@@ -1,5 +1,5 @@
 import surf
-from zope.interface import implements, directlyProvides
+from zope.interface import implements, directlyProvides, Interface
 from zope.component import adapts, queryMultiAdapter
 from Products.Archetypes.Marshall import Marshaller
 from Products.ATContentTypes.interface.interfaces import IATContentType
@@ -30,7 +30,7 @@ class RDFMarshaller(Marshaller):
 
 class ATCT2Surf(object):
     implements(IArchetype2Surf)
-    adapts(IATContentType, ISurfSession)
+    adapts(Interface, ISurfSession)
     
     index_map = dict([('title', 'Title'),
                       ('description', 'Description'),

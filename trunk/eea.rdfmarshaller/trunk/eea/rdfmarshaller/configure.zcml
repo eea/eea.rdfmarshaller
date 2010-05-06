@@ -4,6 +4,8 @@
 
   <five:registerPackage package="." />
 
+  <include package=".browser" />
+
   <class class="surf.Session">
      <implements interface=".interfaces.ISurfSession" />
   </class>
