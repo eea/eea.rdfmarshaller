@@ -1,0 +1,26 @@
+======================
+SENSE input and output
+====================== 
+
+SENSE is a sub project of SOER PART-C which has a goal to enable information
+sharing between countries using RDF. The content shared is the PART-C of SOER
+and is intended as first stage to put more data online and be able to update it
+continuesly.
+
+All content as part of eea.soer can be imported and exported as `SOER Feed <https://svn.eionet.europa.eu/projects/Zope/wiki/SOERFeedSpec>`_.
+
+  >>> self.setRoles(['Manager'])
+  >>> folder =  self.portal[self.portal.invokeFactory('Folder', id='valentine')] 
+  >>> news = folder[folder.invokeFactory('News Item', id='news1')]
+  >>> news.setTitle('my news item')
+  >>> news.setText('My text')
+  >>> news.setCreators(['ab','sasha','ture'])
+  >>> news.setDescription('my description')
+
+
+  >>> from Products.Marshall.registry import getComponent
+  >>> marshaller = getComponent('surfrdf')
+  >>> content_type, length, data = marshaller.marshall(news)
+  >>> from pprint import pprint
+  >>> print data
+    
