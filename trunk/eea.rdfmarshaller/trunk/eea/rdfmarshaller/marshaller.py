@@ -1,13 +1,12 @@
 import surf
-from zope.interface import implements, directlyProvides, Interface
+import rdflib
+from zope.interface import implements, Interface
 from zope.component import adapts, queryMultiAdapter
 from Products.Archetypes.Marshall import Marshaller
-from Products.ATContentTypes.interface.interfaces import IATContentType
 from eea.rdfmarshaller.interfaces import IArchetype2Surf, ISurfSession
 
 class RDFMarshaller(Marshaller):
     """ """
-
 
     def demarshall(self, instance, data, **kwargs):
         pass
@@ -25,32 +24,35 @@ class RDFMarshaller(Marshaller):
         data = store.reader.graph.serialize(format = 'pretty-xml')
         return (content_type, length, data)
         
-
-    
-
-class ATCT2Surf(object):
+class ATCTDublinCore2Surf(object):
     implements(IArchetype2Surf)
     adapts(Interface, ISurfSession)
-    
-    index_map = dict([('title', 'Title'),
-                      ('description', 'Description'),
-                      ('creation_date', 'created'),
-                      ('modification_date', 'modified'),
-                      ('creators', 'Creator'),
-                      ('subject', 'Subject'),
-                      ('effectiveDate', 'effective'),
-                      ('expirationDate', 'expires'),
-                      ])
     
     def __init__(self, context, session):
         self.context = context
         self.session = session
-        portalType = context.portal_type.replace(' ','')
-        surfClass = session.get_class(self.namespace[portalType])
-        self.resource = rdfObj = surfClass(context.absolute_url())
-        rdfObj.bind_namespaces(['ATCT'])
-        rdfObj.session = session
+    
+class ATCT2Surf(object):
+    implements(IArchetype2Surf)
+    adapts(Interface, ISurfSession)
+    
+    dc_map = dict([('title', 'Title'),
+                   ('description', 'Description'),
+                   ('creation_date', 'created'),
+                   ('modification_date', 'modified'),
+                   ('creators', 'Creator'),
+                   ('subject', 'Subject'),
+                   ('effectiveDate', 'effective'),
+                   ('expirationDate', 'expires'),
+                   ])
 
+    field_map = {}
+    blacklist_map = ['constrainTypesMode'] # fields not to export
+    
+    def __init__(self, context, session):
+        self.context = context
+        self.session = session
+        
     @property
     def namespace(self):
         return surf.ns.ATCT
@@ -58,21 +60,50 @@ class ATCT2Surf(object):
     @property
     def prefix(self):
         return 'atct'
+
+    @property
+    def portalType(self):
+        return self.context.portal_type.replace(' ','')
+
+    @property
+    def surfResource(self):
+        resource = self.session.get_class(self.namespace[self.portalType])(self.subject)
+        resource.bind_namespaces([self.prefix])
+        resource.session = self.session
+        return resource
     
-    def at2surf(self):
-        resource = self.resource
+    @property
+    def subject(self):
+        return self.context.absolute_url()
+
+    def _schema2surf(self):
         context = self.context
+        session = self.session
+        resource = self.surfResource
+        
         for field in context.schema.fields():
+            fieldName = field.getName()
+            if fieldName in self.blacklist_map:
+                continue
+            
             value = field.get(context)
             if value:
                 if isinstance(value, (list, tuple)):
                     value = list(value)
+                    if fieldName == 'relatedItems':
+                        value = [ rdflib.URIRef(obj.absolute_url()) for obj in value ]
                 else:
                     value = str(value)
-                fieldName = self.index_map.get(field.getName(), field.getName())
-                prefix = self.prefix
-                if fieldName != field.getName():
+                    prefix = self.prefix
+                if fieldName in self.field_map:
+                    fieldName = self.field_map.get(fieldName)
+                elif fieldName in self.dc_map:
+                    fieldName = self.dc_map.get(fieldName)
                     prefix = 'dc'
                 setattr(resource, '%s_%s' % (prefix, fieldName), value)
         resource.save()
         return resource
+
+    
+    def at2surf(self):
+        return self._schema2surf()

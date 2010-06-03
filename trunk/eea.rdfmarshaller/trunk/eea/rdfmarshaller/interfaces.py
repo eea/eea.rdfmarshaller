@@ -5,4 +5,10 @@ class ISurfSession(Interface):
 
 class IArchetype2Surf(Interface):
     """ """
+
+class IATVocabulary(Interface):
+    """ Marker interface for ATVocabularyManager Simple Vocabularym """
+
+class IATVocabularyTerm(Interface):
+    """ Marker interface for ATVocabularyManager Simple Term """
     

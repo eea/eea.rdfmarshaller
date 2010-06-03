@@ -4,6 +4,7 @@
 
   <five:registerPackage package="." />
 
+  <include file="./atvocabulary.zcml" />
   <include package=".browser" />
 
   <class class="surf.Session">

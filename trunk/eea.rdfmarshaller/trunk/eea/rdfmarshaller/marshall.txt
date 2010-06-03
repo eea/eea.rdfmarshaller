@@ -1,13 +1,11 @@
-======================
-SENSE input and output
-====================== 
+==============
+RDF Marshaller
+==============
 
-SENSE is a sub project of SOER PART-C which has a goal to enable information
-sharing between countries using RDF. The content shared is the PART-C of SOER
-and is intended as first stage to put more data online and be able to update it
-continuesly.
-
-All content as part of eea.soer can be imported and exported as `SOER Feed <https://svn.eionet.europa.eu/projects/Zope/wiki/SOERFeedSpec>`_.
+With RDF marshaller you can export any Archetype content to RDF. It provides a
+few general adaptors for ATContentTypes and ATVocabularyManager. You can then
+look in eea.soer to find out how to customize these adaptors for your own RDF
+schemas and own content types.
 
   >>> self.setRoles(['Manager'])
   >>> folder =  self.portal[self.portal.invokeFactory('Folder', id='valentine')] 
