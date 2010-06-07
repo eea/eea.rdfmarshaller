@@ -47,7 +47,7 @@ class ATCT2Surf(object):
                    ])
 
     field_map = {}
-    blacklist_map = ['constrainTypesMode'] # fields not to export
+    blacklist_map = ['constrainTypesMode','locallyAllowedTypes', 'immediatelyAddableTypes'] # fields not to export
     
     def __init__(self, context, session):
         self.context = context
@@ -88,13 +88,13 @@ class ATCT2Surf(object):
             
             value = field.get(context)
             if value:
+                prefix = self.prefix
                 if isinstance(value, (list, tuple)):
                     value = list(value)
                     if fieldName == 'relatedItems':
                         value = [ rdflib.URIRef(obj.absolute_url()) for obj in value ]
                 else:
                     value = str(value)
-                    prefix = self.prefix
                 if fieldName in self.field_map:
                     fieldName = self.field_map.get(fieldName)
                 elif fieldName in self.dc_map:
