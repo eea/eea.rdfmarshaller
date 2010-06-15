@@ -1,8 +1,11 @@
 Changelog
 =========
 
-0.2 (Unreleased)
+0.2 (2010-06-15)
 ----------------
+
+- Cleanup and more generic export moved here from eea.soer [vincisas]
+- Blacklist added [vincisas]
 
 0.1 (2010-05-19)
 ----------------
