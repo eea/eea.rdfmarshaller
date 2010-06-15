@@ -1,0 +1,24 @@
+==============
+RDF Marshaller
+==============
+
+With RDF marshaller you can export any Archetype content to RDF. It provides a
+few general adaptors for ATContentTypes and ATVocabularyManager. You can then
+look in eea.soer to find out how to customize these adaptors for your own RDF
+schemas and own content types.
+
+  >>> self.setRoles(['Manager'])
+  >>> folder =  self.portal[self.portal.invokeFactory('Folder', id='valentine')] 
+  >>> news = folder[folder.invokeFactory('News Item', id='news1')]
+  >>> news.setTitle('my news item')
+  >>> news.setText('My text')
+  >>> news.setCreators(['ab','sasha','ture'])
+  >>> news.setDescription('my description')
+
+
+  >>> from Products.Marshall.registry import getComponent
+  >>> marshaller = getComponent('surfrdf')
+  >>> content_type, length, data = marshaller.marshall(news)
+  >>> from pprint import pprint
+  >>> print data
+    

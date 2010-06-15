@@ -1,0 +1,15 @@
+============
+Installation
+============
+
+
+Plone 2.5.x
+-----------
+
+To enable marshalling for requests with header Accept: application/rdf+xml 
+Put a Site access rule in root of your plone site.
+
+     request = container.REQUEST
+     if 'application/rdf+xml' == request['HTTP_ACCEPT']:
+        stack = context.REQUEST['TraversalRequestNameStack']
+	   stack.insert(0,'manage_FTPget')
