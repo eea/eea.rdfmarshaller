@@ -81,7 +81,7 @@ class ATCT2Surf(object):
         session = self.session
         resource = self.surfResource
         
-        for field in context.schema.fields():
+        for field in context.Schema().fields():
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
                 continue
