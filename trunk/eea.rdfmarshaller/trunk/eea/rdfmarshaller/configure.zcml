@@ -1,10 +1,12 @@
+
 <configure xmlns="http://namespaces.zope.org/zope"
            xmlns:five="http://namespaces.zope.org/five"
            xmlns:browser="http://namespaces.zope.org/browser">
 
   <five:registerPackage package="." />
 
-  <include file="./atvocabulary.zcml" />
+  <include file="archetypes.zcml" />
+  <include file="atvocabulary.zcml" />
   <include package=".browser" />
 
   <class class="surf.Session">
@@ -12,4 +14,6 @@
   </class>
 
   <adapter factory=".marshaller.ATCT2Surf" />
+  <adapter factory=".marshaller.ATField2Surf" />
+  <adapter factory=".marshaller.FTI2Surf" />
 </configure>

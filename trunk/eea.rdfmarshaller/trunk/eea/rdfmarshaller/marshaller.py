@@ -3,6 +3,9 @@ import rdflib
 from zope.interface import implements, Interface
 from zope.component import adapts, queryMultiAdapter
 from Products.Archetypes.Marshall import Marshaller
+from Products.Archetypes.interfaces import IField
+from Products.CMFDynamicViewFTI.interface import IDynamicViewTypeInformation
+from Products.CMFCore.utils import getToolByName
 from eea.rdfmarshaller.interfaces import IArchetype2Surf, ISurfSession
 
 class RDFMarshaller(Marshaller):
@@ -23,7 +26,8 @@ class RDFMarshaller(Marshaller):
         store.reader.graph.bind('dc',surf.ns.DC, override=True)
         data = store.reader.graph.serialize(format = 'pretty-xml')
         return (content_type, length, data)
-        
+
+
 class ATCTDublinCore2Surf(object):
     implements(IArchetype2Surf)
     adapts(Interface, ISurfSession)
@@ -102,6 +106,77 @@ class ATCT2Surf(object):
                     prefix = 'dc'
                 setattr(resource, '%s_%s' % (prefix, fieldName), value)
         resource.save()
+        return resource
+
+    
+    def at2surf(self):
+        return self._schema2surf()
+
+class ATField2Surf(ATCT2Surf):
+    implements(IArchetype2Surf)
+    adapts(IField, ISurfSession)
+
+    @property
+    def portalType(self):
+        return u'Property'
+
+    @property
+    def namespace(self):
+        return surf.ns.RDFS
+
+    @property
+    def prefix(self):
+        return 'rdfs'
+
+    @property
+    def subject(self):
+        return self.context.getName()
+
+    def _schema2surf(self):
+        context = self.context
+        session = self.session
+        resource = self.surfResource
+
+        resource.rdfs_label = context.getName()
+        resource.rdfs_comment = context.widget.description
+        resource.rdf_id = context.getName()
+        resource.save()
+        return resource
+
+
+class FTI2Surf(ATCT2Surf):
+    implements(IArchetype2Surf)
+    adapts(IDynamicViewTypeInformation, ISurfSession)
+
+    @property
+    def portalType(self):
+        return u'Class'
+
+    @property
+    def namespace(self):
+        return surf.ns.RDFS
+
+    @property
+    def prefix(self):
+        return 'rdfs'
+
+    @property
+    def subject(self):
+        return ''
+    
+    def _schema2surf(self):
+        context = self.context
+        session = self.session
+        resource = self.surfResource
+
+        attool = getToolByName(context, 'archetype_tool')
+        resource.rdfs_label = context.Title()
+        resource.rdf_id = context.Title()
+        resource.save()
+        for field in attool.lookupType(context.product, context.content_meta_type)['schema'].fields():
+            atsurf = queryMultiAdapter((field, session), interface=IArchetype2Surf)
+            atsurf.at2surf()
+        import pdb; pdb.set_trace()
         return resource
 
     

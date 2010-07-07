@@ -1,0 +1,11 @@
+===================================
+From Archetype schema to RDF schema
+===================================
+
+
+  >>> ttool = self.portal.portal_types
+  >>> from Products.Marshall.registry import getComponent
+  >>> marshaller = getComponent('surfrdfs')
+  >>> content_type, length, data = marshaller.marshall(ttool.Folder)
+  >>> from pprint import pprint
+  >>> print data

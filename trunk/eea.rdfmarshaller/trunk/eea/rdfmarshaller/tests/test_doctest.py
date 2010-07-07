@@ -15,6 +15,10 @@ def test_suite():
                   optionflags=OPTIONFLAGS,
                   package='eea.rdfmarshaller',
                   test_class=FunctionalTestCase),
+            FunctionalDocFileSuite('schema.txt',
+                  optionflags=OPTIONFLAGS,
+                  package='eea.rdfmarshaller',
+                  test_class=FunctionalTestCase),
             ))
 
 

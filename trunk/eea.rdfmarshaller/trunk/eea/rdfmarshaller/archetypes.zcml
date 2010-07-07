@@ -1,0 +1,11 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class="Products.Archetypes.Field.Field">
+     <implements interface="Products.Archetypes.interfaces.IField" />
+  </class>
+
+
+
+</configure>
