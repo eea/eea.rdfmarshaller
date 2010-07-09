@@ -11,14 +11,43 @@ schemas and own content types.
   >>> folder =  self.portal[self.portal.invokeFactory('Folder', id='valentine')] 
   >>> news = folder[folder.invokeFactory('News Item', id='news1')]
   >>> news.setTitle('my news item')
-  >>> news.setText('My text')
   >>> news.setCreators(['ab','sasha','ture'])
   >>> news.setDescription('my description')
-
+  >>> news.setText('<p>my news rocks!</p>')
 
   >>> from Products.Marshall.registry import getComponent
   >>> marshaller = getComponent('surfrdf')
-  >>> content_type, length, data = marshaller.marshall(news)
-  >>> from pprint import pprint
-  >>> print data
+  >>> import surf
+  >>> surf.ns.register(NEWSITEM='%s#' % self.portal.portal_types['News Item'].absolute_url())
+  >>> surf.ns.register(FOLDER='%s#' % self.portal.portal_types['Folder'].absolute_url())
+  >>> content_type, length, data = marshaller.marshall(folder)
+
+If we print data we should get something like
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <rdf:RDF
+      xmlns:newsitem='http://nohost/plone/portal_types/News%20Item#'
+      xmlns:folder='http://nohost/plone/portal_types/Folder#'
+      xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+      xmlns:dc='http://purl.org/dc/elements/1.1/'
+    >
+      <folder:Folder rdf:about="http://nohost/plone/valentine">
+        <dc:modified>2010/07/09 12:55:26.760 GMT+2</dc:modified>
+        <dc:created>2010/07/09 12:55:26.739 GMT+2</dc:created>
+        <folder:id>valentine</folder:id>
+        <dc:Creator>test_user_1_</dc:Creator>
+      </folder:Folder>
+      <newsitem:NewsItem rdf:about="http://nohost/plone/valentine/news1">
+        <dc:Description>my description</dc:Description>
+        <newsitem:id>news1</newsitem:id>
+        <dc:Title>my news item</dc:Title>
+        <newsitem:text><![CDATA[<p>my news rocks!</p>]]></newsitem:text>
+        <dc:modified>2010/07/09 12:55:26.834 GMT+2</dc:modified>
+        <dc:Creator>ture</dc:Creator>
+        <dc:Creator>ab</dc:Creator>
+        <dc:Creator>sasha</dc:Creator>
+        <dc:created>2010/07/09 12:55:26.815 GMT+2</dc:created>
+      </newsitem:NewsItem>
+    </rdf:RDF>
+
     

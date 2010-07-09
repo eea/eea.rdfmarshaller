@@ -1,5 +1,6 @@
 import surf
 import rdflib
+from OFS.interfaces import IFolder
 from zope.interface import implements, Interface
 from zope.component import adapts, queryMultiAdapter
 from Products.Archetypes.Marshall import Marshaller
@@ -59,11 +60,13 @@ class ATCT2Surf(object):
         
     @property
     def namespace(self):
-        return surf.ns.ATCT
+        context = self.context
+        ttool = getToolByName(context, 'portal_types')
+        return surf.ns.get_namespace('%s#' % ttool[context.portal_type].absolute_url())[1]
 
     @property
     def prefix(self):
-        return 'atct'
+        return self.portalType.lower()
 
     @property
     def portalType(self):
@@ -89,7 +92,6 @@ class ATCT2Surf(object):
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
                 continue
-            
             value = field.get(context)
             if value:
                 prefix = self.prefix
@@ -111,6 +113,20 @@ class ATCT2Surf(object):
     
     def at2surf(self):
         return self._schema2surf()
+
+class ATFolderish2Surf(ATCT2Surf):
+    implements(IArchetype2Surf)
+    adapts(IFolder, ISurfSession)
+
+    def at2surf(self):
+        for obj in self.context.objectValues():
+            atsurf = queryMultiAdapter((obj, self.session), interface=IArchetype2Surf)
+            if atsurf is not None:
+                self.session.default_store.reader.graph.bind(atsurf.prefix, atsurf.namespace, override=False)
+                atsurf.at2surf()
+
+        return self._schema2surf()
+        
 
 class ATField2Surf(ATCT2Surf):
     implements(IArchetype2Surf)
