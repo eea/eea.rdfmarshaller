@@ -114,8 +114,13 @@ class ATCT2Surf(object):
 
 class ATField2Surf(ATCT2Surf):
     implements(IArchetype2Surf)
-    adapts(IField, ISurfSession)
+    adapts(IField, Interface, ISurfSession)
 
+    def __init__(self, context, fti, session):
+        self.context = context
+        self.session = session
+        self.fti = fti
+        
     @property
     def portalType(self):
         return u'Property'
@@ -129,17 +134,22 @@ class ATField2Surf(ATCT2Surf):
         return 'rdfs'
 
     @property
+    def rdfId(self):
+        return self.context.getName().replace(' ','')
+
+    @property
     def subject(self):
-        return self.context.getName()
+        return '%s#%s' % (self.fti.absolute_url(),self.context.getName())
 
     def _schema2surf(self):
         context = self.context
         session = self.session
         resource = self.surfResource
-
-        resource.rdfs_label = context.getName()
-        resource.rdfs_comment = context.widget.description
-        resource.rdf_id = context.getName()
+        
+        resource.rdfs_label = (context.widget.label, u'en')
+        resource.rdfs_comment = (context.widget.description, u'en')
+        resource.rdf_id = self.rdfId
+        resource.rdf_domain = rdflib.URIRef(u'#%s' % self.fti.Title())
         resource.save()
         return resource
 
@@ -161,8 +171,12 @@ class FTI2Surf(ATCT2Surf):
         return 'rdfs'
 
     @property
+    def rdfId(self):
+        return self.context.getId().replace(' ','')
+
+    @property
     def subject(self):
-        return ''
+        return '%s#%s' % (self.context.absolute_url(),self.rdfId)
     
     def _schema2surf(self):
         context = self.context
@@ -170,13 +184,14 @@ class FTI2Surf(ATCT2Surf):
         resource = self.surfResource
 
         attool = getToolByName(context, 'archetype_tool')
-        resource.rdfs_label = context.Title()
-        resource.rdf_id = context.Title()
+        resource.rdfs_label = (context.Title(), u'en')
+        resource.rdfs_comment = (context.Description(), u'en')
+        resource.rdf_id = self.rdfId
         resource.save()
-        for field in attool.lookupType(context.product, context.content_meta_type)['schema'].fields():
-            atsurf = queryMultiAdapter((field, session), interface=IArchetype2Surf)
+        schema = attool.lookupType(context.product, context.content_meta_type)['schema']
+        for field in schema.fields():
+            atsurf = queryMultiAdapter((field, context, session), interface=IArchetype2Surf)
             atsurf.at2surf()
-        import pdb; pdb.set_trace()
         return resource
 
     
