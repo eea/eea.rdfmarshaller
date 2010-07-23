@@ -7,7 +7,7 @@ from Products.Archetypes.Marshall import Marshaller
 from Products.Archetypes.interfaces import IField
 from Products.CMFDynamicViewFTI.interface import IDynamicViewTypeInformation
 from Products.CMFCore.utils import getToolByName
-from eea.rdfmarshaller.interfaces import IArchetype2Surf, ISurfSession
+from eea.rdfmarshaller.interfaces import IArchetype2Surf, ISurfSession, IReferenceField
 
 class RDFMarshaller(Marshaller):
     """ """
@@ -36,6 +36,19 @@ class ATCTDublinCore2Surf(object):
     def __init__(self, context, session):
         self.context = context
         self.session = session
+
+class ATField2Surf(object):
+    implements(IArchetype2Surf)
+    adapts(IField, ISurfSession)
+
+    def __init__(self, context, session):
+        self.context = context
+        self.session = session
+
+class ATReferenceField2Surf(ATField2Surf):
+    implements(IArchetype2Surf)
+    adapts(IReferenceField, ISurfSession)
+
     
 class ATCT2Surf(object):
     implements(IArchetype2Surf)
@@ -52,7 +65,7 @@ class ATCT2Surf(object):
                    ])
 
     field_map = {}
-    blacklist_map = ['constrainTypesMode','locallyAllowedTypes', 'immediatelyAddableTypes'] # fields not to export
+    blacklist_map = ['constrainTypesMode','locallyAllowedTypes', 'immediatelyAddableTypes','language'] # fields not to export
     
     def __init__(self, context, session):
         self.context = context
@@ -87,8 +100,9 @@ class ATCT2Surf(object):
         context = self.context
         session = self.session
         resource = self.surfResource
-        
+        language = context.Language()
         for field in context.Schema().fields():
+            fieldAdapter = queryMultiAdapter((field, self.session), interface=IArchetype2Surf)
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
                 continue
@@ -100,7 +114,7 @@ class ATCT2Surf(object):
                     if fieldName == 'relatedItems':
                         value = [ rdflib.URIRef(obj.absolute_url()) for obj in value ]
                 else:
-                    value = str(value)
+                    value = (str(value), language)
                 if fieldName in self.field_map:
                     fieldName = self.field_map.get(fieldName)
                 elif fieldName in self.dc_map:
@@ -128,7 +142,7 @@ class ATFolderish2Surf(ATCT2Surf):
         return self._schema2surf()
         
 
-class ATField2Surf(ATCT2Surf):
+class ATField2RdfSchema(ATCT2Surf):
     implements(IArchetype2Surf)
     adapts(IField, Interface, ISurfSession)
 
