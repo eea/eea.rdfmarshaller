@@ -9,4 +9,11 @@
     permission="zope.Public"
     />
 
+  <browser:page
+    for="*"
+    name="rdfs"
+    class=".export.RDFSExport"
+    permission="zope.Public"
+    />
+
 </configure>
