@@ -5,9 +5,10 @@ from zope.interface import implements, Interface
 from zope.component import adapts, queryMultiAdapter
 from Products.Archetypes.Marshall import Marshaller
 from Products.Archetypes.interfaces import IField
-from Products.CMFDynamicViewFTI.interface import IDynamicViewTypeInformation
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.interfaces import ITypeInformation
 from eea.rdfmarshaller.interfaces import IArchetype2Surf, ISurfSession, IReferenceField
+from eea.rdfmarshaller.interfaces import IATVocabularyTerm
 
 class RDFMarshaller(Marshaller):
     """ """
@@ -65,7 +66,7 @@ class ATCT2Surf(object):
                    ])
 
     field_map = {}
-    blacklist_map = ['constrainTypesMode','locallyAllowedTypes', 'immediatelyAddableTypes','language'] # fields not to export
+    blacklist_map = ['constrainTypesMode','locallyAllowedTypes', 'immediatelyAddableTypes','language', 'allowDiscussion'] # fields not to export
     
     def __init__(self, context, session):
         self.context = context
@@ -128,6 +129,16 @@ class ATCT2Surf(object):
     def at2surf(self):
         return self._schema2surf()
 
+class ATVocabularyTerm2Surf(ATCT2Surf):
+    implements(IArchetype2Surf)
+    adapts(IATVocabularyTerm, ISurfSession)
+
+    def __init__(self, context, session):
+        self.context = context
+        self.session = session
+
+        self.blacklist_map = ATCT2Surf.blacklist_map + ['creation_date', 'modification_date', 'creators']
+
 class ATFolderish2Surf(ATCT2Surf):
     implements(IArchetype2Surf)
     adapts(IFolder, ISurfSession)
@@ -186,7 +197,21 @@ class ATField2RdfSchema(ATCT2Surf):
 
 class FTI2Surf(ATCT2Surf):
     implements(IArchetype2Surf)
-    adapts(IDynamicViewTypeInformation, ISurfSession)
+    adapts(ITypeInformation, ISurfSession)
+
+    
+    blacklist_map = ['constrainTypesMode','locallyAllowedTypes',
+                     'immediatelyAddableTypes','language',
+                     'creation_date',
+                     'modification_date',
+                     'creators',
+                     'subject',
+                     'effectiveDate',
+                     'expirationDate',
+                     'contributors',
+                     'allowDiscussion',
+                     'rights'
+                     ] # fields not to export, i.e Dublin Core
 
     @property
     def portalType(self):
@@ -220,6 +245,10 @@ class FTI2Surf(ATCT2Surf):
         resource.save()
         schema = attool.lookupType(context.product, context.content_meta_type)['schema']
         for field in schema.fields():
+            fieldName = field.getName()
+            if fieldName in self.blacklist_map:
+                continue
+
             atsurf = queryMultiAdapter((field, context, session), interface=IArchetype2Surf)
             atsurf.at2surf()
         return resource

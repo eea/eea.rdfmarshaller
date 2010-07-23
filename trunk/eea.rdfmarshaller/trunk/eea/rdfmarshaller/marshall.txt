@@ -50,4 +50,45 @@ If we print data we should get something like
       </newsitem:NewsItem>
     </rdf:RDF>
 
+
+Exporting a vocabulary
     
+    >>> self.setupVocabularies()
+    >>> vocab = self.portal.portal_vocabularies['eea.rdfmarshaller.vocab.testing']
+    >>> content_type, length, data = marshaller.marshall(vocab)
+    >>> print data
+    ...
+
+This is the output of a standard SimpleVocabulary and it's SimpleVocabularyTerms. The Dublin Core information has been stripped for terms.
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <rdf:RDF
+      xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+      xmlns:simplevocabularyterm='http://nohost/plone/portal_types/SimpleVocabularyTerm#'
+      xmlns:dc='http://purl.org/dc/elements/1.1/'
+      xmlns:simplevocabulary='http://nohost/plone/portal_types/SimpleVocabulary#'
+    >
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/freshwater">
+        <dc:Title>Freshwater</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/land">
+        <dc:Title>Land use</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/air%20pollution">
+        <dc:Title>Air pollution</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/climate%20change">
+        <dc:Title>Climate change mitigation</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/biodiversity">
+        <dc:Title>Nature protection and biodiversity</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/waste">
+        <dc:Title>Waste</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabulary:SimpleVocabulary rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing">
+        <dc:Creator>test_user_1_</dc:Creator>
+        <dc:created>2010/07/23 14:10:56.279 GMT+2</dc:created>
+        <dc:modified>2010/07/23 14:10:56.295 GMT+2</dc:modified>
+      </simplevocabulary:SimpleVocabulary>
+    </rdf:RDF>

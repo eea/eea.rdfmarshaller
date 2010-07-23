@@ -1,13 +1,11 @@
-import os
-from Globals import package_home
+from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase.layer import onsetup
 from Products.Five import zcml
 from Products.Five import fiveconfigure
-from Products.CMFPlone.interfaces import IPloneSiteRoot
 
 
-PRODUCTS = []
+PRODUCTS = ['ATVocabularyMananger']
 PROFILES = ['eea.rdfmarshaller:default']
 
 @onsetup
@@ -34,4 +32,28 @@ class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
     def afterSetUp(self):
         self.setRoles(['Manager'])
 
+
+    def setupVocabularies(self):
+        from Products.ATVocabularyManager.config import TOOL_NAME as ATVOCABULARYTOOL
+        portal = self.portal
+        atvm = getToolByName(portal, ATVOCABULARYTOOL, None)
+        if atvm is None:
+            return
+        vocabs =  {
+            'eea.rdfmarshaller.vocab.testing': (
+              (u'air pollution', "Air pollution"),
+              (u'climate change', "Climate change mitigation"),
+              (u'biodiversity', "Nature protection and biodiversity"),
+              (u'land', "Land use"),
+              (u'freshwater', "Freshwater"),
+              (u'waste', "Waste"),
+             ),
+            }
+
+
+        for vkey in vocabs.keys():
+            atvm.invokeFactory('SimpleVocabulary', vkey)
+            simple = atvm.getVocabularyByName(vkey)
+            for (key, val) in vocabs[vkey]:
+                simple.addTerm(key, val)
 
