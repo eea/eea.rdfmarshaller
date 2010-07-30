@@ -66,12 +66,21 @@ class ATCT2Surf(object):
                    ])
 
     field_map = {}
-    blacklist_map = ['constrainTypesMode','locallyAllowedTypes', 'immediatelyAddableTypes','language', 'allowDiscussion'] # fields not to export
+
     
     def __init__(self, context, session):
         self.context = context
         self.session = session
-        
+
+    @property
+    def blacklist_map(self):
+        ptool = getToolByName(self.context,'portal_properties')
+        props = getattr(ptool, 'rdfmarshaller_properties', None)
+        blacklist = ['constrainTypesMode','locallyAllowedTypes', 'immediatelyAddableTypes','language', 'allowDiscussion'] # fields not to export
+        if props:
+            blacklist = list(props.getProperty('%s_blacklist' % self.portalType.lower(), props.getProperty('blacklist')))
+        return blacklist
+    
     @property
     def namespace(self):
         context = self.context
@@ -137,7 +146,9 @@ class ATVocabularyTerm2Surf(ATCT2Surf):
         self.context = context
         self.session = session
 
-        self.blacklist_map = ATCT2Surf.blacklist_map + ['creation_date', 'modification_date', 'creators']
+    @property
+    def blacklist_map(self):
+        return super(ATVocabularyTerm2Surf, self).blacklist_map + ['creation_date', 'modification_date', 'creators']
 
 class ATFolderish2Surf(ATCT2Surf):
     implements(IArchetype2Surf)

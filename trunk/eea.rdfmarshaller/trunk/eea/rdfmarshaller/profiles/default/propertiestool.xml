@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<object name="portal_properties" meta_type="Plone Properties Tool">
+ <object name="rdfmarshaller_properties" meta_type="Plone Property Sheet">
+  <property name="title">eea.rdfmarshaller  properties</property>
+  <property name="blacklist" type="lines">
+    <element value="constrainTypesMode" />
+    <element value="locallyAllowedTypes" />
+    <element value="immediatelyAddableTypes" />
+    <element value="language" />
+    <element value="allowDiscussion" />
+  </property>
+ </object>
+</object>
