@@ -4,6 +4,8 @@ Changelog
 0.3 (unreleased)
 ----------------
 
+- blacklist is configurable through ZMI in properties_tool/rdfmarshaller_properties [vincisas]
+
 0.2 (2010-06-15)
 ----------------
 
