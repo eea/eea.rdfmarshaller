@@ -55,12 +55,12 @@ class ATCT2Surf(object):
     implements(IArchetype2Surf)
     adapts(Interface, ISurfSession)
     
-    dc_map = dict([('title', 'Title'),
-                   ('description', 'Description'),
+    dc_map = dict([('title', 'title'),
+                   ('description', 'description'),
                    ('creation_date', 'created'),
                    ('modification_date', 'modified'),
-                   ('creators', 'Creator'),
-                   ('subject', 'Subject'),
+                   ('creators', 'creator'),
+                   ('subject', 'subject'),
                    ('effectiveDate', 'effective'),
                    ('expirationDate', 'expires'),
                    ])
@@ -71,7 +71,10 @@ class ATCT2Surf(object):
     def __init__(self, context, session):
         self.context = context
         self.session = session
-
+        if self.namespace is None:
+            ttool = getToolByName(context, 'portal_types')
+            surf.ns.register(**{ self.prefix : '%s#' % ttool[context.portal_type].absolute_url()} )
+        
     @property
     def blacklist_map(self):
         ptool = getToolByName(self.context,'portal_properties')
@@ -83,10 +86,8 @@ class ATCT2Surf(object):
     
     @property
     def namespace(self):
-        context = self.context
-        ttool = getToolByName(context, 'portal_types')
-        return surf.ns.get_namespace('%s#' % ttool[context.portal_type].absolute_url())[1]
-
+        return getattr(surf.ns, self.prefix.upper(), None)
+    
     @property
     def prefix(self):
         return self.portalType.lower()
@@ -97,7 +98,10 @@ class ATCT2Surf(object):
 
     @property
     def surfResource(self):
-        resource = self.session.get_class(self.namespace[self.portalType])(self.subject)
+        try:
+            resource = self.session.get_class(self.namespace[self.portalType])(self.subject)
+        except:
+            import pdb; pdb.set_trace()
         resource.bind_namespaces([self.prefix])
         resource.session = self.session
         return resource
@@ -142,10 +146,6 @@ class ATVocabularyTerm2Surf(ATCT2Surf):
     implements(IArchetype2Surf)
     adapts(IATVocabularyTerm, ISurfSession)
 
-    def __init__(self, context, session):
-        self.context = context
-        self.session = session
-
     @property
     def blacklist_map(self):
         return super(ATVocabularyTerm2Surf, self).blacklist_map + ['creation_date', 'modification_date', 'creators']
@@ -155,13 +155,14 @@ class ATFolderish2Surf(ATCT2Surf):
     adapts(IFolder, ISurfSession)
 
     def at2surf(self):
+        resource = super(ATFolderish2Surf, self).at2surf()
         for obj in self.context.objectValues():
             atsurf = queryMultiAdapter((obj, self.session), interface=IArchetype2Surf)
             if atsurf is not None:
                 self.session.default_store.reader.graph.bind(atsurf.prefix, atsurf.namespace, override=False)
                 atsurf.at2surf()
 
-        return self._schema2surf()
+        return resource
         
 
 class ATField2RdfSchema(ATCT2Surf):
