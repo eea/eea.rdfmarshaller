@@ -1,0 +1,94 @@
+==============
+RDF Marshaller
+==============
+
+With RDF marshaller you can export any Archetype content to RDF. It provides a
+few general adaptors for ATContentTypes and ATVocabularyManager. You can then
+look in eea.soer to find out how to customize these adaptors for your own RDF
+schemas and own content types.
+
+  >>> self.setRoles(['Manager'])
+  >>> folder =  self.portal[self.portal.invokeFactory('Folder', id='valentine')] 
+  >>> news = folder[folder.invokeFactory('News Item', id='news1')]
+  >>> news.setTitle('my news item')
+  >>> news.setCreators(['ab','sasha','ture'])
+  >>> news.setDescription('my description')
+  >>> news.setText('<p>my news rocks!</p>')
+
+  >>> from Products.Marshall.registry import getComponent
+  >>> marshaller = getComponent('surfrdf')
+  >>> import surf
+  >>> surf.ns.register(NEWSITEM='%s#' % self.portal.portal_types['News Item'].absolute_url())
+  >>> surf.ns.register(FOLDER='%s#' % self.portal.portal_types['Folder'].absolute_url())
+  >>> content_type, length, data = marshaller.marshall(folder)
+
+If we print data we should get something like
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <rdf:RDF
+      xmlns:newsitem='http://nohost/plone/portal_types/News%20Item#'
+      xmlns:folder='http://nohost/plone/portal_types/Folder#'
+      xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+      xmlns:dc='http://purl.org/dc/elements/1.1/'
+    >
+      <folder:Folder rdf:about="http://nohost/plone/valentine">
+        <dc:modified>2010/07/09 12:55:26.760 GMT+2</dc:modified>
+        <dc:created>2010/07/09 12:55:26.739 GMT+2</dc:created>
+        <folder:id>valentine</folder:id>
+        <dc:Creator>test_user_1_</dc:Creator>
+      </folder:Folder>
+      <newsitem:NewsItem rdf:about="http://nohost/plone/valentine/news1">
+        <dc:Description>my description</dc:Description>
+        <newsitem:id>news1</newsitem:id>
+        <dc:Title>my news item</dc:Title>
+        <newsitem:text><![CDATA[<p>my news rocks!</p>]]></newsitem:text>
+        <dc:modified>2010/07/09 12:55:26.834 GMT+2</dc:modified>
+        <dc:Creator>ture</dc:Creator>
+        <dc:Creator>ab</dc:Creator>
+        <dc:Creator>sasha</dc:Creator>
+        <dc:created>2010/07/09 12:55:26.815 GMT+2</dc:created>
+      </newsitem:NewsItem>
+    </rdf:RDF>
+
+
+Exporting a vocabulary
+    
+    >>> self.setupVocabularies()
+    >>> vocab = self.portal.portal_vocabularies['eea.rdfmarshaller.vocab.testing']
+    >>> content_type, length, data = marshaller.marshall(vocab)
+    >>> print data
+    ...
+
+This is the output of a standard SimpleVocabulary and it's SimpleVocabularyTerms. The Dublin Core information has been stripped for terms.
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <rdf:RDF
+      xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+      xmlns:simplevocabularyterm='http://nohost/plone/portal_types/SimpleVocabularyTerm#'
+      xmlns:dc='http://purl.org/dc/elements/1.1/'
+      xmlns:simplevocabulary='http://nohost/plone/portal_types/SimpleVocabulary#'
+    >
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/freshwater">
+        <dc:Title>Freshwater</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/land">
+        <dc:Title>Land use</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/air%20pollution">
+        <dc:Title>Air pollution</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/climate%20change">
+        <dc:Title>Climate change mitigation</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/biodiversity">
+        <dc:Title>Nature protection and biodiversity</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/waste">
+        <dc:Title>Waste</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabulary:SimpleVocabulary rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing">
+        <dc:Creator>test_user_1_</dc:Creator>
+        <dc:created>2010/07/23 14:10:56.279 GMT+2</dc:created>
+        <dc:modified>2010/07/23 14:10:56.295 GMT+2</dc:modified>
+      </simplevocabulary:SimpleVocabulary>
+    </rdf:RDF>
