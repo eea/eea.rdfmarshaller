@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.3'
+version = '0.4svn'
 
 setup(name='eea.rdfmarshaller',
       version=version,
