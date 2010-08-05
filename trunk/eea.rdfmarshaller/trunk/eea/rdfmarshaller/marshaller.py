@@ -101,7 +101,8 @@ class ATCT2Surf(object):
         try:
             resource = self.session.get_class(self.namespace[self.portalType])(self.subject)
         except:
-            import pdb; pdb.set_trace()
+            #import pdb; pdb.set_trace()
+            pass
         resource.bind_namespaces([self.prefix])
         resource.session = self.session
         return resource
