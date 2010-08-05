@@ -79,7 +79,7 @@ class ATCT2Surf(object):
     def blacklist_map(self):
         ptool = getToolByName(self.context,'portal_properties')
         props = getattr(ptool, 'rdfmarshaller_properties', None)
-        #TODO: added 'file' to back list as fails with unicode error
+        #TODO: added 'file' to blacklist as fails with unicode error
         blacklist = ['constrainTypesMode','locallyAllowedTypes', 'immediatelyAddableTypes','language', 'allowDiscussion', 'file'] # fields not to export
         if props:
             blacklist = list(props.getProperty('%s_blacklist' % self.portalType.lower(), props.getProperty('blacklist')))
