@@ -4,6 +4,7 @@ Changelog
 0.4 (unreleased)
 ----------------
 
+- use accessor to get the value of fields [tiberich #3550]
 - 'file' added to blacklist as a temporary fix for encode error [ghicaale]
 - under marshaller.py added temporary fix for: 'tuple' object has no attribute 'replace' [ghicaale]
 
