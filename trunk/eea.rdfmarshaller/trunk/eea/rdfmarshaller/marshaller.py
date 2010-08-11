@@ -126,7 +126,7 @@ class ATCT2Surf(object):
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
                 continue
-            value = field.get(context)
+            value = field.getAccessor(context)()
             if value:
                 prefix = self.prefix
                 if isinstance(value, (list, tuple)):
