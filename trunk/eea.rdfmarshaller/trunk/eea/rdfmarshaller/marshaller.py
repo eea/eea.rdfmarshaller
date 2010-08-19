@@ -1,3 +1,4 @@
+import sys, traceback
 import surf
 import rdflib
 from OFS.interfaces import IFolder
@@ -7,6 +8,7 @@ from Products.Archetypes.Marshall import Marshaller
 from Products.Archetypes.interfaces import IField
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.interfaces import ITypeInformation
+from Products.CMFPlone import log
 from eea.rdfmarshaller.interfaces import IArchetype2Surf, ISurfSession, IReferenceField
 from eea.rdfmarshaller.interfaces import IATVocabularyTerm
 
@@ -122,10 +124,10 @@ class ATCT2Surf(object):
         resource = self.surfResource
         language = context.Language()
         for field in context.Schema().fields():
-            fieldAdapter = queryMultiAdapter((field, self.session), interface=IArchetype2Surf)
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
                 continue
+            fieldAdapter = queryMultiAdapter((field, self.session), interface=IArchetype2Surf)
             value = field.getAccessor(context)()
             if value:
                 prefix = self.prefix
@@ -140,7 +142,14 @@ class ATCT2Surf(object):
                 elif fieldName in self.dc_map:
                     fieldName = self.dc_map.get(fieldName)
                     prefix = 'dc'
-                setattr(resource, '%s_%s' % (prefix, fieldName), value)
+                try:
+                    setattr(resource, '%s_%s' % (prefix, fieldName), value)
+                except:
+                    log.log('RDF marshaller error for context[field] "%s[%s]": \n%s: %s' % (context.absolute_url(), fieldName,
+                                                                                              sys.exc_info()[0],
+                                                                                              sys.exc_info()[1]),
+                                                                                            severity=log.logging.WARN)
+                            
         resource.save()
         return resource
 
