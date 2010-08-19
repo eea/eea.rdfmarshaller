@@ -270,7 +270,12 @@ class FTI2Surf(ATCT2Surf):
         resource.rdfs_comment = (context.Description(), u'en')
         resource.rdf_id = self.rdfId
         resource.save()
-        schema = attool.lookupType(context.product, context.content_meta_type)['schema']
+        attype = attool.lookupType(context.product, context.content_meta_type)
+        if attype is None:
+            # not an Archetype
+            return resource
+        
+        schema = attype['schema']
         for field in schema.fields():
             fieldName = field.getName()
             if fieldName in self.blacklist_map:

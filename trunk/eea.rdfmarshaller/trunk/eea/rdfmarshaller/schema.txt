@@ -79,3 +79,31 @@ an other content type that is named 'NewsItem', but why should you have that? :)
   rdflib.Literal(u'News Item', lang=u'en')
   >>> newsClass.rdfs_comment.first
   rdflib.Literal(u'An announcement that will show up on the news portlet and in the news listing.', lang=u'en')
+
+
+For none Archetypes we only get the class definition
+
+  >>> marshaller = getComponent('surfrdfs')
+  >>> content_type, length, data = marshaller.marshall(ttool['CMF Document'])
+  >>> store.load_triples(source=StringIO(data))
+  True
+  >>> cmfDocNS = surf.ns.Namespace('%s#' % ttool['CMF Document'].absolute_url())
+  >>> docClass = session.get_class(cmfDocNS['CMFDocument'])
+  >>> docClass.rdfs_label.first
+  rdflib.Literal(u'CMF Document', lang=u'en')
+  >>> docClass.rdfs_comment.first
+  rdflib.Literal(u'Documents contain text that can be formatted using \'Structured Text.\'\nThey may also contain HTML, or "plain" text.', lang=u'en')
+
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <rdf:RDF
+      xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+      xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
+    >
+      <rdfs:Class rdf:about="http://nohost/plone/portal_types/CMF%20Document#CMFDocument">
+        <rdfs:comment xml:lang="en">Documents contain text that can be formatted using 'Structured Text.'
+    They may also contain HTML, or "plain" text.</rdfs:comment>
+        <rdf:id>CMFDocument</rdf:id>
+        <rdfs:label xml:lang="en">CMF Document</rdfs:label>
+      </rdfs:Class>
+    </rdf:RDF>
