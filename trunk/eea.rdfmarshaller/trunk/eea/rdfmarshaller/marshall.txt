@@ -15,12 +15,29 @@ schemas and own content types.
   >>> news.setDescription('my description')
   >>> news.setText('<p>my news rocks!</p>')
 
+Add an Image so we can test marshalling binary objects.
+
+  >>> img = folder[folder.invokeFactory('Image', id='img1', 
+  ... 	    					 title='Image title')]
+  >>> imgdata = folder['logo.jpg']._data
+  >>> img.setImage(imgdata)
+
+  >>> zipf= folder[folder.invokeFactory('File', id='zip1', 
+  ... 	    					 title='Zip file')]
+  >>> zipf.setFile('svenska tecken צהו')
+  >>> pdff= folder[folder.invokeFactory('File', id='pdf1', 
+  ... 	    					 title='Pdf file')]
+  >>> pdff.setFile('svenska tecken צהו')
+
+  
   >>> from Products.Marshall.registry import getComponent
   >>> marshaller = getComponent('surfrdf')
   >>> import surf
   >>> surf.ns.register(NEWSITEM='%s#' % self.portal.portal_types['News Item'].absolute_url())
   >>> surf.ns.register(FOLDER='%s#' % self.portal.portal_types['Folder'].absolute_url())
+  >>> self.enableDebugLog()
   >>> content_type, length, data = marshaller.marshall(folder)
+  >>> print data
 
 If we print data we should get something like
 

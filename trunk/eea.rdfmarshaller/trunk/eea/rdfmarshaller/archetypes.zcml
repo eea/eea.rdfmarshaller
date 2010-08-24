@@ -6,6 +6,10 @@
      <implements interface="Products.Archetypes.interfaces.IField" />
   </class>
 
+  <class class="Products.Archetypes.Field.FileField">
+     <implements interface="Products.Archetypes.interfaces.IFileField" />
+  </class>
+
   <class class="Products.Archetypes.Field.ReferenceField">
      <implements interface=".interfaces.IReferenceField" />
   </class>

@@ -16,6 +16,7 @@
 
   <adapter factory=".marshaller.ATCT2Surf" />
   <adapter factory=".marshaller.ATField2Surf" />
+  <adapter factory=".marshaller.ATFileField2Surf" />
   <adapter factory=".marshaller.ATReferenceField2Surf" />
   <adapter factory=".marshaller.ATField2RdfSchema" />
   <adapter factory=".marshaller.FTI2Surf" />

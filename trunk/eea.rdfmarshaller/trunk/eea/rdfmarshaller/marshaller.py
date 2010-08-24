@@ -5,11 +5,12 @@ from OFS.interfaces import IFolder
 from zope.interface import implements, Interface
 from zope.component import adapts, queryMultiAdapter
 from Products.Archetypes.Marshall import Marshaller
-from Products.Archetypes.interfaces import IField
+from Products.Archetypes.interfaces import IField, IFileField
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFPlone import log
-from eea.rdfmarshaller.interfaces import IArchetype2Surf, ISurfSession, IReferenceField
+from eea.rdfmarshaller.interfaces import IArchetype2Surf, IATField2Surf
+from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
 from eea.rdfmarshaller.interfaces import IATVocabularyTerm
 
 class RDFMarshaller(Marshaller):
@@ -45,17 +46,32 @@ class ATCTDublinCore2Surf(object):
         self.session = session
 
 class ATField2Surf(object):
-    implements(IArchetype2Surf)
+    implements(IATField2Surf)
     adapts(IField, ISurfSession)
 
+    exportable = True
+    
     def __init__(self, context, session):
-        self.context = context
+        self.field = context
         self.session = session
 
+    def value(self, context):
+        return self.field.getAccessor(context)()
+
+
+class ATFileField2Surf(ATField2Surf):
+    implements(IATField2Surf)
+    adapts(IFileField, ISurfSession)
+
+    exportable = False
+    
 class ATReferenceField2Surf(ATField2Surf):
-    implements(IArchetype2Surf)
+    implements(IATField2Surf)
     adapts(IReferenceField, ISurfSession)
 
+    def value(self, context):
+        value = self.field.getAccessor(context)()
+        return [ rdflib.URIRef(obj.absolute_url()) for obj in value ]
     
 class ATCT2Surf(object):
     implements(IArchetype2Surf)
@@ -86,7 +102,7 @@ class ATCT2Surf(object):
         ptool = getToolByName(self.context,'portal_properties')
         props = getattr(ptool, 'rdfmarshaller_properties', None)
         #TODO: added 'file' to blacklist as fails with unicode error
-        blacklist = ['constrainTypesMode','locallyAllowedTypes', 'immediatelyAddableTypes','language', 'allowDiscussion', 'file'] # fields not to export
+        blacklist = ['constrainTypesMode','locallyAllowedTypes', 'immediatelyAddableTypes','language', 'allowDiscussion'] # fields not to export
         if props:
             blacklist = list(props.getProperty('%s_blacklist' % self.portalType.lower(), props.getProperty('blacklist')))
         return blacklist
@@ -127,28 +143,27 @@ class ATCT2Surf(object):
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
                 continue
-            fieldAdapter = queryMultiAdapter((field, self.session), interface=IArchetype2Surf)
-            value = field.getAccessor(context)()
-            if value:
-                prefix = self.prefix
-                if isinstance(value, (list, tuple)):
-                    value = list(value)
-                    if fieldName == 'relatedItems':
-                        value = [ rdflib.URIRef(obj.absolute_url()) for obj in value ]
-                else:
-                    value = (str(value), language)
-                if fieldName in self.field_map:
-                    fieldName = self.field_map.get(fieldName)
-                elif fieldName in self.dc_map:
-                    fieldName = self.dc_map.get(fieldName)
-                    prefix = 'dc'
-                try:
-                    setattr(resource, '%s_%s' % (prefix, fieldName), value)
-                except:
-                    log.log('RDF marshaller error for context[field] "%s[%s]": \n%s: %s' % (context.absolute_url(), fieldName,
-                                                                                              sys.exc_info()[0],
-                                                                                              sys.exc_info()[1]),
-                                                                                            severity=log.logging.WARN)
+            fieldAdapter = queryMultiAdapter((field, self.session), interface=IATField2Surf)
+            if fieldAdapter.exportable:
+                value = fieldAdapter.value(context)
+                if value:
+                    prefix = self.prefix
+                    if isinstance(value, (list, tuple)):
+                        value = list(value)
+                    else:
+                        value = (str(value), language)
+                    if fieldName in self.field_map:
+                        fieldName = self.field_map.get(fieldName)
+                    elif fieldName in self.dc_map:
+                        fieldName = self.dc_map.get(fieldName)
+                        prefix = 'dc'
+                    try:
+                        setattr(resource, '%s_%s' % (prefix, fieldName), value)
+                    except:
+                        log.log('RDF marshaller error for context[field] "%s[%s]": \n%s: %s' % (context.absolute_url(), fieldName,
+                                                                                                  sys.exc_info()[0],
+                                                                                                  sys.exc_info()[1]),
+                                                                                                severity=log.logging.WARN)
                             
         resource.save()
         return resource

@@ -1,3 +1,5 @@
+import os
+from Globals import package_home
 from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase.layer import onsetup
@@ -27,11 +29,20 @@ PRODUCTS.append('eea.rdfmarshaller')
 PloneTestCase.setupPloneSite(products=PRODUCTS)
 
 
+
+
 class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
     
     def afterSetUp(self):
         self.setRoles(['Manager'])
 
+
+    def enableDebugLog(self):
+        """ Enable context.plone_log() output from Python scripts """
+        import sys ,logging
+        from Products.CMFPlone.log import logger
+        logger.root.setLevel(logging.WARN)
+        logger.root.addHandler(logging.StreamHandler(sys.stdout))
 
     def setupVocabularies(self):
         from Products.ATVocabularyManager.config import TOOL_NAME as ATVOCABULARYTOOL

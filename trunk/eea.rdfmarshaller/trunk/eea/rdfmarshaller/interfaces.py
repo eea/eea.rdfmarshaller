@@ -1,4 +1,4 @@
-from zope.interface import Interface
+from zope.interface import Interface, Attribute
 from Products.Archetypes.interfaces import IField
 
 class ISurfSession(Interface):
@@ -7,6 +7,15 @@ class ISurfSession(Interface):
 class IArchetype2Surf(Interface):
     """ """
 
+class IATField2Surf(Interface):
+    """ """
+
+    def value(context):
+        """ Returns the value in RDF format """
+
+    exportable = Attribute("Return True if it is possible to export the value to RDF")
+
+        
 class IATVocabulary(Interface):
     """ Marker interface for ATVocabularyManager Simple Vocabularym """
 
