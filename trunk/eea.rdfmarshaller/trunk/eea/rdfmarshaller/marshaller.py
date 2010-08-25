@@ -30,11 +30,7 @@ class RDFMarshaller(Marshaller):
         store.reader.graph.bind(atsurf.prefix, atsurf.namespace, override=False)
         store.reader.graph.bind('dc',surf.ns.DC, override=True)
         data = store.reader.graph.serialize(format = 'pretty-xml')
-        #TODO: temporary fix for error: 'tuple' object has no attribute 'replace'
-        try:
-    	    return (content_type, length, data)
-    	except:
-    	    return ('', 0, '')
+        return (content_type, length, data)
 
 
 class ATCTDublinCore2Surf(object):
