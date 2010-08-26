@@ -81,6 +81,7 @@ class ATCT2Surf(object):
                    ('subject', 'subject'),
                    ('effectiveDate', 'effective'),
                    ('expirationDate', 'expires'),
+                   ('rights','rights'),
                    ])
 
     field_map = {}
