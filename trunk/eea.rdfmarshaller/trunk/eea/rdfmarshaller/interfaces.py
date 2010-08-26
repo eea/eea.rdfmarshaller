@@ -24,3 +24,6 @@ class IATVocabularyTerm(Interface):
     
 class IReferenceField(IField):
     """ Marker interface for Products.Archetypes.Field.ReferenceField """
+
+class ITextField(IField):
+    """ Marker interface for Products.Archetypes.Field.ReferenceField """

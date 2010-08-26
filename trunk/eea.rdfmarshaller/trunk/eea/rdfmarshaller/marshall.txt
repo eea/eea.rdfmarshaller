@@ -28,7 +28,7 @@ Add an Image so we can test marshalling binary objects.
   >>> pdff= folder[folder.invokeFactory('File', id='pdf1', 
   ... 	    					 title='Pdf file')]
   >>> pdff.setFile('svenska tecken צהו')
-
+  >>> folder.setRights('copyright by me!!!')
   
   >>> from Products.Marshall.registry import getComponent
   >>> marshaller = getComponent('surfrdf')

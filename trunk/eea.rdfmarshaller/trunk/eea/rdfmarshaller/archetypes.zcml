@@ -10,6 +10,10 @@
      <implements interface="Products.Archetypes.interfaces.IFileField" />
   </class>
 
+  <class class="Products.Archetypes.Field.TextField">
+     <implements interface=".interfaces.ITextField" />
+  </class>
+
   <class class="Products.Archetypes.Field.ReferenceField">
      <implements interface=".interfaces.IReferenceField" />
   </class>
