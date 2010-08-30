@@ -26,7 +26,8 @@ class RDFMarshaller(Marshaller):
         length = data = 0
 
         atsurf = queryMultiAdapter((instance, session), interface=IArchetype2Surf)
-        atsurf.at2surf()
+        endLevel = kwargs.get('endLevel', 1)
+        atsurf.at2surf(endLevel=endLevel)
         store.reader.graph.bind(atsurf.prefix, atsurf.namespace, override=False)
         store.reader.graph.bind('dc',surf.ns.DC, override=True)
         data = store.reader.graph.serialize(format = 'pretty-xml')
@@ -165,7 +166,7 @@ class ATCT2Surf(object):
         return resource
 
     
-    def at2surf(self):
+    def at2surf(self, **kwargs):
         return self._schema2surf()
 
 class ATVocabularyTerm2Surf(ATCT2Surf):
@@ -180,14 +181,15 @@ class ATFolderish2Surf(ATCT2Surf):
     implements(IArchetype2Surf)
     adapts(IFolder, ISurfSession)
 
-    def at2surf(self):
-        resource = super(ATFolderish2Surf, self).at2surf()
-        for obj in self.context.objectValues():
-            atsurf = queryMultiAdapter((obj, self.session), interface=IArchetype2Surf)
-            if atsurf is not None:
-                self.session.default_store.reader.graph.bind(atsurf.prefix, atsurf.namespace, override=False)
-                atsurf.at2surf()
-
+    def at2surf(self, currentLevel=0, endLevel=1):
+        currentLevel += 1
+        resource = super(ATFolderish2Surf, self).at2surf(currentLevel=currentLevel, endLevel=endLevel)
+        if currentLevel <= endLevel or endLevel == 0:
+            for obj in self.context.objectValues():
+                atsurf = queryMultiAdapter((obj, self.session), interface=IArchetype2Surf)
+                if atsurf is not None:
+                    self.session.default_store.reader.graph.bind(atsurf.prefix, atsurf.namespace, override=False)
+                    atsurf.at2surf(currentLevel=currentLevel, endLevel=endLevel)
         return resource
         
 
@@ -297,5 +299,5 @@ class FTI2Surf(ATCT2Surf):
         return resource
 
     
-    def at2surf(self):
+    def at2surf(self, **kwargs):
         return self._schema2surf()
