@@ -10,7 +10,8 @@ class RDFExport(object):
 
     def __call__(self):
         marshaller = getComponent('surfrdf')
-        content_type, length, data = marshaller.marshall(self.context)
+        endLevel = int(self.request.get('endLevel',1))
+        content_type, length, data = marshaller.marshall(self.context, endLevel=endLevel)
         self.request.response.setHeader('Content-Type','application/rdf+xml; charset=utf-8')
         return data
 
