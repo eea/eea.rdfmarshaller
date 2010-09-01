@@ -9,6 +9,7 @@ from Products.Archetypes.interfaces import IField, IFileField
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFPlone import log
+from Products.CMFPlone.utils import _createObjectByType
 from eea.rdfmarshaller.interfaces import IArchetype2Surf, IATField2Surf
 from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
 from eea.rdfmarshaller.interfaces import IATVocabularyTerm
@@ -283,19 +284,23 @@ class FTI2Surf(ATCT2Surf):
         resource.rdfs_comment = (context.Description(), u'en')
         resource.rdf_id = self.rdfId
         resource.save()
-        attype = attool.lookupType(context.product, context.content_meta_type)
-        if attype is None:
-            # not an Archetype
-            return resource
-        
-        schema = attype['schema']
-        for field in schema.fields():
-            fieldName = field.getName()
-            if fieldName in self.blacklist_map:
-                continue
 
-            atsurf = queryMultiAdapter((field, context, session), interface=IArchetype2Surf)
-            atsurf.at2surf()
+        # we need an instance to get full schema with extended fields
+        portal_type = context.getId()
+        tmpFolder = getToolByName(context, 'portal_url').getPortalObject().portal_factory._getTempFolder(portal_type)
+        instance = getattr(tmpFolder, 'rdfstype', None)
+        if instance is None:
+            instance = _createObjectByType(portal_type, tmpFolder, 'rdfstype')
+        if hasattr(instance, 'Schema'):
+            schema = instance.Schema()
+            for field in schema.fields():
+                fieldName = field.getName()
+                if fieldName in self.blacklist_map:
+                    continue
+
+                atsurf = queryMultiAdapter((field, context, session), interface=IArchetype2Surf)
+                atsurf.at2surf()
+
         return resource
 
     
