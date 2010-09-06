@@ -1,0 +1,19 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:browser="http://namespaces.zope.org/browser">
+
+  <browser:page
+    for="*"
+    name="rdf"
+    class=".export.RDFExport"
+    permission="zope.Public"
+    />
+
+  <browser:page
+    for="*"
+    name="rdfs"
+    class=".export.RDFSExport"
+    permission="zope.Public"
+    />
+
+</configure>
