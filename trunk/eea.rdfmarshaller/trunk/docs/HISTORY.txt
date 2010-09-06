@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4 (unreleased)
+0.4 (2010-09-06)
 ----------------
 
 - use accessor to get the value of fields [tiberich #3550]
