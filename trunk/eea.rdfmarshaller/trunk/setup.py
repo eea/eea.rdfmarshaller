@@ -1,9 +1,12 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.4svn'
+author = "European Environment Agency"
+name = "eea.rdfmarshaller"
+path = name.split('.') + ['version.txt']
+version = open(os.path.join(*path)).read().strip()
 
-setup(name='eea.rdfmarshaller',
+setup(name=name,
       version=version,
       description="RDF marshaller for Plone",
       long_description=open("README.txt").read() + "\n" +
@@ -13,9 +16,9 @@ setup(name='eea.rdfmarshaller',
         "Programming Language :: Python",
         ],
       keywords='',
-      author='',
-      author_email='',
-      url='http://svn.plone.org/svn/collective/',
+      author=author,
+      author_email='sasha.vincic@eea.europa.eu',
+      url='http://svn.eionet.europa.eu/projects/Zope',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['eea'],
