@@ -176,3 +176,10 @@ Infinit recursive
   >>> Folder = session.get_class(surf.ns.FOLDER['Folder'])
   >>> [obj.folder_id.first.strip() for obj in Folder.all().order()]
   [u'valentine', u'sub1', u'sub2', u'sub3', u'sub4']
+
+A folder uses dcterms:hasPart to tell which content it has. 
+
+  >>> parts = [part.subject.strip() for part in session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart]
+  >>> parts.sort()
+  >>> parts
+  [u'http://nohost/plone/valentine/img1', u'http://nohost/plone/valentine/news1', u'http://nohost/plone/valentine/pdf1', u'http://nohost/plone/valentine/sub1', u'http://nohost/plone/valentine/zip1']

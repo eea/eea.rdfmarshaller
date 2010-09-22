@@ -31,6 +31,7 @@ class RDFMarshaller(Marshaller):
         atsurf.at2surf(endLevel=endLevel)
         store.reader.graph.bind(atsurf.prefix, atsurf.namespace, override=False)
         store.reader.graph.bind('dc',surf.ns.DC, override=True)
+        store.reader.graph.bind('dcterms',surf.ns.DCTERMS, override=True)        
         data = store.reader.graph.serialize(format = 'pretty-xml')
         return (content_type, length, data)
 
@@ -95,7 +96,6 @@ class ATCT2Surf(object):
         if self.namespace is None:
             ttool = getToolByName(context, 'portal_types')
             surf.ns.register(**{ self.prefix : '%s#' % ttool[context.portal_type].absolute_url()} )
-        
     @property
     def blacklist_map(self):
         ptool = getToolByName(self.context,'portal_properties')
@@ -186,11 +186,14 @@ class ATFolderish2Surf(ATCT2Surf):
         currentLevel += 1
         resource = super(ATFolderish2Surf, self).at2surf(currentLevel=currentLevel, endLevel=endLevel)
         if currentLevel <= endLevel or endLevel == 0:
+            resource.dcterms_hasPart =[]            
             for obj in self.context.objectValues():
+                resource.dcterms_hasPart.append( rdflib.URIRef(obj.absolute_url()))
                 atsurf = queryMultiAdapter((obj, self.session), interface=IArchetype2Surf)
                 if atsurf is not None:
                     self.session.default_store.reader.graph.bind(atsurf.prefix, atsurf.namespace, override=False)
                     atsurf.at2surf(currentLevel=currentLevel, endLevel=endLevel)
+        resource.save()
         return resource
         
 

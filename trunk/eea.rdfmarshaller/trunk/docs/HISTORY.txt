@@ -4,6 +4,8 @@ Changelog
 0.5 (unreleased)
 ----------------
 
+- dcterms:hasPart added to folderish content #3519 [vincisas]
+
 0.4 (2010-09-06)
 ----------------
 
