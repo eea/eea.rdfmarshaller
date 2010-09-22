@@ -5,6 +5,7 @@ Changelog
 ----------------
 
 - dcterms:hasPart added to folderish content #3519 [vincisas]
+- dcterms:isPartOf added to contained content #3519 [vincisas]
 
 0.4 (2010-09-06)
 ----------------

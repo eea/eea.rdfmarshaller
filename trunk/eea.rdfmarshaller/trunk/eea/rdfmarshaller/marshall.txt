@@ -183,3 +183,8 @@ A folder uses dcterms:hasPart to tell which content it has.
   >>> parts.sort()
   >>> parts
   [u'http://nohost/plone/valentine/img1', u'http://nohost/plone/valentine/news1', u'http://nohost/plone/valentine/pdf1', u'http://nohost/plone/valentine/sub1', u'http://nohost/plone/valentine/zip1']
+
+An item in the folder uses dcterms:isPartOf to tell which parent it belongs to. 
+
+  >>> [part.dcterms_isPartOf.first.subject.strip() for part in session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart]
+  [u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine']

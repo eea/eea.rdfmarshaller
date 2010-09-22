@@ -162,7 +162,10 @@ class ATCT2Surf(object):
                                                                                                   sys.exc_info()[0],
                                                                                                   sys.exc_info()[1]),
                                                                                                 severity=log.logging.WARN)
-                            
+
+        parent = getattr(context, 'aq_parent', None)
+        if parent is not None:
+            resource.dcterms_isPartOf = rdflib.URIRef(parent.absolute_url())
         resource.save()
         return resource
 
