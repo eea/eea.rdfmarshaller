@@ -1,6 +1,7 @@
 import sys, traceback
 import surf
 import rdflib
+from Acquisition import aq_inner
 from OFS.interfaces import IFolder
 from zope.interface import implements, Interface
 from zope.component import adapts, queryMultiAdapter
@@ -163,7 +164,7 @@ class ATCT2Surf(object):
                                                                                                   sys.exc_info()[1]),
                                                                                                 severity=log.logging.WARN)
 
-        parent = getattr(context, 'aq_parent', None)
+        parent = getattr(aq_inner(context), 'aq_parent', None)
         if parent is not None:
             resource.dcterms_isPartOf = rdflib.URIRef(parent.absolute_url())
         resource.save()
