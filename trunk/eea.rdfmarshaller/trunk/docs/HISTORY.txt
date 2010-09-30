@@ -1,8 +1,11 @@
 Changelog
 =========
 
+0.6 - (unreleased)
+------------------
+
 0.5 - (2010-09-30)
-----------------------
+------------------
 - dcterms:hasPart added to folderish content #3519 [vincisas]
 - dcterms:isPartOf added to contained content #3519 [vincisas]
 
