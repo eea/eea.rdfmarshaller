@@ -7,7 +7,7 @@ from Products.Five import zcml
 from Products.Five import fiveconfigure
 
 
-PRODUCTS = ['ATVocabularyMananger']
+PRODUCTS = ['ATVocabularyManager']
 PROFILES = ['eea.rdfmarshaller:default']
 
 @onsetup
