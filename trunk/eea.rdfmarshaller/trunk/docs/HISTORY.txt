@@ -3,6 +3,7 @@ Changelog
 
 0.7 - (Unreleased)
 ------------------
+- set surf logging level to CRITICAL to avoid all INFO messages #3951 [vincisas]
 
 0.6 - (2010-11-10)
 ------------------

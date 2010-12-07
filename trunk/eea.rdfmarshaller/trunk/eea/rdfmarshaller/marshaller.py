@@ -14,6 +14,8 @@ from Products.CMFPlone.utils import _createObjectByType
 from eea.rdfmarshaller.interfaces import IArchetype2Surf, IATField2Surf
 from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
 from eea.rdfmarshaller.interfaces import IATVocabularyTerm
+import logging
+logging.basicConfig(level=logging.CRITICAL)
 
 class RDFMarshaller(Marshaller):
     """ """
@@ -23,6 +25,8 @@ class RDFMarshaller(Marshaller):
 
     def marshall(self, instance, **kwargs):
         store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store = 'IOMemory')
+        store.log.setLevel(logging.CRITICAL)
+        store.writer.log.setLevel(logging.CRITICAL)
         session = surf.Session(store)
         content_type = 'text/xml; charset=UTF-8'
         length = data = 0
