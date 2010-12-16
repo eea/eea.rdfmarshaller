@@ -1,15 +1,14 @@
 Changelog
 =========
 
-0.7-dev - (Unreleased)
+0.7 - (2010-12-16)
 ------------------
 - set surf logging level to CRITICAL to avoid all INFO messages #3951 [vincisas]
 
 0.6 - (2010-11-10)
 ------------------
-
 - typo fix for tests [vincisas]
- 
+
 0.5 - (2010-09-30)
 ------------------
 - dcterms:hasPart added to folderish content #3519 [vincisas]
@@ -40,3 +39,4 @@ Changelog
 0.1 (2010-05-19)
 ----------------
 - Initial release
+
