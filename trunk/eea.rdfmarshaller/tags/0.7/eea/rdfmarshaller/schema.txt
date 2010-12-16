@@ -1,0 +1,156 @@
+===================================
+From Archetype schema to RDF schema
+===================================
+
+
+Lets go to portal_types tool and marshall the Folder type. We should then get a RDF  schema for it.
+
+  >>> ttool = self.portal.portal_types
+  >>> from Products.Marshall.registry import getComponent
+  >>> marshaller = getComponent('surfrdfs')
+  >>> content_type, length, data = marshaller.marshall(ttool.Folder)
+
+We have now a schema in the `data` variable which looks something like
+
+  ...
+      <rdfs:Class rdf:about="http://nohost/plone/portal_types/Folder#Folder">
+        <rdfs:comment xml:lang="en">A folder which can contain other items.</rdfs:comment>
+        <rdfs:label xml:lang="en">Folder</rdfs:label>
+        <rdf:id>Folder</rdf:id>
+      </rdfs:Class>
+      <rdfs:Property rdf:about="http://nohost/plone/portal_types/Folder#expirationDate">
+        <rdfs:comment xml:lang="en">Date when the content should no longer be visible on the public site</rdfs:comment>
+        <rdfs:label xml:lang="en">Expiration Date</rdfs:label>
+        <rdf:id>expirationDate</rdf:id>
+        <rdf:domain rdf:resource="#Folder"/>
+      </rdfs:Property>
+  ...
+
+Lets reparse it and see if we have correct values in it.
+
+  >>> import surf
+  >>> store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store = 'IOMemory')
+  >>> session = surf.Session(store)
+  >>> from StringIO import StringIO 
+  >>> store.load_triples(source=StringIO(data))
+  True
+
+
+We use SuRF to parse and check the values. First we create a namespace for our Folder schema.
+
+  >>> folderNS = surf.ns.Namespace('%s#' % ttool.Folder.absolute_url())
+
+
+Then we try to find the class definition in the parsed rdf.
+
+  >>> folderClass = session.get_class(folderNS['Folder'])
+
+
+Now let see if we have a label and a comment in the english language.
+
+  >>> folderClass.rdfs_label.first
+  rdflib.Literal(u'Folder', lang=u'en')
+  >>> folderClass.rdfs_comment.first
+  rdflib.Literal(u'A folder which can contain other items.', lang=u'en')
+
+
+Now lets try the same thing on Document type.
+
+  >>> content_type, length, data = marshaller.marshall(ttool.Document)
+  >>> store.load_triples(source=StringIO(data))
+  True
+  >>> docNS = surf.ns.Namespace('%s#' % ttool.Document.absolute_url())
+  >>> docClass = session.get_class(docNS['Document'])
+  >>> docClass.rdfs_label.first
+  rdflib.Literal(u'Page', lang=u'en')
+  >>> docClass.rdfs_comment.first
+  rdflib.Literal(u'A page in the site. Can contain rich text.', lang=u'en')
+
+And lets try a 'News Item' which has space in the id and title. Spaces are not
+allowed in tags so we remove them. This could conflict if you happen to have
+an other content type that is named 'NewsItem', but why should you have that? :)
+
+  >>> content_type, length, data = marshaller.marshall(ttool['News Item'])
+  >>> store.load_triples(source=StringIO(data))
+  True
+  >>> newsNS = surf.ns.Namespace('%s#' % ttool['News Item'].absolute_url())
+  >>> newsClass = session.get_class(newsNS['NewsItem'])
+  >>> newsClass.rdfs_label.first
+  rdflib.Literal(u'News Item', lang=u'en')
+  >>> newsClass.rdfs_comment.first
+  rdflib.Literal(u'An announcement that will show up on the news portlet and in the news listing.', lang=u'en')
+
+
+For none Archetypes we only get the class definition
+
+  >>> marshaller = getComponent('surfrdfs')
+  >>> content_type, length, data = marshaller.marshall(ttool['CMF Document'])
+  >>> store.load_triples(source=StringIO(data))
+  True
+  >>> cmfDocNS = surf.ns.Namespace('%s#' % ttool['CMF Document'].absolute_url())
+  >>> docClass = session.get_class(cmfDocNS['CMFDocument'])
+  >>> docClass.rdfs_label.first
+  rdflib.Literal(u'CMF Document', lang=u'en')
+  >>> docClass.rdfs_comment.first
+  rdflib.Literal(u'Documents contain text that can be formatted using \'Structured Text.\'\nThey may also contain HTML, or "plain" text.', lang=u'en')
+
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <rdf:RDF
+      xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+      xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
+    >
+      <rdfs:Class rdf:about="http://nohost/plone/portal_types/CMF%20Document#CMFDocument">
+        <rdfs:comment xml:lang="en">Documents contain text that can be formatted using 'Structured Text.'
+    They may also contain HTML, or "plain" text.</rdfs:comment>
+        <rdf:id>CMFDocument</rdf:id>
+        <rdfs:label xml:lang="en">CMF Document</rdfs:label>
+      </rdfs:Class>
+    </rdf:RDF>
+
+
+Schema extender
+
+First we create an schema extender
+
+  >>> from Products.Archetypes.public import BooleanField
+  >>> from archetypes.schemaextender.field import ExtensionField
+  >>> 
+  >>> class MyBooleanField(ExtensionField, BooleanField):
+  ...         """A trivial field."""
+
+
+  >>> from zope.component import adapts
+  >>> from zope.interface import implements
+  >>> from archetypes.schemaextender.interfaces import ISchemaExtender
+  >>> from Products.Archetypes.public import BooleanWidget
+  >>> from Products.ATContentTypes.interface import IATDocument
+  >>> 
+  >>> class PageExtender(object):
+  ...     adapts(IATDocument)
+  ...     implements(ISchemaExtender)
+  ... 
+  ... 
+  ...     fields = [
+  ...         MyBooleanField("super_power",
+  ...         widget = BooleanWidget(
+  ...             label="This page has super powers")),
+  ...             ]
+  ... 
+  ...     def __init__(self, context):
+  ...         self.context = context
+  ... 
+  ...     def getFields(self):
+  ...         return self.fields
+
+  >>> from zope.component import provideAdapter
+  >>> provideAdapter(PageExtender)
+
+  >>> content_type, length, data = marshaller.marshall(ttool['Document'])
+  >>> store.load_triples(source=StringIO(data))
+  True
+  >>> ourField = session.get_class(docNS['super_power'])
+  >>> ourField.rdfs_label.first
+  rdflib.Literal(u'This page has super powers', lang=u'en')
+  
+  
