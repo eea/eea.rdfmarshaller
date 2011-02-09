@@ -1,37 +1,41 @@
-import sys, traceback
-import surf
-import rdflib
 from Acquisition import aq_inner
 from OFS.interfaces import IFolder
-from zope.interface import implements, Interface
-from zope.component import adapts, queryMultiAdapter
 from Products.Archetypes.Marshall import Marshaller
 from Products.Archetypes.interfaces import IField, IFileField
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.interfaces import ITypeInformation
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import log
 from Products.CMFPlone.utils import _createObjectByType
+from eea.rdfmarshaller.interfaces import IATVocabularyTerm
 from eea.rdfmarshaller.interfaces import IArchetype2Surf, IATField2Surf
 from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
-from eea.rdfmarshaller.interfaces import IATVocabularyTerm
+from zope.component import adapts, queryMultiAdapter
+from zope.interface import implements, Interface
 import logging
+import rdflib
+import surf
+import sys  #, traceback
+
 logging.basicConfig(level=logging.CRITICAL)
 
+
 class RDFMarshaller(Marshaller):
-    """ """
+    """Marshal content types instances into RDF format """
 
     def demarshall(self, instance, data, **kwargs):
         pass
 
     def marshall(self, instance, **kwargs):
-        store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store = 'IOMemory')
+        store = surf.Store(reader='rdflib',  writer='rdflib', 
+                           rdflib_store = 'IOMemory')
         store.log.setLevel(logging.CRITICAL)
         store.writer.log.setLevel(logging.CRITICAL)
         session = surf.Session(store)
         content_type = 'text/xml; charset=UTF-8'
         length = data = 0
 
-        atsurf = queryMultiAdapter((instance, session), interface=IArchetype2Surf)
+        atsurf = queryMultiAdapter((instance, session), 
+                                   interface=IArchetype2Surf)
         endLevel = kwargs.get('endLevel', 1)
         atsurf.at2surf(endLevel=endLevel)
         store.reader.graph.bind(atsurf.prefix, atsurf.namespace, override=False)
@@ -42,6 +46,7 @@ class RDFMarshaller(Marshaller):
 
 
 class ATCTDublinCore2Surf(object):
+    """Base implementation of IArchetype2Surf """
     implements(IArchetype2Surf)
     adapts(Interface, ISurfSession)
     
@@ -49,7 +54,9 @@ class ATCTDublinCore2Surf(object):
         self.context = context
         self.session = session
 
+
 class ATField2Surf(object):
+    """Base implementation of IATField2Surf"""
     implements(IATField2Surf)
     adapts(IField, ISurfSession)
 
@@ -64,20 +71,26 @@ class ATField2Surf(object):
 
 
 class ATFileField2Surf(ATField2Surf):
+    """IATField2Surf implementation for File fields"""
     implements(IATField2Surf)
     adapts(IFileField, ISurfSession)
 
     exportable = False
+
     
 class ATReferenceField2Surf(ATField2Surf):
+    """IATField2Surf implementation for Reference fields"""
     implements(IATField2Surf)
     adapts(IReferenceField, ISurfSession)
 
     def value(self, context):
         value = self.field.getAccessor(context)()
         return [ rdflib.URIRef(obj.absolute_url()) for obj in value ]
+
     
 class ATCT2Surf(object):
+    """IArchetype2Surf implementation for ATCT"""
+
     implements(IArchetype2Surf)
     adapts(Interface, ISurfSession)
     
@@ -93,21 +106,25 @@ class ATCT2Surf(object):
                    ])
 
     field_map = {}
-
     
     def __init__(self, context, session):
         self.context = context
         self.session = session
         if self.namespace is None:
             ttool = getToolByName(context, 'portal_types')
-            surf.ns.register(**{ self.prefix : '%s#' % ttool[context.portal_type].absolute_url()} )
+            surf.ns.register(**{ self.prefix : '%s#' % 
+                                 ttool[context.portal_type].absolute_url()} )
+
     @property
     def blacklist_map(self):
         ptool = getToolByName(self.context,'portal_properties')
         props = getattr(ptool, 'rdfmarshaller_properties', None)
-        blacklist = ['constrainTypesMode','locallyAllowedTypes', 'immediatelyAddableTypes','language', 'allowDiscussion'] # fields not to export
+        blacklist = ['constrainTypesMode','locallyAllowedTypes', 
+                     'immediatelyAddableTypes','language', 
+                     'allowDiscussion'] # fields not to export
         if props:
-            blacklist = list(props.getProperty('%s_blacklist' % self.portalType.lower(), props.getProperty('blacklist')))
+            blacklist = list(props.getProperty('%s_blacklist' % 
+                self.portalType.lower(), props.getProperty('blacklist')))
         return blacklist
     
     @property
@@ -125,7 +142,8 @@ class ATCT2Surf(object):
     @property
     def surfResource(self):
         try:
-            resource = self.session.get_class(self.namespace[self.portalType])(self.subject)
+            resource = self.session.get_class(
+                    self.namespace[self.portalType])(self.subject)
         except:
             #import pdb; pdb.set_trace()
             pass
@@ -146,9 +164,20 @@ class ATCT2Surf(object):
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
                 continue
-            fieldAdapter = queryMultiAdapter((field, self.session), interface=IATField2Surf)
+            fieldAdapter = queryMultiAdapter((field, self.session), 
+                    interface=IATField2Surf)
+
             if fieldAdapter.exportable:
-                value = fieldAdapter.value(context)
+                try:
+                    value = fieldAdapter.value(context)
+                except TypeError:
+                    log.log('RDF marshaller error for context[field]'
+                            ' "%s[%s]": \n%s: %s' % 
+                            (context.absolute_url(), fieldName, 
+                             sys.exc_info()[0], sys.exc_info()[1]), 
+                             severity=log.logging.WARN)
+                    continue
+
                 if value:
                     prefix = self.prefix
                     if isinstance(value, (list, tuple)):
@@ -163,49 +192,60 @@ class ATCT2Surf(object):
                     try:
                         setattr(resource, '%s_%s' % (prefix, fieldName), value)
                     except:
-                        log.log('RDF marshaller error for context[field] "%s[%s]": \n%s: %s' % (context.absolute_url(), fieldName,
-                                                                                                  sys.exc_info()[0],
-                                                                                                  sys.exc_info()[1]),
-                                                                                                severity=log.logging.WARN)
+                        log.log('RDF marshaller error for context[field]'
+                                '"%s[%s]": \n%s: %s' % 
+                                (context.absolute_url(), fieldName, 
+                                 sys.exc_info()[0], sys.exc_info()[1]), 
+                                 severity=log.logging.WARN)
 
         parent = getattr(aq_inner(context), 'aq_parent', None)
         if parent is not None:
             resource.dcterms_isPartOf = rdflib.URIRef(parent.absolute_url())
         resource.save()
         return resource
-
     
     def at2surf(self, **kwargs):
         return self._schema2surf()
 
+
 class ATVocabularyTerm2Surf(ATCT2Surf):
+    """IArchetype2Surf implemention for ATVocabularyTerms"""
     implements(IArchetype2Surf)
     adapts(IATVocabularyTerm, ISurfSession)
 
     @property
     def blacklist_map(self):
-        return super(ATVocabularyTerm2Surf, self).blacklist_map + ['creation_date', 'modification_date', 'creators']
+        return super(ATVocabularyTerm2Surf, self).blacklist_map + \
+                ['creation_date', 'modification_date', 'creators']
+
 
 class ATFolderish2Surf(ATCT2Surf):
+    """IArchetype2Surf implemention for Folders"""
+
     implements(IArchetype2Surf)
     adapts(IFolder, ISurfSession)
 
     def at2surf(self, currentLevel=0, endLevel=1):
         currentLevel += 1
-        resource = super(ATFolderish2Surf, self).at2surf(currentLevel=currentLevel, endLevel=endLevel)
+        resource = super(ATFolderish2Surf, self).at2surf(
+                currentLevel=currentLevel, endLevel=endLevel)
         if currentLevel <= endLevel or endLevel == 0:
             resource.dcterms_hasPart =[]            
             for obj in self.context.objectValues():
-                resource.dcterms_hasPart.append( rdflib.URIRef(obj.absolute_url()))
-                atsurf = queryMultiAdapter((obj, self.session), interface=IArchetype2Surf)
+                resource.dcterms_hasPart.append(rdflib.URIRef(
+                                                    obj.absolute_url()))
+                atsurf = queryMultiAdapter((obj, self.session), 
+                                            interface=IArchetype2Surf)
                 if atsurf is not None:
-                    self.session.default_store.reader.graph.bind(atsurf.prefix, atsurf.namespace, override=False)
+                    self.session.default_store.reader.graph.bind(
+                            atsurf.prefix, atsurf.namespace, override=False)
                     atsurf.at2surf(currentLevel=currentLevel, endLevel=endLevel)
         resource.save()
         return resource
         
 
 class ATField2RdfSchema(ATCT2Surf):
+    """IArchetype2Surf implemention for Fields"""
     implements(IArchetype2Surf)
     adapts(IField, Interface, ISurfSession)
 
@@ -248,9 +288,9 @@ class ATField2RdfSchema(ATCT2Surf):
 
 
 class FTI2Surf(ATCT2Surf):
+    """IArchetype2Surf implemention for TypeInformations"""
     implements(IArchetype2Surf)
     adapts(ITypeInformation, ISurfSession)
-
     
     blacklist_map = ['constrainTypesMode','locallyAllowedTypes',
                      'immediatelyAddableTypes','language',
@@ -298,7 +338,8 @@ class FTI2Surf(ATCT2Surf):
 
         # we need an instance to get full schema with extended fields
         portal_type = context.getId()
-        tmpFolder = getToolByName(context, 'portal_url').getPortalObject().portal_factory._getTempFolder(portal_type)
+        tmpFolder = getToolByName(context, 'portal_url').getPortalObject().\
+                portal_factory._getTempFolder(portal_type)
         instance = getattr(tmpFolder, 'rdfstype', None)
         if instance is None:
             instance = _createObjectByType(portal_type, tmpFolder, 'rdfstype')
@@ -309,11 +350,12 @@ class FTI2Surf(ATCT2Surf):
                 if fieldName in self.blacklist_map:
                     continue
 
-                atsurf = queryMultiAdapter((field, context, session), interface=IArchetype2Surf)
+                atsurf = queryMultiAdapter((field, context, session), 
+                                           interface=IArchetype2Surf)
                 atsurf.at2surf()
 
         return resource
-
     
     def at2surf(self, **kwargs):
         return self._schema2surf()
+

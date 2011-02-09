@@ -3,6 +3,7 @@ Changelog
 
 0.8-dev - (unreleased)
 ----------------------
+ * Bug fix: skip fields for which the accessor cannot be determined [tiberich #3982]
 
 0.7 - (2010-12-16)
 ------------------
