@@ -1,5 +1,5 @@
-import os
-from Globals import package_home
+#import os
+#from Globals import package_home
 from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase.layer import onsetup

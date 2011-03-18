@@ -3,6 +3,8 @@ Changelog
 
 0.9-dev - (unreleased)
 ----------------------
+ * Cleaned: pyflakes warnings [ichimdav #4141]
+ * Cleaned: pylint violations [ichimdav #4140]
 
 0.8 - (2011-02-09)
 ------------------

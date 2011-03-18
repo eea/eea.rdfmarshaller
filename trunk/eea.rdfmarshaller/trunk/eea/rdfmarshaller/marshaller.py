@@ -144,7 +144,7 @@ class ATCT2Surf(object):
         try:
             resource = self.session.get_class(
                     self.namespace[self.portalType])(self.subject)
-        except:
+        except Exception:
             #import pdb; pdb.set_trace()
             pass
         resource.bind_namespaces([self.prefix])
@@ -157,7 +157,7 @@ class ATCT2Surf(object):
 
     def _schema2surf(self):
         context = self.context
-        session = self.session
+        #session = self.session
         resource = self.surfResource
         language = context.Language()
         for field in context.Schema().fields():
@@ -191,7 +191,7 @@ class ATCT2Surf(object):
                         prefix = 'dc'
                     try:
                         setattr(resource, '%s_%s' % (prefix, fieldName), value)
-                    except:
+                    except Exception:
                         log.log('RDF marshaller error for context[field]'
                                 '"%s[%s]": \n%s: %s' % 
                                 (context.absolute_url(), fieldName, 
@@ -200,7 +200,7 @@ class ATCT2Surf(object):
 
         parent = getattr(aq_inner(context), 'aq_parent', None)
         if parent is not None:
-            resource.dcterms_isPartOf = rdflib.URIRef(parent.absolute_url())
+            resource.dcterms_isPartOf = rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
         resource.save()
         return resource
     
@@ -276,13 +276,13 @@ class ATField2RdfSchema(ATCT2Surf):
 
     def _schema2surf(self):
         context = self.context
-        session = self.session
+        #session = self.session
         resource = self.surfResource
         
-        resource.rdfs_label = (context.widget.label, u'en')
-        resource.rdfs_comment = (context.widget.description, u'en')
-        resource.rdf_id = self.rdfId
-        resource.rdf_domain = rdflib.URIRef(u'#%s' % self.fti.Title())
+        resource.rdfs_label = (context.widget.label, u'en') #pylint: disable-msg = W0612
+        resource.rdfs_comment = (context.widget.description, u'en')#pylint: disable-msg = W0612
+        resource.rdf_id = self.rdfId#pylint: disable-msg = W0612
+        resource.rdf_domain = rdflib.URIRef(u'#%s' % self.fti.Title())#pylint: disable-msg = W0612
         resource.save()
         return resource
 
@@ -330,7 +330,7 @@ class FTI2Surf(ATCT2Surf):
         session = self.session
         resource = self.surfResource
 
-        attool = getToolByName(context, 'archetype_tool')
+        #attool = getToolByName(context, 'archetype_tool')
         resource.rdfs_label = (context.Title(), u'en')
         resource.rdfs_comment = (context.Description(), u'en')
         resource.rdf_id = self.rdfId
