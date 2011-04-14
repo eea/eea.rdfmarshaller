@@ -39,9 +39,9 @@ class RDFMarshaller(Marshaller):
         endLevel = kwargs.get('endLevel', 1)
         atsurf.at2surf(endLevel=endLevel)
         store.reader.graph.bind(atsurf.prefix, atsurf.namespace, override=False)
-        store.reader.graph.bind('dc',surf.ns.DC, override=True)
-        store.reader.graph.bind('dcterms',surf.ns.DCTERMS, override=True)        
-        data = store.reader.graph.serialize(format = 'pretty-xml')
+        store.reader.graph.bind('dc', surf.ns.DC, override=True)
+        store.reader.graph.bind('dcterms', surf.ns.DCTERMS, override=True)        
+        data = store.reader.graph.serialize(format='pretty-xml')
         return (content_type, length, data)
 
 
@@ -145,7 +145,6 @@ class ATCT2Surf(object):
             resource = self.session.get_class(
                     self.namespace[self.portalType])(self.subject)
         except Exception:
-            #import pdb; pdb.set_trace()
             pass
         resource.bind_namespaces([self.prefix])
         resource.session = self.session
@@ -188,7 +187,7 @@ class ATCT2Surf(object):
                         fieldName = self.field_map.get(fieldName)
                     elif fieldName in self.dc_map:
                         fieldName = self.dc_map.get(fieldName)
-                        prefix = 'dc'
+                        prefix = 'dcterm'
                     try:
                         setattr(resource, '%s_%s' % (prefix, fieldName), value)
                     except Exception:
@@ -246,6 +245,7 @@ class ATFolderish2Surf(ATCT2Surf):
 
 class ATField2RdfSchema(ATCT2Surf):
     """IArchetype2Surf implemention for Fields"""
+
     implements(IArchetype2Surf)
     adapts(IField, Interface, ISurfSession)
 
