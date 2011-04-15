@@ -29,10 +29,8 @@ PRODUCTS.append('eea.rdfmarshaller')
 PloneTestCase.setupPloneSite(products=PRODUCTS)
 
 
-
-
 class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
-    
+
     def afterSetUp(self):
         self.setRoles(['Manager'])
 

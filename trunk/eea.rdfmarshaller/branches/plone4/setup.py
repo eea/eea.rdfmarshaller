@@ -1,7 +1,8 @@
-from setuptools import setup, find_packages
+""" EEA RDF Marshaller Installer
+"""
 import os
+from setuptools import setup, find_packages
 
-author = "European Environment Agency"
 name = "eea.rdfmarshaller"
 path = name.split('.') + ['version.txt']
 version = open(os.path.join(*path)).read().strip()
@@ -11,14 +12,16 @@ setup(name=name,
       description="RDF marshaller for Plone",
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
-      # Get more strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
+        "Framework :: Plone",
         "Programming Language :: Python",
+        "Topic :: Software Development :: Libraries :: Python Modules",
         ],
       keywords='RDF linkeddata lod semanticweb plone',
-      author=author,
+      author='European Environment Agency',
       author_email='webadmin@eea.europa.eu',
-      url='http://svn.eionet.europa.eu/projects/Zope',
+      url='http://svn.eionet.europa.eu/projects/'
+          'Zope/browser/trunk/eea.rdfmarshaller',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['eea'],
@@ -29,6 +32,7 @@ setup(name=name,
           'uuid',
           'surf',
           'surf.rdflib',
+          'Products.ATVocabularyManager',
       ],
       entry_points="""
       # -*- Entry points: -*-

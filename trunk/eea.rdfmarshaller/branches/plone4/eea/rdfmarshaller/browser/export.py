@@ -3,7 +3,7 @@ from Products.Marshall.registry import getComponent
 
 class RDFExport(object):
     """ """
-    
+
     def __init__(self, context, request):
         self.context = context
         self.request = request
@@ -17,7 +17,7 @@ class RDFExport(object):
 
 class RDFSExport(object):
     """ """
-    
+
     def __init__(self, context, request):
         self.context = context
         self.request = request

@@ -8,6 +8,30 @@
     <element value="immediatelyAddableTypes" />
     <element value="language" />
     <element value="allowDiscussion" />
+    <element value="file" />
+    <element value="image" />
   </property>
+
+  <property name="mymetatype_blacklist" type="lines">
+    <element value="#example where you can add a black list for specific metatype. copy the generic and add more fields" />
+  </property>
+
+  <property name="figure_blacklist" type="lines">
+    <element value="creation_date" />
+    <element value="modification_date" />
+    <element value="creators" />
+    <element value="subject" />
+    <element value="effectiveDate" />
+    <element value="expirationDate" />
+    <element value="constrainTypesMode" />
+    <element value="locallyAllowedTypes" />
+    <element value="immediatelyAddableTypes" />
+    <element value="language" />
+    <element value="allowDiscussion" />
+    <element value="image" />
+  </property>
+
+
+
  </object>
 </object>

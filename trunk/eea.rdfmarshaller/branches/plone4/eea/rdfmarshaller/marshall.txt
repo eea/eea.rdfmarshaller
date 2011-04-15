@@ -8,7 +8,7 @@ look in eea.soer to find out how to customize these adaptors for your own RDF
 schemas and own content types.
 
   >>> self.setRoles(['Manager'])
-  >>> folder =  self.portal[self.portal.invokeFactory('Folder', id='valentine')] 
+  >>> folder =  self.portal[self.portal.invokeFactory('Folder', id='valentine')]
   >>> news = folder[folder.invokeFactory('News Item', id='news1')]
   >>> news.setTitle('my news item')
   >>> news.setCreators(['ab','sasha','ture'])
@@ -17,19 +17,19 @@ schemas and own content types.
 
 Add an Image so we can test marshalling binary objects.
 
-  >>> img = folder[folder.invokeFactory('Image', id='img1', 
-  ... 	    					 title='Image title')]
+  >>> img = folder[folder.invokeFactory('Image', id='img1',
+  ...                                   title='Image title')]
   >>> imgdata = folder['logo.jpg']._data
   >>> img.setImage(imgdata)
 
-  >>> zipf= folder[folder.invokeFactory('File', id='zip1', 
-  ... 	    					 title='Zip file')]
-  >>> zipf.setFile('svenska tecken צהו')
-  >>> pdff= folder[folder.invokeFactory('File', id='pdf1', 
-  ... 	    					 title='Pdf file')]
-  >>> pdff.setFile('svenska tecken צהו')
+  >>> zipf= folder[folder.invokeFactory('File', id='zip1',
+  ...                                   title='Zip file')]
+  >>> zipf.setFile('svenska tecken ן¿½)
+  >>> pdff= folder[folder.invokeFactory('File', id='pdf1',
+  ...                                   title='Pdf file')]
+  >>> pdff.setFile('svenska tecken ן¿½)
   >>> folder.setRights('copyright by me!!!')
-  
+
   >>> from Products.Marshall.registry import getComponent
   >>> marshaller = getComponent('surfrdf')
   >>> import surf
@@ -39,8 +39,8 @@ Add an Image so we can test marshalling binary objects.
   >>> content_type, length, data = marshaller.marshall(folder)
 
 Lets verify our export
-   
-  >>> from StringIO import StringIO  
+
+  >>> from StringIO import StringIO
   >>> store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store ='IOMemory')
   >>> session = surf.Session(store)
   >>> store.load_triples(source=StringIO(data))
@@ -85,7 +85,7 @@ If we print data we should get something like
 
 
 Exporting a vocabulary
-    
+
     >>> surf.ns.register(SIMPLEVOCABULARY='%s#' % self.portal.portal_types['SimpleVocabulary'].absolute_url())
     >>> surf.ns.register(SIMPLEVOCABULARYTERM='%s#' % self.portal.portal_types['SimpleVocabularyTerm'].absolute_url())
     >>> self.setupVocabularies()
@@ -93,7 +93,7 @@ Exporting a vocabulary
     >>> content_type, length, data = marshaller.marshall(vocab)
     >>> store.load_triples(source=StringIO(data))
     True
-    >>> SimpleVocabularyTerm = session.get_class(surf.ns.SIMPLEVOCABULARYTERM['SimpleVocabularyTerm'])    
+    >>> SimpleVocabularyTerm = session.get_class(surf.ns.SIMPLEVOCABULARYTERM['SimpleVocabularyTerm'])
     >>> [(obj.simplevocabularyterm_id.first.strip(), obj.dc_title.first.strip()) for obj in SimpleVocabularyTerm.all().order()]
     [(u'air pollution', u'Air pollution'), (u'biodiversity', u'Nature protection and biodiversity'), (u'climate change', u'Climate change mitigation'), (u'freshwater', u'Freshwater'), (u'land', u'Land use'), (u'waste', u'Waste')]
 
@@ -138,10 +138,10 @@ Testing recursive export
 
 Adding extra folder structure
 
-  >>> sub1 =  folder[folder.invokeFactory('Folder', id='sub1', title='Subfolder 1')] 
-  >>> sub2 =  sub1[sub1.invokeFactory('Folder', id='sub2', title='Subfolder 2')] 
-  >>> sub3 =  sub2[sub2.invokeFactory('Folder', id='sub3', title='Subfolder 3')] 
-  >>> sub4 =  sub3[sub3.invokeFactory('Folder', id='sub4', title='Subfolder 4')] 
+  >>> sub1 =  folder[folder.invokeFactory('Folder', id='sub1', title='Subfolder 1')]
+  >>> sub2 =  sub1[sub1.invokeFactory('Folder', id='sub2', title='Subfolder 2')]
+  >>> sub3 =  sub2[sub2.invokeFactory('Folder', id='sub3', title='Subfolder 3')]
+  >>> sub4 =  sub3[sub3.invokeFactory('Folder', id='sub4', title='Subfolder 4')]
 
 Default recursive is set to end level 1, that means it marshalls the contents of
 a folder but doesn't continue further down into any folderish content.
@@ -177,14 +177,14 @@ Infinit recursive
   >>> [obj.folder_id.first.strip() for obj in Folder.all().order()]
   [u'valentine', u'sub1', u'sub2', u'sub3', u'sub4']
 
-A folder uses dcterms:hasPart to tell which content it has. 
+A folder uses dcterms:hasPart to tell which content it has.
 
   >>> parts = [part.subject.strip() for part in session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart]
   >>> parts.sort()
   >>> parts
   [u'http://nohost/plone/valentine/img1', u'http://nohost/plone/valentine/news1', u'http://nohost/plone/valentine/pdf1', u'http://nohost/plone/valentine/sub1', u'http://nohost/plone/valentine/zip1']
 
-An item in the folder uses dcterms:isPartOf to tell which parent it belongs to. 
+An item in the folder uses dcterms:isPartOf to tell which parent it belongs to.
 
   >>> [part.dcterms_isPartOf.first.subject.strip() for part in session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart]
   [u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine']

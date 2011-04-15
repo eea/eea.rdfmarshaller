@@ -2,7 +2,7 @@
            xmlns:five="http://namespaces.zope.org/five"
            xmlns:browser="http://namespaces.zope.org/browser">
 
-  <five:registerPackage package="." />
+  <include package="Products.ATVocabularyManager" />
 
   <include file="profiles.zcml" />
   <include file="archetypes.zcml" />
@@ -15,9 +15,9 @@
 
   <adapter factory=".marshaller.ATCT2Surf" />
   <adapter factory=".marshaller.ATField2Surf" />
-  <adapter factory=".marshaller.ATField2Surf" 
+  <adapter factory=".marshaller.ATField2Surf"
            for=".interfaces.ITextField
-	        .interfaces.ISurfSession" />
+                .interfaces.ISurfSession" />
   <adapter factory=".marshaller.ATFileField2Surf" />
   <adapter factory=".marshaller.ATReferenceField2Surf" />
   <adapter factory=".marshaller.ATField2RdfSchema" />
