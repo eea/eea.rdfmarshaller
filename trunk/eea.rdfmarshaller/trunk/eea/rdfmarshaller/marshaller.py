@@ -187,7 +187,7 @@ class ATCT2Surf(object):
                         fieldName = self.field_map.get(fieldName)
                     elif fieldName in self.dc_map:
                         fieldName = self.dc_map.get(fieldName)
-                        prefix = 'dcterm'
+                        prefix = 'dc'   #'dcterm'
                     try:
                         setattr(resource, '%s_%s' % (prefix, fieldName), value)
                     except Exception:

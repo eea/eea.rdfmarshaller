@@ -5,7 +5,7 @@ Changelog
 ----------------------
  * Cleaned: pyflakes warnings [ichimdav #4141]
  * Cleaned: pylint violations [ichimdav #4140]
- * Change: use dcterm namespace for metadata instead of dc [tiberich #4250]
+ * WIP: use dcterm namespace for metadata instead of dc [tiberich #4250]
 
 0.8 - (2011-02-09)
 ------------------
