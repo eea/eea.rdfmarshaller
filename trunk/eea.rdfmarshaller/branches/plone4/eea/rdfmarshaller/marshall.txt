@@ -1,0 +1,190 @@
+==============
+RDF Marshaller
+==============
+
+With RDF marshaller you can export any Archetype content to RDF. It provides a
+few general adaptors for ATContentTypes and ATVocabularyManager. You can then
+look in eea.soer to find out how to customize these adaptors for your own RDF
+schemas and own content types.
+
+  >>> self.setRoles(['Manager'])
+  >>> folder =  self.portal[self.portal.invokeFactory('Folder', id='valentine')] 
+  >>> news = folder[folder.invokeFactory('News Item', id='news1')]
+  >>> news.setTitle('my news item')
+  >>> news.setCreators(['ab','sasha','ture'])
+  >>> news.setDescription('my description')
+  >>> news.setText('<p>my news rocks!</p>')
+
+Add an Image so we can test marshalling binary objects.
+
+  >>> img = folder[folder.invokeFactory('Image', id='img1', 
+  ... 	    					 title='Image title')]
+  >>> imgdata = folder['logo.jpg']._data
+  >>> img.setImage(imgdata)
+
+  >>> zipf= folder[folder.invokeFactory('File', id='zip1', 
+  ... 	    					 title='Zip file')]
+  >>> zipf.setFile('svenska tecken צהו')
+  >>> pdff= folder[folder.invokeFactory('File', id='pdf1', 
+  ... 	    					 title='Pdf file')]
+  >>> pdff.setFile('svenska tecken צהו')
+  >>> folder.setRights('copyright by me!!!')
+  
+  >>> from Products.Marshall.registry import getComponent
+  >>> marshaller = getComponent('surfrdf')
+  >>> import surf
+  >>> surf.ns.register(NEWSITEM='%s#' % self.portal.portal_types['News Item'].absolute_url())
+  >>> surf.ns.register(FOLDER='%s#' % self.portal.portal_types['Folder'].absolute_url())
+  >>> self.enableDebugLog()
+  >>> content_type, length, data = marshaller.marshall(folder)
+
+Lets verify our export
+   
+  >>> from StringIO import StringIO  
+  >>> store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store ='IOMemory')
+  >>> session = surf.Session(store)
+  >>> store.load_triples(source=StringIO(data))
+  True
+  >>> Folder = session.get_class(surf.ns.FOLDER['Folder'])
+  >>> folderIds = [obj.folder_id.first.strip() for obj in Folder.all().order()]
+  >>> folderIds
+  [u'valentine']
+
+  >>> NewsItem = session.get_class(surf.ns.NEWSITEM['NewsItem'])
+  >>> [(obj.newsitem_id.first.strip(), obj.newsitem_text.first.strip())
+  ...    for obj in NewsItem.all().order()]
+  [(u'news1', u'<p>my news rocks!</p>')]
+
+If we print data we should get something like
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <rdf:RDF
+      xmlns:newsitem='http://nohost/plone/portal_types/News%20Item#'
+      xmlns:folder='http://nohost/plone/portal_types/Folder#'
+      xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+      xmlns:dc='http://purl.org/dc/elements/1.1/'
+    >
+      <folder:Folder rdf:about="http://nohost/plone/valentine">
+        <dc:modified>2010/07/09 12:55:26.760 GMT+2</dc:modified>
+        <dc:created>2010/07/09 12:55:26.739 GMT+2</dc:created>
+        <folder:id>valentine</folder:id>
+        <dc:Creator>test_user_1_</dc:Creator>
+      </folder:Folder>
+      <newsitem:NewsItem rdf:about="http://nohost/plone/valentine/news1">
+        <dc:Description>my description</dc:Description>
+        <newsitem:id>news1</newsitem:id>
+        <dc:Title>my news item</dc:Title>
+        <newsitem:text><![CDATA[<p>my news rocks!</p>]]></newsitem:text>
+        <dc:modified>2010/07/09 12:55:26.834 GMT+2</dc:modified>
+        <dc:Creator>ture</dc:Creator>
+        <dc:Creator>ab</dc:Creator>
+        <dc:Creator>sasha</dc:Creator>
+        <dc:created>2010/07/09 12:55:26.815 GMT+2</dc:created>
+      </newsitem:NewsItem>
+    </rdf:RDF>
+
+
+Exporting a vocabulary
+    
+    >>> surf.ns.register(SIMPLEVOCABULARY='%s#' % self.portal.portal_types['SimpleVocabulary'].absolute_url())
+    >>> surf.ns.register(SIMPLEVOCABULARYTERM='%s#' % self.portal.portal_types['SimpleVocabularyTerm'].absolute_url())
+    >>> self.setupVocabularies()
+    >>> vocab = self.portal.portal_vocabularies['eea.rdfmarshaller.vocab.testing']
+    >>> content_type, length, data = marshaller.marshall(vocab)
+    >>> store.load_triples(source=StringIO(data))
+    True
+    >>> SimpleVocabularyTerm = session.get_class(surf.ns.SIMPLEVOCABULARYTERM['SimpleVocabularyTerm'])    
+    >>> [(obj.simplevocabularyterm_id.first.strip(), obj.dc_title.first.strip()) for obj in SimpleVocabularyTerm.all().order()]
+    [(u'air pollution', u'Air pollution'), (u'biodiversity', u'Nature protection and biodiversity'), (u'climate change', u'Climate change mitigation'), (u'freshwater', u'Freshwater'), (u'land', u'Land use'), (u'waste', u'Waste')]
+
+This is the output of a standard SimpleVocabulary and it's SimpleVocabularyTerms. The Dublin Core information has been stripped for terms.
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <rdf:RDF
+      xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+      xmlns:simplevocabularyterm='http://nohost/plone/portal_types/SimpleVocabularyTerm#'
+      xmlns:dc='http://purl.org/dc/elements/1.1/'
+      xmlns:simplevocabulary='http://nohost/plone/portal_types/SimpleVocabulary#'
+    >
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/freshwater">
+        <dc:Title>Freshwater</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/land">
+        <dc:Title>Land use</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/air%20pollution">
+        <dc:Title>Air pollution</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/climate%20change">
+        <dc:Title>Climate change mitigation</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/biodiversity">
+        <dc:Title>Nature protection and biodiversity</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabularyterm:SimpleVocabularyTerm rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing/waste">
+        <dc:Title>Waste</dc:Title>
+      </simplevocabularyterm:SimpleVocabularyTerm>
+      <simplevocabulary:SimpleVocabulary rdf:about="http://nohost/plone/portal_vocabularies/eea.rdfmarshaller.vocab.testing">
+        <dc:Creator>test_user_1_</dc:Creator>
+        <dc:created>2010/07/23 14:10:56.279 GMT+2</dc:created>
+        <dc:modified>2010/07/23 14:10:56.295 GMT+2</dc:modified>
+      </simplevocabulary:SimpleVocabulary>
+    </rdf:RDF>
+
+
+
+Testing recursive export
+------------------------
+
+Adding extra folder structure
+
+  >>> sub1 =  folder[folder.invokeFactory('Folder', id='sub1', title='Subfolder 1')] 
+  >>> sub2 =  sub1[sub1.invokeFactory('Folder', id='sub2', title='Subfolder 2')] 
+  >>> sub3 =  sub2[sub2.invokeFactory('Folder', id='sub3', title='Subfolder 3')] 
+  >>> sub4 =  sub3[sub3.invokeFactory('Folder', id='sub4', title='Subfolder 4')] 
+
+Default recursive is set to end level 1, that means it marshalls the contents of
+a folder but doesn't continue further down into any folderish content.
+
+  >>> content_type, length, data = marshaller.marshall(folder)
+  >>> store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store = 'IOMemory')
+  >>> session = surf.Session(store)
+  >>> store.load_triples(source=StringIO(data))
+  True
+  >>> Folder = session.get_class(surf.ns.FOLDER['Folder'])
+  >>> [obj.folder_id.first.strip() for obj in Folder.all().order()]
+  [u'valentine', u'sub1']
+
+Level 2 recursive
+
+  >>> content_type, length, data = marshaller.marshall(folder, endLevel=2)
+  >>> store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store = 'IOMemory')
+  >>> session = surf.Session(store)
+  >>> store.load_triples(source=StringIO(data))
+  True
+  >>> Folder = session.get_class(surf.ns.FOLDER['Folder'])
+  >>> [obj.folder_id.first.strip() for obj in Folder.all().order()]
+  [u'valentine', u'sub1', u'sub2']
+
+Infinit recursive
+
+  >>> content_type, length, data = marshaller.marshall(folder, endLevel=0)
+  >>> store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store = 'IOMemory')
+  >>> session = surf.Session(store)
+  >>> store.load_triples(source=StringIO(data))
+  True
+  >>> Folder = session.get_class(surf.ns.FOLDER['Folder'])
+  >>> [obj.folder_id.first.strip() for obj in Folder.all().order()]
+  [u'valentine', u'sub1', u'sub2', u'sub3', u'sub4']
+
+A folder uses dcterms:hasPart to tell which content it has. 
+
+  >>> parts = [part.subject.strip() for part in session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart]
+  >>> parts.sort()
+  >>> parts
+  [u'http://nohost/plone/valentine/img1', u'http://nohost/plone/valentine/news1', u'http://nohost/plone/valentine/pdf1', u'http://nohost/plone/valentine/sub1', u'http://nohost/plone/valentine/zip1']
+
+An item in the folder uses dcterms:isPartOf to tell which parent it belongs to. 
+
+  >>> [part.dcterms_isPartOf.first.subject.strip() for part in session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart]
+  [u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine']
