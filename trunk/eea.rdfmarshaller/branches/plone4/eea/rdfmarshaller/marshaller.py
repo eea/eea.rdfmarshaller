@@ -163,7 +163,9 @@ class ATCT2Surf(object):
             resource = self.session.get_class(
                     self.namespace[self.portalType])(self.subject)
         except Exception:
-            pass
+            log.log('RDF marshaller error \n%s: %s' %
+                    (sys.exc_info()[0], sys.exc_info()[1]),
+                     severity=log.logging.WARN)
         resource.bind_namespaces([self.prefix])
         resource.session = self.session
         return resource

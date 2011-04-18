@@ -8,7 +8,7 @@ look in eea.soer to find out how to customize these adaptors for your own RDF
 schemas and own content types.
 
   >>> self.setRoles(['Manager'])
-  >>> folder =  self.portal[self.portal.invokeFactory('Folder', id='valentine')]
+  >>> folder = self.portal[self.portal.invokeFactory('Folder', id='valentine')]
   >>> news = folder[folder.invokeFactory('News Item', id='news1')]
   >>> news.setTitle('my news item')
   >>> news.setCreators(['ab','sasha','ture'])
@@ -19,15 +19,15 @@ Add an Image so we can test marshalling binary objects.
 
   >>> img = folder[folder.invokeFactory('Image', id='img1',
   ...                                   title='Image title')]
-  >>> imgdata = folder['logo.jpg']._data
+  >>> imgdata = self.portal.portal_skins.plone_images['logo.png']._data
   >>> img.setImage(imgdata)
 
   >>> zipf= folder[folder.invokeFactory('File', id='zip1',
   ...                                   title='Zip file')]
-  >>> zipf.setFile('svenska tecken �)
+  >>> zipf.setFile('svenska tecken öäå')
   >>> pdff= folder[folder.invokeFactory('File', id='pdf1',
   ...                                   title='Pdf file')]
-  >>> pdff.setFile('svenska tecken �)
+  >>> pdff.setFile('svenska tecken öäå')
   >>> folder.setRights('copyright by me!!!')
 
   >>> from Products.Marshall.registry import getComponent
