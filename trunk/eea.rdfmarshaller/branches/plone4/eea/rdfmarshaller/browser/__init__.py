@@ -1,1 +1,1 @@
-# package
+""" browser package """

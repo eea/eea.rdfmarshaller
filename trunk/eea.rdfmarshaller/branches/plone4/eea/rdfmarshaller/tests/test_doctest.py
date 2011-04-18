@@ -1,6 +1,8 @@
+""" Doc tests
+"""
 import doctest
 import unittest
-from base import FunctionalTestCase
+from eea.rdfmarshaller.tests.base import FunctionalTestCase
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 
 
@@ -10,6 +12,8 @@ OPTIONFLAGS = (doctest.REPORT_ONLY_FIRST_FAILURE |
 
 
 def test_suite():
+    """ Suite
+    """
     return unittest.TestSuite((
             FunctionalDocFileSuite('marshall.txt',
                   optionflags=OPTIONFLAGS,

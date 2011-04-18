@@ -1,17 +1,16 @@
-#import os
-#from Globals import package_home
+""" Base module """
 from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase.layer import onsetup
 from Products.Five import zcml
 from Products.Five import fiveconfigure
 
-
 PRODUCTS = ['ATVocabularyManager']
 PROFILES = ['eea.rdfmarshaller:default']
 
 @onsetup
 def setup_soer():
+    """ Setup """
     fiveconfigure.debug_mode = True
     import Products.Five
     import eea.rdfmarshaller
@@ -30,22 +29,25 @@ PloneTestCase.setupPloneSite(products=PRODUCTS)
 
 
 class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
+    """ Functional Test Case """
 
     def afterSetUp(self):
+        """ After setup """
         self.setRoles(['Manager'])
 
 
     def enableDebugLog(self):
         """ Enable context.plone_log() output from Python scripts """
-        import sys ,logging
+        import sys, logging
         from Products.CMFPlone.log import logger
         logger.root.setLevel(logging.WARN)
         logger.root.addHandler(logging.StreamHandler(sys.stdout))
 
     def setupVocabularies(self):
-        from Products.ATVocabularyManager.config import TOOL_NAME as ATVOCABULARYTOOL
+        """ Setup vocabularies """
+        from Products.ATVocabularyManager.config import TOOL_NAME as VOCABTOOL
         portal = self.portal
-        atvm = getToolByName(portal, ATVOCABULARYTOOL, None)
+        atvm = getToolByName(portal, VOCABTOOL, None)
         if atvm is None:
             return
         vocabs =  {
