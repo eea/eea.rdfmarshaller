@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<import-steps>
+ <import-step id="eea.facetednavigation.various" version="20110418-01"
+              handler="eea.rdfmarshaller.setuphandlers.setupVarious"
+              title="EEA RDF Marshaller setup">
+   <dependency step="actions"/>
+    EEA RDF Marshaller installation step.
+ </import-step>
+</import-steps>
