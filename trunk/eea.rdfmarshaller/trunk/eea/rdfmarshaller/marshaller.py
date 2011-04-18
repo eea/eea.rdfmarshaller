@@ -11,6 +11,7 @@ from eea.rdfmarshaller.interfaces import IArchetype2Surf, IATField2Surf
 from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
 from zope.component import adapts, queryMultiAdapter
 from zope.interface import implements, Interface
+from DateTime.DateTime import DateTime
 import logging
 import rdflib
 import surf
@@ -156,15 +157,15 @@ class ATCT2Surf(object):
 
     def _schema2surf(self):
         context = self.context
-        #session = self.session
+        session = self.session
         resource = self.surfResource
         language = context.Language()
         for field in context.Schema().fields():
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
                 continue
-            fieldAdapter = queryMultiAdapter((field, self.session), 
-                    interface=IATField2Surf)
+            fieldAdapter = queryMultiAdapter((field, session), 
+                                              interface=IATField2Surf)
 
             if fieldAdapter.exportable:
                 try:
@@ -177,17 +178,22 @@ class ATCT2Surf(object):
                              severity=log.logging.WARN)
                     continue
 
-                if value:
+                if (value and value != "None") or \
+                        (isinstance(value, basestring) and value.strip()) :
                     prefix = self.prefix
-                    if isinstance(value, (list, tuple)):
-                        value = list(value)
-                    else:
-                        value = (str(value), language)
                     if fieldName in self.field_map:
                         fieldName = self.field_map.get(fieldName)
                     elif fieldName in self.dc_map:
                         fieldName = self.dc_map.get(fieldName)
-                        prefix = 'dc'   #'dcterm'
+                        prefix = 'dcterms'   #'dcterm'
+
+                    if isinstance(value, (list, tuple)):
+                        value = list(value)
+                    elif isinstance(value, DateTime):
+                        value = (value.HTML4(),)
+                    else:
+                        value = (str(value), language)
+                    
                     try:
                         setattr(resource, '%s_%s' % (prefix, fieldName), value)
                     except Exception:
@@ -199,7 +205,8 @@ class ATCT2Surf(object):
 
         parent = getattr(aq_inner(context), 'aq_parent', None)
         if parent is not None:
-            resource.dcterms_isPartOf = rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
+            resource.dcterms_isPartOf = \
+                rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
         resource.save()
         return resource
     
