@@ -31,7 +31,23 @@
     <element value="image" />
   </property>
 
+  <property name="specification_blacklist" type="lines">
+    <element value="codes" />
+    <element value="constrainTypesMode" />
+    <element value="locallyAllowedTypes" />
+    <element value="immediatelyAddableTypes" />
+    <element value="language" />
+    <element value="allowDiscussion" />
+  </property>
 
+  <property name="article_blacklist" type="lines">
+    <element value="media" />
+    <element value="constrainTypesMode" />
+    <element value="locallyAllowedTypes" />
+    <element value="immediatelyAddableTypes" />
+    <element value="language" />
+    <element value="allowDiscussion" />
+  </property>
 
  </object>
 </object>
