@@ -5,27 +5,18 @@ from Products.PloneTestCase.layer import onsetup
 from Products.Five import zcml
 from Products.Five import fiveconfigure
 
-PRODUCTS = ['ATVocabularyManager']
-PROFILES = ['eea.rdfmarshaller:default']
+PloneTestCase.installProduct('ATVocabularyManager')
 
 @onsetup
-def setup_soer():
+def setup_rdfmarshaller():
     """ Setup """
     fiveconfigure.debug_mode = True
-    import Products.Five
     import eea.rdfmarshaller
-    zcml.load_config('meta.zcml', Products.Five)
-    zcml.load_config('configure.zcml', Products.Five)
     zcml.load_config('configure.zcml', eea.rdfmarshaller)
     fiveconfigure.debug_mode = False
 
-    PloneTestCase.installProduct('Five')
-    for product in PRODUCTS:
-        PloneTestCase.installProduct(product)
-
-setup_soer()
-PRODUCTS.append('eea.rdfmarshaller')
-PloneTestCase.setupPloneSite(products=PRODUCTS)
+setup_rdfmarshaller()
+PloneTestCase.setupPloneSite(extension_profiles=('eea.rdfmarshaller:default',))
 
 
 class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
