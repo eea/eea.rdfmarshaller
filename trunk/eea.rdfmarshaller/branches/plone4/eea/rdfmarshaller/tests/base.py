@@ -61,10 +61,8 @@ class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
              ),
             }
 
-
         for vkey in vocabs.keys():
             atvm.invokeFactory('SimpleVocabulary', vkey)
             simple = atvm.getVocabularyByName(vkey)
             for (key, val) in vocabs[vkey]:
                 simple.addTerm(key, val)
-
