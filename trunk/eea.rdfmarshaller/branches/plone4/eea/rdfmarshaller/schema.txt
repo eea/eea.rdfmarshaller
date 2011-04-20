@@ -31,7 +31,7 @@ Lets reparse it and see if we have correct values in it.
   >>> import surf
   >>> store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store = 'IOMemory')
   >>> session = surf.Session(store)
-  >>> from StringIO import StringIO 
+  >>> from StringIO import StringIO
   >>> store.load_triples(source=StringIO(data))
   True
 
@@ -115,7 +115,7 @@ First we create an schema extender
 
   >>> from Products.Archetypes.public import BooleanField
   >>> from archetypes.schemaextender.field import ExtensionField
-  >>> 
+  >>>
   >>> class MyBooleanField(ExtensionField, BooleanField):
   ...         """A trivial field."""
 
@@ -125,21 +125,21 @@ First we create an schema extender
   >>> from archetypes.schemaextender.interfaces import ISchemaExtender
   >>> from Products.Archetypes.public import BooleanWidget
   >>> from Products.ATContentTypes.interface import IATDocument
-  >>> 
+  >>>
   >>> class PageExtender(object):
   ...     adapts(IATDocument)
   ...     implements(ISchemaExtender)
-  ... 
-  ... 
+  ...
+  ...
   ...     fields = [
   ...         MyBooleanField("super_power",
   ...         widget = BooleanWidget(
   ...             label="This page has super powers")),
   ...             ]
-  ... 
+  ...
   ...     def __init__(self, context):
   ...         self.context = context
-  ... 
+  ...
   ...     def getFields(self):
   ...         return self.fields
 
@@ -152,5 +152,3 @@ First we create an schema extender
   >>> ourField = session.get_class(docNS['super_power'])
   >>> ourField.rdfs_label.first
   rdflib.Literal(u'This page has super powers', lang=u'en')
-  
-  
