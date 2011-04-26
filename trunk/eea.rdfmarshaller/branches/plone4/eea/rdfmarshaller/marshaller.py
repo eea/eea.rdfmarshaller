@@ -222,7 +222,8 @@ class ATCT2Surf(object):
 
         parent = getattr(aq_inner(context), 'aq_parent', None)
         if parent is not None:
-            resource.dcterms_isPartOf = rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
+            parent_uri = rdflib.URIRef(parent.absolute_url())
+            resource.dcterms_isPartOf = parent_uri #pylint: disable-msg = W0612
         resource.save()
         return resource
 
@@ -311,10 +312,14 @@ class ATField2RdfSchema(ATCT2Surf):
         #session = self.session
         resource = self.surfResource
 
-        resource.rdfs_label = (context.widget.label, u'en') #pylint: disable-msg = W0612
-        resource.rdfs_comment = (context.widget.description, u'en') #pylint: disable-msg = W0612
+        widget_label = (context.widget.label, u'en')
+        widget_description = (context.widget.description, u'en')
+        fti_title = rdflib.URIRef(u'#%s' % self.fti.Title())
+
+        resource.rdfs_label = widget_label #pylint: disable-msg = W0612
+        resource.rdfs_comment = widget_description #pylint: disable-msg = W0612
         resource.rdf_id = self.rdfId #pylint: disable-msg = W0612
-        resource.rdf_domain = rdflib.URIRef(u'#%s' % self.fti.Title()) #pylint: disable-msg = W0612
+        resource.rdf_domain = fti_title #pylint: disable-msg = W0612
         resource.save()
         return resource
 
