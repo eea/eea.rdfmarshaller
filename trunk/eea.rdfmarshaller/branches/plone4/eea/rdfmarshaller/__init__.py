@@ -10,4 +10,4 @@ registerComponent('surfrdf', 'RDF Marshaller',
 registerComponent('surfrdfs', 'RDF Schema Marshaller',
                   marshaller.RDFMarshaller)
 
-__all__ = [config.__name__,]
+__all__ = [config.__name__, ]

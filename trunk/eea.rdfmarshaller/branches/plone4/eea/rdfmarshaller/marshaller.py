@@ -154,6 +154,7 @@ class ATCT2Surf(object):
 
     @property
     def portalType(self):
+        """ Portal type """
         return self.context.portal_type.replace(' ','')
 
     @property
@@ -221,8 +222,7 @@ class ATCT2Surf(object):
 
         parent = getattr(aq_inner(context), 'aq_parent', None)
         if parent is not None:
-            resource.dcterms_isPartOf = \
-              rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
+            resource.dcterms_isPartOf = rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
         resource.save()
         return resource
 
@@ -249,7 +249,7 @@ class ATFolderish2Surf(ATCT2Surf):
     implements(IArchetype2Surf)
     adapts(IFolder, ISurfSession)
 
-    def at2surf(self, currentLevel=0, endLevel=1): #xxx
+    def at2surf(self, currentLevel=0, endLevel=1): #pylint: disable-msg = W0221
         """ AT to Surf """
         currentLevel += 1
         resource = super(ATFolderish2Surf, self).at2surf(
@@ -275,7 +275,7 @@ class ATField2RdfSchema(ATCT2Surf):
     implements(IArchetype2Surf)
     adapts(IField, Interface, ISurfSession)
 
-    def __init__(self, context, fti, session): #xxx
+    def __init__(self, context, fti, session): #pylint: disable-msg = W0231
         self.context = context
         self.session = session
         self.fti = fti
@@ -303,7 +303,7 @@ class ATField2RdfSchema(ATCT2Surf):
     @property
     def subject(self):
         """ subject """
-        return '%s#%s' % (self.fti.absolute_url(),self.context.getName())
+        return '%s#%s' % (self.fti.absolute_url(), self.context.getName())
 
     def _schema2surf(self):
         """ Schema to Surf """
@@ -311,17 +311,12 @@ class ATField2RdfSchema(ATCT2Surf):
         #session = self.session
         resource = self.surfResource
 
-        resource.rdfs_label = \
-          (context.widget.label, u'en') #pylint: disable-msg = W0612
-        resource.rdfs_comment = \
-          (context.widget.description, u'en') #pylint: disable-msg = W0612
-        resource.rdf_id = \
-          self.rdfId #pylint: disable-msg = W0612
-        resource.rdf_domain = \
-          rdflib.URIRef(u'#%s' % self.fti.Title()) #pylint: disable-msg = W0612
+        resource.rdfs_label = (context.widget.label, u'en') #pylint: disable-msg = W0612
+        resource.rdfs_comment = (context.widget.description, u'en') #pylint: disable-msg = W0612
+        resource.rdf_id = self.rdfId #pylint: disable-msg = W0612
+        resource.rdf_domain = rdflib.URIRef(u'#%s' % self.fti.Title()) #pylint: disable-msg = W0612
         resource.save()
         return resource
-
 
 class FTI2Surf(ATCT2Surf):
     """ IArchetype2Surf implemention for TypeInformations """
@@ -367,7 +362,7 @@ class FTI2Surf(ATCT2Surf):
     @property
     def subject(self):
         """ subject """
-        return '%s#%s' % (self.context.absolute_url(),self.rdfId)
+        return '%s#%s' % (self.context.absolute_url(), self.rdfId)
 
     def _schema2surf(self):
         """ Schema to Surf """
@@ -402,5 +397,6 @@ class FTI2Surf(ATCT2Surf):
         return resource
 
     def at2surf(self, **kwargs):
+        """ AT to Surf """
         return self._schema2surf()
 
