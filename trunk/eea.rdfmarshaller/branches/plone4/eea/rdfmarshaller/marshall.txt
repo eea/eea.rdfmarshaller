@@ -86,7 +86,6 @@ If we print data we should get something like
       </newsitem:NewsItem>
     </rdf:RDF>
 
-
 Exporting a vocabulary
 
   >>> surf.ns.register(SIMPLEVOCABULARY='%s#' % self.portal.portal_types['SimpleVocabulary'].absolute_url())
@@ -135,8 +134,6 @@ This is the output of a standard SimpleVocabulary and it's SimpleVocabularyTerms
         <dc:modified>2010/07/23 14:10:56.295 GMT+2</dc:modified>
       </simplevocabulary:SimpleVocabulary>
     </rdf:RDF>
-
-
 
 Testing recursive export
 ------------------------

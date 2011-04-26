@@ -3,7 +3,7 @@ From Archetype schema to RDF schema
 ===================================
 
 
-Lets go to portal_types tool and marshall the Folder type. We should then get a RDF  schema for it.
+Lets go to portal_types tool and marshall the Folder type. We should then get a RDF schema for it.
 
   >>> ttool = self.portal.portal_types
   >>> from Products.Marshall.registry import getComponent
