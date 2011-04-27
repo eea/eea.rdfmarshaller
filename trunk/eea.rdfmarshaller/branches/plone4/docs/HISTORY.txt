@@ -1,11 +1,13 @@
 Changelog
 =========
+[Alexandru Ghica - alec.ghica@eaudeweb.ro]
+[Sasha Vincic - Valentine Web Systems]
 
 4.0-dev - (unreleased)
 ----------------------
- * Todo: fix tests under marshaller.txt which are marked with #TODO
+ * TODO: fix tests under marshaller.txt which are marked with #TODO
          fix tests under schema.txt
- * BACKWARD INCOMPATIBLE: Plone4 compatible [ghicaale #4258]
+ * Feature: Plone 4.0.4 compatible release [ghicaale #4258]
  * Cleaned: pyflakes warnings [ichimdav #4141]
  * Cleaned: pylint violations [ichimdav #4140]
  * Change: use dcterm namespace for metadata instead of dc [tiberich #4250]
