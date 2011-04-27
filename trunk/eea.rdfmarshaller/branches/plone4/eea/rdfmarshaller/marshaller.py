@@ -162,11 +162,13 @@ class ATCT2Surf(object):
         """ Surf resource """
         try:
             resource = self.session.get_class(
-                    self.namespace[self.portalType])(self.subject)
+                self.namespace[self.portalType])(self.subject)
         except Exception:
             log.log('RDF marshaller error \n%s: %s' %
                     (sys.exc_info()[0], sys.exc_info()[1]),
-                     severity=log.logging.WARN)
+                    severity=log.logging.WARN)
+            return None
+
         resource.bind_namespaces([self.prefix])
         resource.session = self.session
         return resource
@@ -223,11 +225,11 @@ class ATCT2Surf(object):
         parent = getattr(aq_inner(context), 'aq_parent', None)
         if parent is not None:
             parent_uri = rdflib.URIRef(parent.absolute_url())
-            resource.dcterms_isPartOf = parent_uri #pylint: disable-msg = W0612
+            setattr(resource, 'dcterms_isPartOf', parent_uri)
         resource.save()
         return resource
 
-    def at2surf(self, **kwargs):
+    def at2surf(self, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
         return self._schema2surf()
 
@@ -250,7 +252,7 @@ class ATFolderish2Surf(ATCT2Surf):
     implements(IArchetype2Surf)
     adapts(IFolder, ISurfSession)
 
-    def at2surf(self, currentLevel=0, endLevel=1): #pylint: disable-msg = W0221
+    def at2surf(self, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
         currentLevel += 1
         resource = super(ATFolderish2Surf, self).at2surf(
@@ -276,9 +278,8 @@ class ATField2RdfSchema(ATCT2Surf):
     implements(IArchetype2Surf)
     adapts(IField, Interface, ISurfSession)
 
-    def __init__(self, context, fti, session): #pylint: disable-msg = W0231
-        self.context = context
-        self.session = session
+    def __init__(self, context, fti, session):
+        super(ATField2RdfSchema).__init__(self, context, session)
         self.fti = fti
 
     @property
@@ -309,17 +310,16 @@ class ATField2RdfSchema(ATCT2Surf):
     def _schema2surf(self):
         """ Schema to Surf """
         context = self.context
-        #session = self.session
         resource = self.surfResource
 
         widget_label = (context.widget.label, u'en')
         widget_description = (context.widget.description, u'en')
         fti_title = rdflib.URIRef(u'#%s' % self.fti.Title())
 
-        resource.rdfs_label = widget_label #pylint: disable-msg = W0612
-        resource.rdfs_comment = widget_description #pylint: disable-msg = W0612
-        resource.rdf_id = self.rdfId #pylint: disable-msg = W0612
-        resource.rdf_domain = fti_title #pylint: disable-msg = W0612
+        setattr(resource, 'rdfs_label', widget_label)
+        setattr(resource, 'rdfs_comment', widget_description)
+        setattr(resource, 'rdf_id', self.rdfId)
+        setattr(resource, 'rdf_domain', fti_title)
         resource.save()
         return resource
 
@@ -375,10 +375,9 @@ class FTI2Surf(ATCT2Surf):
         session = self.session
         resource = self.surfResource
 
-        #attool = getToolByName(context, 'archetype_tool')
-        resource.rdfs_label = (context.Title(), u'en')
-        resource.rdfs_comment = (context.Description(), u'en')
-        resource.rdf_id = self.rdfId
+        setattr(resource, 'rdfs_label', (context.Title(), u'en'))
+        setattr(resource, 'rdfs_comment', (context.Description(), u'en'))
+        setattr(resource, 'rdf_id', self.rdfId)
         resource.save()
 
         # we need an instance to get full schema with extended fields
@@ -401,7 +400,6 @@ class FTI2Surf(ATCT2Surf):
 
         return resource
 
-    def at2surf(self, **kwargs):
+    def at2surf(self, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
         return self._schema2surf()
-
