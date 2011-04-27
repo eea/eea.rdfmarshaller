@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.9-dev - (unreleased)
+4.0-dev - (unreleased)
 ----------------------
  * Todo: fix tests under marshaller.txt which are marked with #TODO
          fix tests under schema.txt
