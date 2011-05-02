@@ -18,7 +18,6 @@ def setup_rdfmarshaller():
 setup_rdfmarshaller()
 PloneTestCase.setupPloneSite(extension_profiles=('eea.rdfmarshaller:default',))
 
-
 class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
     """ Functional Test Case """
 
