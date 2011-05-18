@@ -3,6 +3,7 @@ Changelog
 
 0.11-dev - (unreleased)
 -----------------------
+ * Bug fix: fix errors in previous egg release [tiberich #4250]
 
 0.10 - (2011-05-18)
 -------------------
