@@ -193,11 +193,7 @@ class ATCT2Surf(object):
                         value = (value.HTML4(),)
                     else:
                         value = (str(value), language)
-                    if fieldName in self.field_map:
-                        fieldName = self.field_map.get(fieldName)
-                    elif fieldName in self.dc_map:
-                        fieldName = self.dc_map.get(fieldName)
-                        prefix = 'dcterm'
+
                     try:
                         setattr(resource, '%s_%s' % (prefix, fieldName), value)
                     except Exception:
