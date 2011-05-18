@@ -94,7 +94,7 @@ Exporting a vocabulary
     >>> store.load_triples(source=StringIO(data))
     True
     >>> SimpleVocabularyTerm = session.get_class(surf.ns.SIMPLEVOCABULARYTERM['SimpleVocabularyTerm'])    
-    >>> [(obj.simplevocabularyterm_id.first.strip(), obj.dcterm_title.first.strip()) for obj in SimpleVocabularyTerm.all().order()]
+    >>> [(obj.simplevocabularyterm_id.first.strip(), obj.dcterms_title.first.strip()) for obj in SimpleVocabularyTerm.all().order()]
     [(u'air pollution', u'Air pollution'), (u'biodiversity', u'Nature protection and biodiversity'), (u'climate change', u'Climate change mitigation'), (u'freshwater', u'Freshwater'), (u'land', u'Land use'), (u'waste', u'Waste')]
 
 This is the output of a standard SimpleVocabulary and it's SimpleVocabularyTerms. The Dublin Core information has been stripped for terms.
