@@ -190,7 +190,7 @@ class ATCT2Surf(object):
                     if isinstance(value, (list, tuple)):
                         value = list(value)
                     elif isinstance(value, DateTime):
-                        value = (value.HTML4(),)
+                        value = (value.HTML4(), None, 'http://www.w3.org/2001/XMLSchema#dateTime')
                     else:
                         value = (str(value), language)
 

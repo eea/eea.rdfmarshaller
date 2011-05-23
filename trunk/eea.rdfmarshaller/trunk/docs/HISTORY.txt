@@ -3,6 +3,7 @@ Changelog
 
 0.12-dev - (unreleased)
 -----------------------
+ * Feature: add rdf:datatype to date fields in @@rdf view [tiberich #4250]
 
 0.11 - (2011-05-18)
 -------------------
