@@ -4,10 +4,9 @@
 
   <genericsetup:registerProfile
       name="default"
-      title="eea.rdfmarshaller"
+      title="EEA RDF Marshaller"
       directory="profiles/default"
-      description="Extension profile for eea.rdfmarshaller"
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      />
+      description="Extension profile for EEA RDF Marshaller"
+      provides="Products.GenericSetup.interfaces.EXTENSION" />
 
 </configure>
