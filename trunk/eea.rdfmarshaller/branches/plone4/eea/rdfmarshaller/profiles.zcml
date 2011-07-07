@@ -1,12 +1,20 @@
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-           i18n_domain="eea">
+  xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+  i18n_domain="eea">
 
   <genericsetup:registerProfile
-      name="default"
-      title="EEA RDF Marshaller"
-      directory="profiles/default"
-      description="Extension profile for EEA RDF Marshaller"
-      provides="Products.GenericSetup.interfaces.EXTENSION" />
+    name="default"
+    title="EEA RDF Marshaller"
+    directory="profiles/default"
+    description="Extension profile for EEA RDF Marshaller"
+    provides="Products.GenericSetup.interfaces.EXTENSION" />
+
+  <genericsetup:importStep
+    name="eea.rdfmarshaller.various"
+    title="EEA RDF Marshaller setup"
+    description="EEA RDF Marshaller installation step."
+    handler="eea.rdfmarshaller.setuphandlers.setupVarious">
+    <depends name="actions"/>
+  </genericsetup:importStep>
 
 </configure>

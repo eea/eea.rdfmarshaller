@@ -212,7 +212,8 @@ class ATCT2Surf(object):
                         fieldName = self.field_map.get(fieldName)
                     elif fieldName in self.dc_map:
                         fieldName = self.dc_map.get(fieldName)
-                        prefix = 'dcterm'
+                        # plone4 was dcterm but dc prefix is what is expected
+                        prefix = 'dc'
                     try:
                         setattr(resource, '%s_%s' % (prefix, fieldName), value)
                     except Exception:
@@ -279,7 +280,7 @@ class ATField2RdfSchema(ATCT2Surf):
     adapts(IField, Interface, ISurfSession)
 
     def __init__(self, context, fti, session):
-        super(ATField2RdfSchema).__init__(self, context, session)
+        super(ATField2RdfSchema, self).__init__(context, session)
         self.fti = fti
 
     @property

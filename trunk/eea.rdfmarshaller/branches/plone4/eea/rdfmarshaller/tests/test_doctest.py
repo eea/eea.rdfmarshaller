@@ -6,7 +6,7 @@ from eea.rdfmarshaller.tests.base import FunctionalTestCase
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 
 
-OPTIONFLAGS = (doctest.REPORT_ONLY_FIRST_FAILURE |
+OPTIONFLAGS = (
                doctest.ELLIPSIS |
                doctest.NORMALIZE_WHITESPACE)
 
@@ -19,10 +19,10 @@ def test_suite():
                   optionflags=OPTIONFLAGS,
                   package='eea.rdfmarshaller',
                   test_class=FunctionalTestCase),
-            #FunctionalDocFileSuite('schema.txt',
-                  #optionflags=OPTIONFLAGS,
-                  #package='eea.rdfmarshaller',
-                  #test_class=FunctionalTestCase),
+            FunctionalDocFileSuite('schema.txt',
+                  optionflags=OPTIONFLAGS,
+                  package='eea.rdfmarshaller',
+                  test_class=FunctionalTestCase),
             ))
 
 

@@ -38,7 +38,7 @@ Lets reparse it and see if we have correct values in it.
 
 We use SuRF to parse and check the values. First we create a namespace for our Folder schema.
 
-  >>> folderNS = surf.ns.Namespace('%s#' % ttool.Folder.absolute_url())
+  >>> folderNS = surf.ns.Namespace('%s#' % ttool['Folder'].absolute_url())
 
 
 Then we try to find the class definition in the parsed rdf.
@@ -51,7 +51,12 @@ Now let see if we have a label and a comment in the english language.
   >>> folderClass.rdfs_label.first
   rdflib.Literal(u'Folder', lang=u'en')
   >>> folderClass.rdfs_comment.first
-  rdflib.Literal(u'A folder which can contain other items.', lang=u'en')
+  rdflib.Literal(u'', lang=u'en')
+
+# Note: plone 4 doesn't set the description inside Folder.xml  
+# like news item contenttype does, therefore we get an empty description
+# instead of:
+# rdflib.Literal(u'A folder which can contain other items.', lang=u'en')
 
 
 Now lets try the same thing on Document type.
@@ -64,7 +69,7 @@ Now lets try the same thing on Document type.
   >>> docClass.rdfs_label.first
   rdflib.Literal(u'Page', lang=u'en')
   >>> docClass.rdfs_comment.first
-  rdflib.Literal(u'A page in the site. Can contain rich text.', lang=u'en')
+  rdflib.Literal(u'', lang=u'en')
 
 And lets try a 'News Item' which has space in the id and title. Spaces are not
 allowed in tags so we remove them. This could conflict if you happen to have
@@ -78,36 +83,7 @@ an other content type that is named 'NewsItem', but why should you have that? :)
   >>> newsClass.rdfs_label.first
   rdflib.Literal(u'News Item', lang=u'en')
   >>> newsClass.rdfs_comment.first
-  rdflib.Literal(u'An announcement that will show up on the news portlet and in the news listing.', lang=u'en')
-
-
-For none Archetypes we only get the class definition
-
-  >>> marshaller = getComponent('surfrdfs')
-  >>> content_type, length, data = marshaller.marshall(ttool['CMF Document'])
-  >>> store.load_triples(source=StringIO(data))
-  True
-  >>> cmfDocNS = surf.ns.Namespace('%s#' % ttool['CMF Document'].absolute_url())
-  >>> docClass = session.get_class(cmfDocNS['CMFDocument'])
-  >>> docClass.rdfs_label.first
-  rdflib.Literal(u'CMF Document', lang=u'en')
-  >>> docClass.rdfs_comment.first
-  rdflib.Literal(u'Documents contain text that can be formatted using \'Structured Text.\'\nThey may also contain HTML, or "plain" text.', lang=u'en')
-
-
-    <?xml version="1.0" encoding="utf-8"?>
-    <rdf:RDF
-      xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
-      xmlns:rdfs='http://www.w3.org/2000/01/rdf-schema#'
-    >
-      <rdfs:Class rdf:about="http://nohost/plone/portal_types/CMF%20Document#CMFDocument">
-        <rdfs:comment xml:lang="en">Documents contain text that can be formatted using 'Structured Text.'
-    They may also contain HTML, or "plain" text.</rdfs:comment>
-        <rdf:id>CMFDocument</rdf:id>
-        <rdfs:label xml:lang="en">CMF Document</rdfs:label>
-      </rdfs:Class>
-    </rdf:RDF>
-
+  rdflib.Literal(u'An announcement that will show up in news listings.', lang=u'en')
 
 Schema extender
 

@@ -8,6 +8,7 @@
   <include file="archetypes.zcml" />
   <include file="atvocabulary.zcml" />
   <include package=".browser" />
+  <include package=".upgrades" />
 
   <class class="surf.Session">
      <implements interface=".interfaces.ISurfSession" />

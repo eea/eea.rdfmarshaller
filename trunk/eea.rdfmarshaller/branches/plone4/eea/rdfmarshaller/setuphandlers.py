@@ -9,6 +9,8 @@ def setupVarious(context):
     if context.readDataFile('eea.rdfmarshaller.txt') is None:
         return
 
+    # Products.Marshall doesn't use GenericSetup profiles,
+    # so we need to install it from here
     logger = logging.getLogger("eea.rdfmarshaller")
     logger.info("Installing Products.Marshall")
 
