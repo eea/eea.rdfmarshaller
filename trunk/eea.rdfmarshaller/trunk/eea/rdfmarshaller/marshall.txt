@@ -14,6 +14,7 @@ schemas and own content types.
   >>> news.setCreators(['ab','sasha','ture'])
   >>> news.setDescription('my description')
   >>> news.setText('<p>my news rocks!</p>')
+  >>> folder.portal_workflow.doActionFor(news, 'publish')
 
 Add an Image so we can test marshalling binary objects.
 

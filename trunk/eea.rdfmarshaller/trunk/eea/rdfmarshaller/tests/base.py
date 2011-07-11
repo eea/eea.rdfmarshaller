@@ -18,6 +18,7 @@ def setup_soer():
     zcml.load_config('meta.zcml', Products.Five)
     zcml.load_config('configure.zcml', Products.Five)
     zcml.load_config('configure.zcml', eea.rdfmarshaller)
+    zcml.load_config('testing.zcml', eea.rdfmarshaller)
     fiveconfigure.debug_mode = False
 
     PloneTestCase.installProduct('Five')
@@ -26,9 +27,8 @@ def setup_soer():
 
 setup_soer()
 PRODUCTS.append('eea.rdfmarshaller')
-PloneTestCase.setupPloneSite(products=PRODUCTS)
-
-
+PloneTestCase.setupPloneSite(products=PRODUCTS, 
+        extension_profiles=['eea.rdfmarshaller:testfixture'])
 
 
 class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
@@ -61,10 +61,12 @@ class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
              ),
             }
 
-
+        wftool = portal.portal_workflow
         for vkey in vocabs.keys():
             atvm.invokeFactory('SimpleVocabulary', vkey)
             simple = atvm.getVocabularyByName(vkey)
             for (key, val) in vocabs[vkey]:
                 simple.addTerm(key, val)
+                term = simple[key]
+                wftool.doActionFor(term, 'publish')
 
