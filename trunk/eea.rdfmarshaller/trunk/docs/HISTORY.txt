@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.13-dev - (unreleased)
------------------------
+0.13 - (2011-07-11)
+-------------------
  * Bug fix: use getFolderContents instead of objectValues() to retrieve children [tiberich #4418]
 
 0.12 - (2011-05-24)
