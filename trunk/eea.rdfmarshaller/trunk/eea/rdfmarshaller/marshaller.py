@@ -237,7 +237,10 @@ class ATFolderish2Surf(ATCT2Surf):
                 currentLevel=currentLevel, endLevel=endLevel)
         if currentLevel <= endLevel or endLevel == 0:
             resource.dcterms_hasPart =[]            
-            for obj in self.context.objectValues():
+            objs = [b.getObject() for b in self.context.getFolderContents(
+                    contentFilter={'review_state':'published'})]
+
+            for obj in objs:
                 resource.dcterms_hasPart.append(rdflib.URIRef(
                                                     obj.absolute_url()))
                 atsurf = queryMultiAdapter((obj, self.session), 
