@@ -237,8 +237,8 @@ class ATFolderish2Surf(ATCT2Surf):
                 currentLevel=currentLevel, endLevel=endLevel)
         if currentLevel <= endLevel or endLevel == 0:
             resource.dcterms_hasPart =[]            
-            objs = [b.getObject() for b in self.context.getFolderContents(
-                    contentFilter={'review_state':'published'})]
+            objs = [b.getObject() for b in self.context.getFolderContents(  )]
+                        #contentFilter={'review_state':'published'})]
 
             for obj in objs:
                 resource.dcterms_hasPart.append(rdflib.URIRef(

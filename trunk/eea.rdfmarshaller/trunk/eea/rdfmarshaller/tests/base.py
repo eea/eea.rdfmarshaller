@@ -61,12 +61,12 @@ class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
              ),
             }
 
-        wftool = portal.portal_workflow
+        #wftool = portal.portal_workflow
         for vkey in vocabs.keys():
             atvm.invokeFactory('SimpleVocabulary', vkey)
             simple = atvm.getVocabularyByName(vkey)
             for (key, val) in vocabs[vkey]:
                 simple.addTerm(key, val)
                 term = simple[key]
-                wftool.doActionFor(term, 'publish')
+                #wftool.doActionFor(term, 'publish')
 
