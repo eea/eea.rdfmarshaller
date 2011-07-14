@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.14-dev - (unreleased)
------------------------
+0.14 - (2011-07-14)
+-------------------
  * Bug fix: check if parent is published when including isPartOf info in @@rdf [tiberich #4418]
 
 0.13 - (2011-07-11)
