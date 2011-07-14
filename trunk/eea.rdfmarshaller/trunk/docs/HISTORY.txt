@@ -3,6 +3,7 @@ Changelog
 
 0.14-dev - (unreleased)
 -----------------------
+ * Bug fix: check if parent is published when including isPartOf info in @@rdf [tiberich #4418]
 
 0.13 - (2011-07-11)
 -------------------

@@ -204,7 +204,8 @@ class ATCT2Surf(object):
                                  severity=log.logging.WARN)
 
         parent = getattr(aq_inner(context), 'aq_parent', None)
-        if parent is not None:
+        wftool = getToolByName(context, 'portal_workflow')
+        if (parent is not None) and (wftool.getInfoFor(parent, 'review_state') == 'published'):
             resource.dcterms_isPartOf = \
                 rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
         resource.save()
