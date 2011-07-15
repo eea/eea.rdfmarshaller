@@ -1,7 +1,9 @@
 from Acquisition import aq_inner
+from DateTime.DateTime import DateTime
 from OFS.interfaces import IFolder
 from Products.Archetypes.Marshall import Marshaller
 from Products.Archetypes.interfaces import IField, IFileField
+from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import log
@@ -11,7 +13,6 @@ from eea.rdfmarshaller.interfaces import IArchetype2Surf, IATField2Surf
 from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
 from zope.component import adapts, queryMultiAdapter
 from zope.interface import implements, Interface
-from DateTime.DateTime import DateTime
 import logging
 import rdflib
 import surf
@@ -205,9 +206,15 @@ class ATCT2Surf(object):
 
         parent = getattr(aq_inner(context), 'aq_parent', None)
         wftool = getToolByName(context, 'portal_workflow')
-        if (parent is not None) and (wftool.getInfoFor(parent, 'review_state') == 'published'):
-            resource.dcterms_isPartOf = \
-                rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
+        if (parent is not None):
+            try:
+                state = wftool.getInfoFor(parent, 'review_state')
+            except WorkflowException:   #object has no workflow, we assume public, see #4418
+                state = 'published'
+
+            if state == 'published':
+                resource.dcterms_isPartOf = \
+                    rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
         resource.save()
         return resource
     
