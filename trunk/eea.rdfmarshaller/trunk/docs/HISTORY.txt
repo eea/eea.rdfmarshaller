@@ -3,6 +3,7 @@ Changelog
 
 0.15-dev - (unreleased)
 -----------------------
+ * Bug fix: avoid triggering exceptions when parent has no workflow [tiberich #4418]
 
 0.14 - (2011-07-14)
 -------------------

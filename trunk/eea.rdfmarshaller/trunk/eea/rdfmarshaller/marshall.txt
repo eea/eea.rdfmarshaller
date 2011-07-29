@@ -188,4 +188,7 @@ A folder uses dcterms:hasPart to tell which content it has.
 An item in the folder uses dcterms:isPartOf to tell which parent it belongs to. 
 
   >>> [part.dcterms_isPartOf.first.subject.strip() for part in session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart]
+  >>> parts = session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart
+  >>> parts_of = [p for p in parts if p.dcterms_isPartOf.first]
+  >>> [p.dcterms_isPartOf.first.subject for p in parts_of]
   [u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine']
