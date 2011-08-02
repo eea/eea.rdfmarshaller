@@ -1,0 +1,15 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class="Products.ATVocabularyManager.types.simple.term.SimpleVocabularyTerm">
+     <implements interface=".interfaces.IATVocabularyTerm" />
+  </class>
+
+  <class class="Products.ATVocabularyManager.types.simple.vocabulary.SimpleVocabulary">
+     <implements interface=".interfaces.IATVocabulary" />
+  </class>
+
+  <adapter factory=".marshaller.ATVocabularyTerm2Surf" />
+
+</configure>
