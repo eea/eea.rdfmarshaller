@@ -193,7 +193,7 @@ class ATCT2Surf(object):
                     elif isinstance(value, DateTime):
                         value = (value.HTML4(), None, 'http://www.w3.org/2001/XMLSchema#dateTime')
                     else:
-                        value = (str(value), language)
+                        value = (unicode(value, 'utf-8', 'replace'), language)
 
                     try:
                         setattr(resource, '%s_%s' % (prefix, fieldName), value)
