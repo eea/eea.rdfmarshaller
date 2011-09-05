@@ -204,6 +204,9 @@ class ATCT2Surf(object):
                                  sys.exc_info()[0], sys.exc_info()[1]), 
                                  severity=log.logging.WARN)
 
+        #if context.getId() == 'news2':
+            #import pdb; pdb.set_trace()
+
         parent = getattr(aq_inner(context), 'aq_parent', None)
         wftool = getToolByName(context, 'portal_workflow')
         if (parent is not None):

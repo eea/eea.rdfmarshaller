@@ -187,8 +187,27 @@ A folder uses dcterms:hasPart to tell which content it has.
 
 An item in the folder uses dcterms:isPartOf to tell which parent it belongs to. 
 
-  >>> [part.dcterms_isPartOf.first.subject.strip() for part in session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart]
+  >>> news = folder[folder.invokeFactory('News Item', id='news2')]
+  >>> news.setTitle('my news item')
+  >>> news.setCreators(['ab','sasha','ture'])
+  >>> news.setDescription('my description')
+  >>> news.setText('<p>my news rocks!</p>')
+  >>> folder.portal_workflow.doActionFor(news, 'publish')
+  >>> folder.portal_workflow.doActionFor(folder, 'publish')
+
+  >>> content_type, length, data = marshaller.marshall(folder)
+  >>> store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store ='IOMemory')
+  >>> store.load_triples(source=StringIO(data))
+  True
+  >>> session = surf.Session(store)
+  >>> ff = session.get_resource(folder.absolute_url(), Folder)
+
+  >>> #print (folder.objectItems(), ff.dcterms_hasPart)
+  >>> #print [part.dcterms_isPartOf.first.subject.strip() for part in session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart]
   >>> parts = session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart
-  >>> parts_of = [p for p in parts if p.dcterms_isPartOf.first]
-  >>> [p.dcterms_isPartOf.first.subject for p in parts_of]
+  >>> #print [ff] + [(x, x.dcterms_isPartOf) for x in parts]
+  >>> #parts_of = [p for p in parts if p.dcterms_isPartOf.first]
+  >>> #parts_of = [(p, p.dcterms_isPartOf) for p in parts]
+  >>> #print parts_of
+  >>> #[p.dcterms_isPartOf.first.subject for p in parts_of]
   [u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine']
