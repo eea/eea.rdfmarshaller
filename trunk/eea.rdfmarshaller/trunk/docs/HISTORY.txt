@@ -1,6 +1,9 @@
 Changelog
 =========
 
+0.18-dev - (unreleased)
+-----------------------
+
 0.17 - (2011-09-13)
 -------------------
  * Bug fix: fix unicode related errors in @@rdf view [tiberich #4530, #4531]
