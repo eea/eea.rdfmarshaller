@@ -5,6 +5,7 @@ from Products.Archetypes.Marshall import Marshaller
 from Products.Archetypes.interfaces import IField, IFileField
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.interfaces import ITypeInformation
+from Products.CMFCore.interfaces._tools import ITypesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import log
 from Products.CMFPlone.utils import _createObjectByType
@@ -368,7 +369,18 @@ class FTI2Surf(ATCT2Surf):
                 portal_factory._getTempFolder(portal_type)
         instance = getattr(tmpFolder, 'rdfstype', None)
         if instance is None:
-            instance = _createObjectByType(portal_type, tmpFolder, 'rdfstype')
+            try:
+                instance = _createObjectByType(portal_type, tmpFolder, 
+                            'rdfstype')
+            except:   #might be a tool class
+                log.log('RDF marshaller error for FTI'
+                        ' "%s": \n%s: %s' % 
+                        (context.absolute_url(), 
+                         sys.exc_info()[0], sys.exc_info()[1]), 
+                         severity=log.logging.WARN)
+
+                return
+
         if hasattr(instance, 'Schema'):
             schema = instance.Schema()
             for field in schema.fields():
@@ -382,6 +394,45 @@ class FTI2Surf(ATCT2Surf):
 
         return resource
     
+    def at2surf(self, **kwargs):
+        return self._schema2surf()
+
+
+class PortalTypesUtil2Surf(ATCT2Surf):
+    """IArchetype2Surf implemention for TypeInformations"""
+    implements(IArchetype2Surf)
+    adapts(ITypesTool, ISurfSession)
+    
+    @property
+    def portalType(self):
+        return u'PloneUtility'
+
+    @property
+    def namespace(self):
+        return surf.ns.RDFS
+
+    @property
+    def prefix(self):
+        return 'rdfs'
+
+    @property
+    def rdfId(self):
+        return self.context.getId().replace(' ','')
+
+    @property
+    def subject(self):
+        return '%s#%s' % (self.context.absolute_url(),self.rdfId)
+    
+    def _schema2surf(self):
+        context = self.context
+        session = self.session
+        resource = self.surfResource
+
+        resource.rdfs_label = (u"Plone PortalTypes Tool", None)
+        resource.rdfs_comment = (u"Holds definitions of portal types", None)
+        resource.rdf_id = self.rdfId
+        resource.save()
+
     def at2surf(self, **kwargs):
         return self._schema2surf()
 
