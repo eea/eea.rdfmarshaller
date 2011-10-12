@@ -14,6 +14,7 @@ schemas and own content types.
   >>> news.setCreators(['ab','sasha','ture'])
   >>> news.setDescription('my description')
   >>> news.setText('<p>my news rocks!</p>')
+  >>> folder.portal_workflow.doActionFor(news, 'publish') 
 
 Add an Image so we can test marshalling binary objects.
 
@@ -95,7 +96,7 @@ Exporting a vocabulary
   >>> store.load_triples(source=StringIO(data))
   True
   >>> SimpleVocabularyTerm = session.get_class(surf.ns.SIMPLEVOCABULARYTERM['SimpleVocabularyTerm']) 
-  >>> [(obj.simplevocabularyterm_id.first.strip(), obj.dc_title.first.strip()) for obj in SimpleVocabularyTerm.all().order()]
+  >>> [(obj.simplevocabularyterm_id.first.strip(), obj.dcterm_title.first.strip()) for obj in SimpleVocabularyTerm.all().order()] 
   [(u'air pollution', u'Air pollution'), (u'biodiversity', u'Nature protection and biodiversity'), (u'climate change', u'Climate change mitigation'), (u'freshwater', u'Freshwater'), (u'land', u'Land use'), (u'waste', u'Waste')]
   
 
@@ -196,5 +197,23 @@ A folder uses dcterms:hasPart to tell which content it has.
 
 An item in the folder uses dcterms:isPartOf to tell which parent it belongs to.
 
+  >>> news = folder[folder.invokeFactory('News Item', id='news2')]
+  >>> news.setTitle('my news item')
+  >>> news.setCreators(['ab','sasha','ture'])
+  >>> news.setDescription('my description')
+  >>> news.setText('<p>my news rocks!</p>')
+  >>> folder.portal_workflow.doActionFor(news, 'publish')
+  >>> folder.portal_workflow.doActionFor(folder, 'publish')
+
+  >>> content_type, length, data = marshaller.marshall(folder)
+  >>> store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store ='IOMemory')
+  >>> store.load_triples(source=StringIO(data))
+  True
+  >>> session = surf.Session(store)
+  >>> ff = session.get_resource(folder.absolute_url(), Folder)
+
   >>> [part.dcterms_isPartOf.first.subject.strip() for part in session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart]
+  >>> parts = session.get_resource(folder.absolute_url(), Folder).dcterms_hasPart 
+  >>> parts_of = [p for p in parts if p.dcterms_isPartOf.first] 
+  >>> [p.dcterms_isPartOf.first.subject for p in parts_of] 
   [u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine', u'http://nohost/plone/valentine']

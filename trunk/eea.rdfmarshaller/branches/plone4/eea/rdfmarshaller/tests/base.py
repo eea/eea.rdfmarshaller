@@ -11,15 +11,21 @@ import eea.rdfmarshaller
 
 PloneTestCase.installProduct('ATVocabularyManager')
 
+PRODUCTS = ['ATVocabularyManager']
+PROFILES = ['eea.rdfmarshaller:default']
+
 @onsetup
 def setup_rdfmarshaller():
     """ Setup """
     fiveconfigure.debug_mode = True
     zcml.load_config('configure.zcml', eea.rdfmarshaller)
+    zcml.load_config('testing.zcml', eea.rdfmarshaller) 
     fiveconfigure.debug_mode = False
 
 setup_rdfmarshaller()
-PloneTestCase.setupPloneSite(extension_profiles=('eea.rdfmarshaller:default',))
+PloneTestCase.setupPloneSite(products=PRODUCTS,  
+        extension_profiles=['eea.rdfmarshaller:testfixture']) 
+#PloneTestCase.setupPloneSite(extension_profiles=('eea.rdfmarshaller:default',))
 
 class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
     """ Functional Test Case """
@@ -51,8 +57,11 @@ class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
              ),
             }
 
+        #wftool = portal.portal_workflow 
         for vkey in vocabs.keys():
             atvm.invokeFactory('SimpleVocabulary', vkey)
             simple = atvm.getVocabularyByName(vkey)
             for (key, val) in vocabs[vkey]:
                 simple.addTerm(key, val)
+                term = simple[key] 
+                #wftool.doActionFor(term, 'publish') 

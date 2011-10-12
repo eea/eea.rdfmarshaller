@@ -24,5 +24,6 @@
   <adapter factory=".marshaller.ATField2RdfSchema" />
   <adapter factory=".marshaller.FTI2Surf" />
   <adapter factory=".marshaller.ATFolderish2Surf" />
+  <adapter factory=".marshaller.PortalTypesUtil2Surf" /> 
 
 </configure>

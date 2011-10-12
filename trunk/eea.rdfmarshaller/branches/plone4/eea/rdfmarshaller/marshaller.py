@@ -1,9 +1,12 @@
 """ Marshaller module """
 from Acquisition import aq_inner
+from DateTime.DateTime import DateTime
 from OFS.interfaces import IFolder
 from Products.Archetypes.Marshall import Marshaller
 from Products.Archetypes.interfaces import IField, IFileField
+from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.interfaces import ITypeInformation
+from Products.CMFCore.interfaces._tools import ITypesTool 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import log
 from Products.CMFPlone.utils import _createObjectByType
@@ -184,6 +187,7 @@ class ATCT2Surf(object):
         #session = self.session
         resource = self.surfResource
         language = context.Language()
+
         for field in context.Schema().fields():
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
@@ -202,18 +206,28 @@ class ATCT2Surf(object):
                              severity=log.logging.WARN)
                     continue
 
-                if value:
+                if (value and value != "None") or \
+                        (isinstance(value, basestring) and value.strip()) :
                     prefix = self.prefix
+
                     if isinstance(value, (list, tuple)):
                         value = list(value)
+                    elif isinstance(value, DateTime):
+                        value = (value.HTML4(), None, 'http://www.w3.org/2001/XMLSchema#dateTime')
+                    elif isinstance(value, unicode):
+                        pass
                     else:
-                        value = (str(value), language)
+                        try:
+                            value = (unicode(value, 'utf-8', 'replace'), language)
+                        except TypeError:
+                            value = str(value)
+
                     if fieldName in self.field_map:
                         fieldName = self.field_map.get(fieldName)
                     elif fieldName in self.dc_map:
                         fieldName = self.dc_map.get(fieldName)
-                        # plone4 was dcterm but dc prefix is what is expected
-                        prefix = 'dc'
+                        prefix = 'dcterms'
+
                     try:
                         setattr(resource, '%s_%s' % (prefix, fieldName), value)
                     except Exception:
@@ -224,9 +238,17 @@ class ATCT2Surf(object):
                                  severity=log.logging.WARN)
 
         parent = getattr(aq_inner(context), 'aq_parent', None)
-        if parent is not None:
-            parent_uri = rdflib.URIRef(parent.absolute_url())
-            setattr(resource, 'dcterms_isPartOf', parent_uri)
+        wftool = getToolByName(context, 'portal_workflow')
+        if (parent is not None):
+            try:
+                state = wftool.getInfoFor(parent, 'review_state')
+            except WorkflowException:   #object has no workflow, we assume public, see #4418
+                state = 'published'
+
+            if state == 'published':
+                resource.dcterms_isPartOf = \
+                    rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
+
         resource.save()
         return resource
 
@@ -260,7 +282,11 @@ class ATFolderish2Surf(ATCT2Surf):
                 currentLevel=currentLevel, endLevel=endLevel)
         if currentLevel <= endLevel or endLevel == 0:
             resource.dcterms_hasPart = []
-            for obj in self.context.objectValues():
+
+            objs = [b.getObject() for b in self.context.getFolderContents()]
+                    #contentFilter={'review_state':'published'})] 
+ 
+            for obj in objs: 
                 resource.dcterms_hasPart.append(rdflib.URIRef(
                                                     obj.absolute_url()))
                 atsurf = queryMultiAdapter((obj, self.session),
@@ -387,7 +413,17 @@ class FTI2Surf(ATCT2Surf):
                 portal_factory._getTempFolder(portal_type)
         instance = getattr(tmpFolder, 'rdfstype', None)
         if instance is None:
-            instance = _createObjectByType(portal_type, tmpFolder, 'rdfstype')
+            try: 
+                instance = _createObjectByType(portal_type, tmpFolder,  
+                            'rdfstype') 
+            except:   #might be a tool class 
+                log.log('RDF marshaller error for FTI' 
+                        ' "%s": \n%s: %s' %  
+                        (context.absolute_url(),  
+                         sys.exc_info()[0], sys.exc_info()[1]),  
+                         severity=log.logging.WARN) 
+ 
+                return 
         if hasattr(instance, 'Schema'):
             schema = instance.Schema()
             for field in schema.fields():
@@ -404,3 +440,43 @@ class FTI2Surf(ATCT2Surf):
     def at2surf(self, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
         return self._schema2surf()
+
+ 
+class PortalTypesUtil2Surf(ATCT2Surf): 
+    """IArchetype2Surf implemention for TypeInformations""" 
+    implements(IArchetype2Surf) 
+    adapts(ITypesTool, ISurfSession) 
+     
+    @property 
+    def portalType(self): 
+        return u'PloneUtility' 
+ 
+    @property 
+    def namespace(self): 
+        return surf.ns.RDFS 
+ 
+    @property 
+    def prefix(self): 
+        return 'rdfs' 
+ 
+    @property 
+    def rdfId(self): 
+        return self.context.getId().replace(' ','') 
+ 
+    @property 
+    def subject(self): 
+        return '%s#%s' % (self.context.absolute_url(),self.rdfId) 
+     
+    def _schema2surf(self): 
+        context = self.context 
+        session = self.session 
+        resource = self.surfResource 
+ 
+        resource.rdfs_label = (u"Plone PortalTypes Tool", None) 
+        resource.rdfs_comment = (u"Holds definitions of portal types", None) 
+        resource.rdf_id = self.rdfId 
+        resource.save() 
+ 
+    def at2surf(self, **kwargs): 
+        return self._schema2surf() 
+ 

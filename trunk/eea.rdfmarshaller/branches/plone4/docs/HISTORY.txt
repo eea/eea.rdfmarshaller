@@ -4,6 +4,8 @@ Changelog
 
 4.0-dev - (unreleased)
 ----------------------
+* Bug fix: use getFolderContents instead of objectValues() to retrieve 
+  children [tiberich #4418] (v0.13 backport)
 
 * Bug fix: Fix tests for eea.rdfmarshaller
   [ichimdav #4340]
