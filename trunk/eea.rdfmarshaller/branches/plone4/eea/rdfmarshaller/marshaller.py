@@ -244,8 +244,6 @@ class ATCT2Surf(object):
         parent = getattr(aq_inner(context), 'aq_parent', None)
         wftool = getToolByName(context, 'portal_workflow')
         if (parent is not None):
-            #resource.dcterms_isPartOf = \
-                #rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
             try:
                 state = wftool.getInfoFor(parent, 'review_state')
             except WorkflowException:   #object has no workflow, we assume public, see #4418
