@@ -214,6 +214,8 @@ class ATCT2Surf(object):
                         value = list(value)
                     elif isinstance(value, DateTime):
                         value = (value.HTML4(), None, 'http://www.w3.org/2001/XMLSchema#dateTime')
+                    elif isinstance(value, str):
+                        value = (value, language)
                     elif isinstance(value, unicode):
                         pass
                     else:
@@ -221,6 +223,8 @@ class ATCT2Surf(object):
                             value = (unicode(value, 'utf-8', 'replace'), language)
                         except TypeError:
                             value = str(value)
+                            #value = (value, language)
+                        
 
                     if fieldName in self.field_map:
                         fieldName = self.field_map.get(fieldName)
@@ -240,6 +244,8 @@ class ATCT2Surf(object):
         parent = getattr(aq_inner(context), 'aq_parent', None)
         wftool = getToolByName(context, 'portal_workflow')
         if (parent is not None):
+            #resource.dcterms_isPartOf = \
+                #rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
             try:
                 state = wftool.getInfoFor(parent, 'review_state')
             except WorkflowException:   #object has no workflow, we assume public, see #4418
