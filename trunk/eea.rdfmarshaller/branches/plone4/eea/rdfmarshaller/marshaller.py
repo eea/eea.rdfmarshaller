@@ -213,14 +213,16 @@ class ATCT2Surf(object):
                     if isinstance(value, (list, tuple)):
                         value = list(value)
                     elif isinstance(value, DateTime):
-                        value = (value.HTML4(), None, 'http://www.w3.org/2001/XMLSchema#dateTime')
+                        value = (value.HTML4(), None, 
+                                'http://www.w3.org/2001/XMLSchema#dateTime')
                     elif isinstance(value, str):
                         value = (value, language)
                     elif isinstance(value, unicode):
                         pass
                     else:
                         try:
-                            value = (unicode(value, 'utf-8', 'replace'), language)
+                            value = (unicode(value, 'utf-8', 'replace'), 
+                                    language)
                         except TypeError:
                             value = str(value)
 
@@ -244,7 +246,8 @@ class ATCT2Surf(object):
         if (parent is not None):
             try:
                 state = wftool.getInfoFor(parent, 'review_state')
-            except WorkflowException:   #object has no workflow, we assume public, see #4418
+            except WorkflowException:   
+                #object has no workflow, we assume public, see #4418
                 state = 'published'
 
             if state == 'published':
