@@ -5,7 +5,7 @@ from Products.CMFPlone.log import logger
 from Products.Five import fiveconfigure
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase.layer import onsetup
-from Zope2.App.zcml import zcml
+from Zope2.App.zcml import load_config
 import eea.rdfmarshaller
 import sys, logging
 
@@ -18,8 +18,8 @@ PROFILES = ['eea.rdfmarshaller:default']
 def setup_rdfmarshaller():
     """ Setup """
     fiveconfigure.debug_mode = True
-    zcml.load_config('configure.zcml', eea.rdfmarshaller)
-    zcml.load_config('testing.zcml', eea.rdfmarshaller) 
+    load_config('configure.zcml', eea.rdfmarshaller)
+    load_config('testing.zcml', eea.rdfmarshaller) 
     fiveconfigure.debug_mode = False
 
 setup_rdfmarshaller()
