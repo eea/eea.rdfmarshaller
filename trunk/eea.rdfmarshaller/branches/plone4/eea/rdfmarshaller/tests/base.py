@@ -1,13 +1,13 @@
 """ Base module """
+from Products.ATVocabularyManager.config import TOOL_NAME as VOCABTOOL
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.log import logger
+from Products.Five import fiveconfigure
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase.layer import onsetup
-from Products.Five import zcml
-from Products.Five import fiveconfigure
-from Products.ATVocabularyManager.config import TOOL_NAME as VOCABTOOL
-import sys, logging
-from Products.CMFPlone.log import logger
+from Zope2.App.zcml import zcml
 import eea.rdfmarshaller
+import sys, logging
 
 PloneTestCase.installProduct('ATVocabularyManager')
 
@@ -63,5 +63,5 @@ class FunctionalTestCase(PloneTestCase.FunctionalTestCase):
             simple = atvm.getVocabularyByName(vkey)
             for (key, val) in vocabs[vkey]:
                 simple.addTerm(key, val)
-                term = simple[key] 
+                #term = simple[key] 
                 #wftool.doActionFor(term, 'publish') 

@@ -223,8 +223,6 @@ class ATCT2Surf(object):
                             value = (unicode(value, 'utf-8', 'replace'), language)
                         except TypeError:
                             value = str(value)
-                            #value = (value, language)
-                        
 
                     if fieldName in self.field_map:
                         fieldName = self.field_map.get(fieldName)
@@ -472,8 +470,8 @@ class PortalTypesUtil2Surf(ATCT2Surf):
         return '%s#%s' % (self.context.absolute_url(),self.rdfId) 
      
     def _schema2surf(self): 
-        context = self.context 
-        session = self.session 
+        #context = self.context 
+        #session = self.session 
         resource = self.surfResource 
  
         resource.rdfs_label = (u"Plone PortalTypes Tool", None) 
