@@ -6,7 +6,7 @@ from Products.Archetypes.Marshall import Marshaller
 from Products.Archetypes.interfaces import IField, IFileField
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.interfaces import ITypeInformation
-from Products.CMFCore.interfaces._tools import ITypesTool 
+from Products.CMFCore.interfaces._tools import ITypesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import log
 from Products.CMFPlone.utils import _createObjectByType
@@ -213,7 +213,7 @@ class ATCT2Surf(object):
                     if isinstance(value, (list, tuple)):
                         value = list(value)
                     elif isinstance(value, DateTime):
-                        value = (value.HTML4(), None, 
+                        value = (value.HTML4(), None,
                                 'http://www.w3.org/2001/XMLSchema#dateTime')
                     elif isinstance(value, str):
                         value = (value, language)
@@ -221,7 +221,7 @@ class ATCT2Surf(object):
                         pass
                     else:
                         try:
-                            value = (unicode(value, 'utf-8', 'replace'), 
+                            value = (unicode(value, 'utf-8', 'replace'),
                                     language)
                         except TypeError:
                             value = str(value)
@@ -246,7 +246,7 @@ class ATCT2Surf(object):
         if (parent is not None):
             try:
                 state = wftool.getInfoFor(parent, 'review_state')
-            except WorkflowException:   
+            except WorkflowException:
                 #object has no workflow, we assume public, see #4418
                 state = 'published'
 
@@ -289,9 +289,9 @@ class ATFolderish2Surf(ATCT2Surf):
             resource.dcterms_hasPart = []
 
             objs = [b.getObject() for b in self.context.getFolderContents()]
-                    #contentFilter={'review_state':'published'})] 
- 
-            for obj in objs: 
+                    #contentFilter={'review_state':'published'})]
+
+            for obj in objs:
                 resource.dcterms_hasPart.append(rdflib.URIRef(
                                                     obj.absolute_url()))
                 atsurf = queryMultiAdapter((obj, self.session),
@@ -418,17 +418,18 @@ class FTI2Surf(ATCT2Surf):
                 portal_factory._getTempFolder(portal_type)
         instance = getattr(tmpFolder, 'rdfstype', None)
         if instance is None:
-            try: 
-                instance = _createObjectByType(portal_type, tmpFolder,  
-                            'rdfstype') 
-            except:   #might be a tool class 
-                log.log('RDF marshaller error for FTI' 
-                        ' "%s": \n%s: %s' %  
-                        (context.absolute_url(),  
-                         sys.exc_info()[0], sys.exc_info()[1]),  
-                         severity=log.logging.WARN) 
- 
-                return 
+            try:
+                instance = _createObjectByType(portal_type, tmpFolder,
+                            'rdfstype')
+                instance.unindexObject()
+            except Exception:   #might be a tool class
+                log.log('RDF marshaller error for FTI'
+                        ' "%s": \n%s: %s' %
+                        (context.absolute_url(),
+                         sys.exc_info()[0], sys.exc_info()[1]),
+                         severity=log.logging.WARN)
+
+                return
         if hasattr(instance, 'Schema'):
             schema = instance.Schema()
             for field in schema.fields():
@@ -439,49 +440,48 @@ class FTI2Surf(ATCT2Surf):
                 atsurf = queryMultiAdapter((field, context, session),
                                            interface=IArchetype2Surf)
                 atsurf.at2surf()
-
         return resource
 
     def at2surf(self, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
         return self._schema2surf()
 
- 
-class PortalTypesUtil2Surf(ATCT2Surf): 
-    """IArchetype2Surf implemention for TypeInformations""" 
-    implements(IArchetype2Surf) 
-    adapts(ITypesTool, ISurfSession) 
-     
-    @property 
-    def portalType(self): 
-        return u'PloneUtility' 
- 
-    @property 
-    def namespace(self): 
-        return surf.ns.RDFS 
- 
-    @property 
-    def prefix(self): 
-        return 'rdfs' 
- 
-    @property 
-    def rdfId(self): 
-        return self.context.getId().replace(' ','') 
- 
-    @property 
-    def subject(self): 
-        return '%s#%s' % (self.context.absolute_url(),self.rdfId) 
-     
-    def _schema2surf(self): 
-        #context = self.context 
-        #session = self.session 
-        resource = self.surfResource 
- 
-        resource.rdfs_label = (u"Plone PortalTypes Tool", None) 
-        resource.rdfs_comment = (u"Holds definitions of portal types", None) 
-        resource.rdf_id = self.rdfId 
-        resource.save() 
- 
-    def at2surf(self, **kwargs): 
-        return self._schema2surf() 
- 
+
+class PortalTypesUtil2Surf(ATCT2Surf):
+    """IArchetype2Surf implemention for TypeInformations"""
+    implements(IArchetype2Surf)
+    adapts(ITypesTool, ISurfSession)
+
+    @property
+    def portalType(self):
+        return u'PloneUtility'
+
+    @property
+    def namespace(self):
+        return surf.ns.RDFS
+
+    @property
+    def prefix(self):
+        return 'rdfs'
+
+    @property
+    def rdfId(self):
+        return self.context.getId().replace(' ','')
+
+    @property
+    def subject(self):
+        return '%s#%s' % (self.context.absolute_url(),self.rdfId)
+
+    def _schema2surf(self):
+        #context = self.context
+        #session = self.session
+        resource = self.surfResource
+
+        resource.rdfs_label = (u"Plone PortalTypes Tool", None)
+        resource.rdfs_comment = (u"Holds definitions of portal types", None)
+        resource.rdf_id = self.rdfId
+        resource.save()
+
+    def at2surf(self, **kwargs):
+        return self._schema2surf()
+
