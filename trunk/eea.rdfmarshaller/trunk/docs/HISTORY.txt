@@ -1,8 +1,8 @@
 Changelog
 =========
 
-4.2-dev - (unreleased)
-----------------------
+4.2 - (2011-12-07)
+------------------
 * Bug fix: Unindex temporary objects created in portal_factory
   [voineali #4822]
 
