@@ -1,6 +1,9 @@
 Changelog
 =========
 
+4.3-dev - (unreleased)
+----------------------
+
 4.2 - (2011-12-07)
 ------------------
 * Bug fix: Unindex temporary objects created in portal_factory
