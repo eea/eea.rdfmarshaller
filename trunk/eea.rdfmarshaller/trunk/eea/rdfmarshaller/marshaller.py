@@ -99,6 +99,11 @@ class ATReferenceField2Surf(ATField2Surf):
     def value(self, context):
         """ Value """
         value = self.field.getAccessor(context)()
+
+        #some reference fields are single value only
+        if not isinstance(value, (list, tuple)):
+            value = [value]
+
         return [ rdflib.URIRef(obj.absolute_url()) for obj in value ]
 
 

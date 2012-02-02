@@ -3,6 +3,7 @@ Changelog
 
 4.3-dev - (unreleased)
 ----------------------
+ * Bug fix: fixed a problem inserting related items in rdf stream when relation field is single value [tiberich #4992]
 
 4.2 - (2011-12-07)
 ------------------
