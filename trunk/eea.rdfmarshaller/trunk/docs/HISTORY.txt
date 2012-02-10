@@ -3,8 +3,6 @@ Changelog
 
 4.4-dev - (unreleased)
 ----------------------
- * Feature: no longer add xml:lang attribute to all elements, instead have a 
-   separate dcterms:language element [tiberich #4281]
 
 4.3 - (2012-02-02)
 ------------------
