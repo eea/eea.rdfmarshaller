@@ -193,6 +193,8 @@ class ATCT2Surf(object):
         resource = self.surfResource
         language = context.Language()
 
+        setattr(resource, '%s_%s' % ('dcterms', 'language'), language)
+
         for field in context.Schema().fields():
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
@@ -221,13 +223,16 @@ class ATCT2Surf(object):
                         value = (value.HTML4(), None,
                                 'http://www.w3.org/2001/XMLSchema#dateTime')
                     elif isinstance(value, str):
-                        value = (value, language)
+                        #value = (value, language)
+                        value = (value, None)   #removed language
                     elif isinstance(value, unicode):
                         pass
                     else:
                         try:
+                            #value = (unicode(value, 'utf-8', 'replace'),
+                                    #language)
                             value = (unicode(value, 'utf-8', 'replace'),
-                                    language)
+                                    None)   #removed language
                         except TypeError:
                             value = str(value)
 
