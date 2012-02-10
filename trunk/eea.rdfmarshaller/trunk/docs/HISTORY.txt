@@ -3,6 +3,7 @@ Changelog
 
 4.4-dev - (unreleased)
 ----------------------
+ * Bug fix: fixed a problem with related fields that are empty [tiberich #4942]
 
 4.3 - (2012-02-02)
 ------------------

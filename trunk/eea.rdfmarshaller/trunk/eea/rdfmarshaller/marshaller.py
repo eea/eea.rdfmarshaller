@@ -104,6 +104,8 @@ class ATReferenceField2Surf(ATField2Surf):
         if not isinstance(value, (list, tuple)):
             value = [value]
 
+        value = filter(None, value) #the field might have been empty
+
         return [ rdflib.URIRef(obj.absolute_url()) for obj in value ]
 
 
