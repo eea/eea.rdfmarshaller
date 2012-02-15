@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<object name="portal_properties" meta_type="Plone Properties Tool">
+ <object name="rdfmarshaller_properties" meta_type="Plone Property Sheet">
+  <property name="title">eea.rdfmarshaller  properties</property>
+  <property name="blacklist" type="lines">
+    <element value="constrainTypesMode" />
+    <element value="locallyAllowedTypes" />
+    <element value="immediatelyAddableTypes" />
+    <element value="language" />
+    <element value="allowDiscussion" />
+    <element value="file" />
+    <element value="image" />
+  </property>
+
+  <property name="mymetatype_blacklist" type="lines">
+    <element value="#example where you can add a black list for specific metatype. copy the generic and add more fields" />
+  </property>
+
+  <property name="figure_blacklist" type="lines">
+    <element value="creation_date" />
+    <element value="modification_date" />
+    <element value="creators" />
+    <element value="subject" />
+    <element value="effectiveDate" />
+    <element value="expirationDate" />
+    <element value="constrainTypesMode" />
+    <element value="locallyAllowedTypes" />
+    <element value="immediatelyAddableTypes" />
+    <element value="language" />
+    <element value="allowDiscussion" />
+    <element value="image" />
+  </property>
+
+  <property name="specification_blacklist" type="lines">
+    <element value="codes" />
+    <element value="constrainTypesMode" />
+    <element value="locallyAllowedTypes" />
+    <element value="immediatelyAddableTypes" />
+    <element value="language" />
+    <element value="allowDiscussion" />
+  </property>
+
+  <property name="article_blacklist" type="lines">
+    <element value="media" />
+    <element value="constrainTypesMode" />
+    <element value="locallyAllowedTypes" />
+    <element value="immediatelyAddableTypes" />
+    <element value="language" />
+    <element value="allowDiscussion" />
+  </property>
+
+ </object>
+</object>
