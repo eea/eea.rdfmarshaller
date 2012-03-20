@@ -97,7 +97,7 @@ Exporting a vocabulary
   >>> store.load_triples(source=StringIO(data))
   True
   >>> SimpleVocabularyTerm = session.get_class(surf.ns.SIMPLEVOCABULARYTERM['SimpleVocabularyTerm']) 
-  >>> [(obj.simplevocabularyterm_id.first.strip(), obj.dcterms_title.first.strip()) for obj in SimpleVocabularyTerm.all().order()] 
+  >>> sorted([(obj.simplevocabularyterm_id.first.strip(), obj.dcterms_title.first.strip()) for obj in SimpleVocabularyTerm.all()], key=lambda t:t[0])
   [(u'air pollution', u'Air pollution'), (u'biodiversity', u'Nature protection and biodiversity'), (u'climate change', u'Climate change mitigation'), (u'freshwater', u'Freshwater'), (u'land', u'Land use'), (u'waste', u'Waste')]
   
 
@@ -161,8 +161,8 @@ a folder but doesn't continue further down into any folderish content.
   >>> allobjects = [obj.folder_id.first.strip() for obj in Folder.all().order()]
   >>> len(allobjects)
   2
-  >>> [obj.folder_id.first.strip() for obj in Folder.all().order()]
-  [u'valentine', u'sub1']
+  >>> sorted([obj.folder_id.first.strip() for obj in Folder.all()])
+  [u'sub1', u'valentine']
 
 Level 2 recursive
 
@@ -175,8 +175,8 @@ Level 2 recursive
   >>> allobjects = [obj.folder_id.first.strip() for obj in Folder.all().order()]
   >>> len(allobjects)
   3
-  >>> [obj.folder_id.first.strip() for obj in Folder.all().order()]
-  [u'valentine', u'sub1', u'sub2']
+  >>> sorted([obj.folder_id.first.strip() for obj in Folder.all()])
+  [u'sub1', u'sub2', u'valentine']
 
 Infinit recursive
 
@@ -189,7 +189,7 @@ Infinit recursive
   >>> allobjects = [obj.folder_id.first.strip() for obj in Folder.all().order()]
   >>> len(allobjects)
   5
-  >>> [obj.folder_id.first.strip() for obj in Folder.all().order()]
+  >>> sorted([obj.folder_id.first.strip() for obj in Folder.all()])
   [u'valentine', u'sub1', u'sub2', u'sub3', u'sub4']
 
 A folder uses dcterms:hasPart to tell which content it has.
