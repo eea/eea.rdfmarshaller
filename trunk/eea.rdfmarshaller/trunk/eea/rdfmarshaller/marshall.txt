@@ -190,7 +190,7 @@ Infinit recursive
   >>> len(allobjects)
   5
   >>> sorted([obj.folder_id.first.strip() for obj in Folder.all()])
-  [u'valentine', u'sub1', u'sub2', u'sub3', u'sub4']
+  [u'sub1', u'sub2', u'sub3', u'sub4', u'valentine']
 
 A folder uses dcterms:hasPart to tell which content it has.
 
