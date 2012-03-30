@@ -1,0 +1,29 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:browser="http://namespaces.zope.org/browser">
+
+  <include package="Products.ATVocabularyManager" />
+
+  <include file="profiles.zcml" />
+  <include file="archetypes.zcml" />
+  <include file="atvocabulary.zcml" />
+  <include package=".browser" />
+  <include package=".upgrades" />
+
+  <class class="surf.Session">
+     <implements interface=".interfaces.ISurfSession" />
+  </class>
+
+  <adapter factory=".marshaller.ATCT2Surf" />
+  <adapter factory=".marshaller.ATField2Surf" />
+  <adapter factory=".marshaller.ATField2Surf"
+           for=".interfaces.ITextField
+                .interfaces.ISurfSession" />
+  <adapter factory=".marshaller.ATFileField2Surf" />
+  <adapter factory=".marshaller.ATReferenceField2Surf" />
+  <adapter factory=".marshaller.ATField2RdfSchema" />
+  <adapter factory=".marshaller.FTI2Surf" />
+  <adapter factory=".marshaller.ATFolderish2Surf" />
+  <adapter factory=".marshaller.PortalTypesUtil2Surf" /> 
+
+</configure>
