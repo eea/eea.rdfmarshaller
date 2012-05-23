@@ -29,3 +29,12 @@ class IReferenceField(IField):
 
 class ITextField(IField):
     """ Marker interface for Products.Archetypes.Field.ReferenceField """
+
+
+class ISurfResourceModifier(Interface):
+    """Plugins that can modify the saved resource for a given context
+    """
+
+    def run(resource):
+        """Gets the rdf resource as argument, to allow it to change inplace
+        """

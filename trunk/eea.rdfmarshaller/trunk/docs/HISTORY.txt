@@ -3,9 +3,12 @@ Changelog
 
 4.7-dev - (unreleased)
 ----------------------
+ * Feature: use a mechanism of subscribers to allow modification of the surf
+   resource by package plugins [tiberich #5129]
 
 4.6 - (2012-03-30)
 ------------------
+ * Empty release
 
 4.5 - (2012-02-15)
 ------------------

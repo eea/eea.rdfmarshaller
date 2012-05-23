@@ -13,7 +13,8 @@ from Products.CMFPlone.utils import _createObjectByType
 from eea.rdfmarshaller.interfaces import IATVocabularyTerm
 from eea.rdfmarshaller.interfaces import IArchetype2Surf, IATField2Surf
 from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
-from zope.component import adapts, queryMultiAdapter
+from eea.rdfmarshaller.interfaces import ISurfResourceModifier
+from zope.component import adapts, queryMultiAdapter, subscribers
 from zope.interface import implements, Interface
 import logging
 import rdflib
@@ -266,7 +267,12 @@ class ATCT2Surf(object):
 
     def at2surf(self, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
-        return self._schema2surf()
+
+        res = self._schema2surf() 
+
+        for modifier in subscribers([self.context], ISurfResourceModifier):
+            modifier.run(res)
+        return res
 
 
 class ATVocabularyTerm2Surf(ATCT2Surf):
@@ -451,7 +457,11 @@ class FTI2Surf(ATCT2Surf):
 
     def at2surf(self, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
-        return self._schema2surf()
+        res = self._schema2surf() 
+
+        for modifier in subscribers([self.context], ISurfResourceModifier):
+            modifier.run(res)
+        return res
 
 
 class PortalTypesUtil2Surf(ATCT2Surf):
@@ -490,5 +500,9 @@ class PortalTypesUtil2Surf(ATCT2Surf):
         resource.save()
 
     def at2surf(self, **kwargs):
-        return self._schema2surf()
+        res = self._schema2surf() 
+
+        for modifier in subscribers([self.context], ISurfResourceModifier):
+            modifier.run(res)
+        return res
 
