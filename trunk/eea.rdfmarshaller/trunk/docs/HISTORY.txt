@@ -3,6 +3,8 @@ Changelog
 
 4.7-dev - (unreleased)
 ----------------------
+ * Bug fix: use dcterms:issued instead of dcterms:effective for DC
+   [tiberich #5135]
  * Feature: use a mechanism of subscribers to allow modification of the surf
    resource by package plugins [tiberich #5129]
 

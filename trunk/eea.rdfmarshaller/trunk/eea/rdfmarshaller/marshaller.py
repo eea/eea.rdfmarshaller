@@ -122,7 +122,7 @@ class ATCT2Surf(object):
                    ('modification_date', 'modified'),
                    ('creators', 'creator'),
                    ('subject', 'subject'),
-                   ('effectiveDate', 'effective'),
+                   ('effectiveDate', 'issued'),
                    ('expirationDate', 'expires'),
                    ('rights', 'rights'),
                    ])
