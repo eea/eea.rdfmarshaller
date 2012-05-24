@@ -1,4 +1,5 @@
 """ Marshaller module """
+from Products.MimetypesRegistry.interfaces import IMimetypesRegistry
 from Acquisition import aq_inner
 from DateTime.DateTime import DateTime
 from OFS.interfaces import IFolder
@@ -16,6 +17,7 @@ from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 from zope.component import adapts, queryMultiAdapter, subscribers
 from zope.interface import implements, Interface
+from Products.Archetypes.interfaces import IBaseObject
 import logging
 import rdflib
 import surf
@@ -59,7 +61,10 @@ class RDFMarshaller(Marshaller):
 
 
 class ATCTDublinCore2Surf(object):
-    """Base implementation of IArchetype2Surf """
+    """Base implementation of IArchetype2Surf 
+    
+    comment: is this used anywhere?
+    """
     implements(IArchetype2Surf)
     adapts(Interface, ISurfSession)
 
@@ -69,7 +74,11 @@ class ATCTDublinCore2Surf(object):
 
 
 class ATField2Surf(object):
-    """Base implementation of IATField2Surf"""
+    """Base implementation of IATField2Surf
+    
+    ZZZ: this should be refactored to take the real content into account
+    """
+
     implements(IATField2Surf)
     adapts(IField, ISurfSession)
 
@@ -114,7 +123,7 @@ class ATCT2Surf(object):
     """IArchetype2Surf implementation for ATCT"""
 
     implements(IArchetype2Surf)
-    adapts(Interface, ISurfSession)
+    adapts(IBaseObject, ISurfSession)
 
     dc_map = dict([('title', 'title'),
                    ('description', 'description'),
@@ -506,3 +515,50 @@ class PortalTypesUtil2Surf(ATCT2Surf):
             modifier.run(res)
         return res
 
+class MimetypesRegistry2Surf(ATCT2Surf):
+    """IArchetype2Surf implementation for mimetypes_registry
+    """
+    implements(IArchetype2Surf)
+    adapts(IMimetypesRegistry, ISurfSession)
+    
+    @property
+    def portalType(self):
+        return u'PloneUtility'
+
+    @property
+    def namespace(self):
+        return surf.ns.RDFS
+
+    @property
+    def prefix(self):
+        return 'rdfs'
+
+    @property
+    def rdfId(self):
+        return self.context.getId().replace(' ','')
+
+    @property
+    def subject(self):
+        return '%s#%s' % (self.context.absolute_url(),self.rdfId)
+
+    def _schema2surf(self):
+        #context = self.context
+        #session = self.session
+        resource = self.surfResource
+
+        resource.rdfs_label = (u"Plone Mimetypes Registry Tool", None)
+        resource.rdfs_comment = (u"Holds definitions of mimetypes", None)
+        resource.rdf_id = self.rdfId
+
+        mimes = self.context.list_mimetypes()
+
+        resource.rdfs_mimetype = [(i, None) for i in mimes]
+
+        resource.save()
+
+    def at2surf(self, **kwargs):
+        res = self._schema2surf() 
+
+        for modifier in subscribers([self.context], ISurfResourceModifier):
+            modifier.run(res)
+        return res
