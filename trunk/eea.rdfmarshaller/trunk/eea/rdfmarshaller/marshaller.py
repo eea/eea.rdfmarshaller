@@ -123,7 +123,7 @@ class ATCT2Surf(object):
     """IArchetype2Surf implementation for ATCT"""
 
     implements(IArchetype2Surf)
-    adapts(IBaseObject, ISurfSession)
+    adapts(Interface, ISurfSession)
 
     dc_map = dict([('title', 'title'),
                    ('description', 'description'),
