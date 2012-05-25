@@ -113,7 +113,7 @@ class ATReferenceField2Surf(ATField2Surf):
         if not isinstance(value, (list, tuple)):
             value = [value]
 
-        value = filter(None, value) #the field might have been empty
+        value = [v for v in value if v] #the field might have been empty
 
         return [ rdflib.URIRef(obj.absolute_url()) for obj in value ]
 
@@ -267,8 +267,9 @@ class ATCT2Surf(object):
                 state = 'published'
 
             if state == 'published':
+                parent_url = parent.absolute_url()
                 resource.dcterms_isPartOf = \
-                    rdflib.URIRef(parent.absolute_url()) #pylint: disable-msg = W0612
+                    rdflib.URIRef(parent_url) #pylint: disable-msg = W0612
 
         resource.save()
         return resource
@@ -479,25 +480,31 @@ class PortalTypesUtil2Surf(ATCT2Surf):
 
     @property
     def portalType(self):
+        """portal type"""
         return u'PloneUtility'
 
     @property
     def namespace(self):
+        """namespace"""
         return surf.ns.RDFS
 
     @property
     def prefix(self):
+        """prefix"""
         return 'rdfs'
 
     @property
     def rdfId(self):
+        """rdfid"""
         return self.context.getId().replace(' ','')
 
     @property
     def subject(self):
+        """subject"""
         return '%s#%s' % (self.context.absolute_url(),self.rdfId)
 
     def _schema2surf(self):
+        """_schema2surf"""
         #context = self.context
         #session = self.session
         resource = self.surfResource
@@ -508,6 +515,8 @@ class PortalTypesUtil2Surf(ATCT2Surf):
         resource.save()
 
     def at2surf(self, **kwargs):
+        """at2surf
+        """
         res = self._schema2surf() 
 
         for modifier in subscribers([self.context], ISurfResourceModifier):
@@ -522,25 +531,31 @@ class MimetypesRegistry2Surf(ATCT2Surf):
     
     @property
     def portalType(self):
+        """portalType"""
         return u'PloneUtility'
 
     @property
     def namespace(self):
+        """namespace"""
         return surf.ns.RDFS
 
     @property
     def prefix(self):
+        """prefix"""
         return 'rdfs'
 
     @property
     def rdfId(self):
+        """rdfid"""
         return self.context.getId().replace(' ','')
 
     @property
     def subject(self):
+        """subject"""
         return '%s#%s' % (self.context.absolute_url(),self.rdfId)
 
     def _schema2surf(self):
+        """_schema2surf"""
         #context = self.context
         #session = self.session
         resource = self.surfResource
@@ -555,7 +570,8 @@ class MimetypesRegistry2Surf(ATCT2Surf):
 
         resource.save()
 
-    def at2surf(self, **kwargs):
+    def at2surf(self):
+        """at2surf"""
         res = self._schema2surf() 
 
         for modifier in subscribers([self.context], ISurfResourceModifier):
