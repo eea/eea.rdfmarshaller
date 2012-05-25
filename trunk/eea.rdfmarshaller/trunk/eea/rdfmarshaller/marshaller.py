@@ -17,7 +17,6 @@ from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 from zope.component import adapts, queryMultiAdapter, subscribers
 from zope.interface import implements, Interface
-from Products.Archetypes.interfaces import IBaseObject
 import logging
 import rdflib
 import surf
