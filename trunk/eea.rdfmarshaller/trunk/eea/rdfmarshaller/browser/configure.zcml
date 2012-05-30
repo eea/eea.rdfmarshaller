@@ -16,4 +16,11 @@
     permission="zope.Public"
     />
 
+  <browser:page
+    for="*"
+    name="extensions.rdf"
+    class=".extensions.RDFExtensions"
+    permission="zope.Public"
+    />
+
 </configure>

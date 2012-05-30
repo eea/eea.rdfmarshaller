@@ -3,11 +3,15 @@ Changelog
 
 4.7-dev - (unreleased)
 ----------------------
+ * WIP: added eea:isTranslationOf to point to translations 
+   [tiberich #5130]
  * Bug fix: use dcterms:issued instead of dcterms:effective for DC
    [tiberich #5135]
  * Feature: use a mechanism of subscribers to allow modification of the surf
-   resource by package plugins [tiberich #5129]
- * Bug fix: fix @@rdf view for mimetypes_registry [tiberich #5206]
+   resource by package plugins 
+   [tiberich #5129]
+ * Bug fix: fix @@rdf view for mimetypes_registry 
+   [tiberich #5206]
 
 4.6 - (2012-03-30)
 ------------------
@@ -15,7 +19,8 @@ Changelog
 
 4.5 - (2012-02-15)
 ------------------
- * Bug fix: fixed tests [tiberich]
+ * Bug fix: fixed tests 
+   [tiberich]
 
 4.4 - (2012-02-10)
 ------------------

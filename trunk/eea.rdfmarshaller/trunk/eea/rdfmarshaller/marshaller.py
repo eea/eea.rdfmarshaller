@@ -24,6 +24,7 @@ import sys
 
 logging.basicConfig(level=logging.CRITICAL)
 
+surf.ns.register(SOER="http://www.eea.europa.eu/extensions.rdf#")
 
 class RDFMarshaller(Marshaller):
     """ Marshal content types instances into RDF format """
@@ -54,6 +55,9 @@ class RDFMarshaller(Marshaller):
                                 override=True)
         store.reader.graph.bind('dcterms',
                                 surf.ns.DCTERMS,
+                                override=True)
+        store.reader.graph.bind('eea',
+                                surf.ns.EEA,
                                 override=True)
         data = store.reader.graph.serialize(format='pretty-xml')
         return (content_type, length, data)
@@ -204,6 +208,8 @@ class ATCT2Surf(object):
         resource = self.surfResource
         language = context.Language()
 
+        add_translation_info(self.context, resource)
+
         for field in context.Schema().fields():
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
@@ -307,6 +313,7 @@ class ATFolderish2Surf(ATCT2Surf):
         currentLevel += 1
         resource = super(ATFolderish2Surf, self).at2surf(
                 currentLevel=currentLevel, endLevel=endLevel)
+        add_translation_info(self.context, resource)
         if currentLevel <= endLevel or endLevel == 0:
             resource.dcterms_hasPart = []
 
@@ -523,6 +530,7 @@ class PortalTypesUtil2Surf(ATCT2Surf):
             modifier.run(res)
         return res
 
+
 class MimetypesRegistry2Surf(ATCT2Surf):
     """IArchetype2Surf implementation for mimetypes_registry
     """
@@ -577,3 +585,22 @@ class MimetypesRegistry2Surf(ATCT2Surf):
         for modifier in subscribers([self.context], ISurfResourceModifier):
             modifier.run(res)
         return res
+
+
+def add_translation_info(context, resource):
+    """Add info about translations
+    """
+    #ZZZ: should watch for availability of Products.LinguaPlone
+
+    if not getattr(context, 'isCanonical'):
+        return
+
+    if context.isCanonical():
+        #ZZZ: needs check for review state?
+        translations = context.getTranslations(review_state=False)
+        resource.eea_hasTranslation = [(o.absolute_url(), None) 
+                                        for o in translations.values()]
+    else:
+        resource.eea_isTranslationOf = \
+            context.getCanonical().absolute_url()
+
