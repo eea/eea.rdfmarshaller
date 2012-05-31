@@ -22,9 +22,11 @@ import rdflib
 import surf
 import sys
 
+DEBUG = True
+
 logging.basicConfig(level=logging.CRITICAL)
 
-surf.ns.register(SOER="http://www.eea.europa.eu/extensions.rdf#")
+surf.ns.register(EEA="http://www.eea.europa.eu/extensions.rdf#")
 
 class RDFMarshaller(Marshaller):
     """ Marshal content types instances into RDF format """
@@ -187,6 +189,8 @@ class ATCT2Surf(object):
             resource = self.session.get_class(
                 self.namespace[self.portalType])(self.subject)
         except Exception:
+            if DEBUG:
+                raise
             log.log('RDF marshaller error \n%s: %s' %
                     (sys.exc_info()[0], sys.exc_info()[1]),
                     severity=log.logging.WARN)
@@ -221,6 +225,8 @@ class ATCT2Surf(object):
                 try:
                     value = fieldAdapter.value(context)
                 except TypeError:
+                    if DEBUG:
+                        raise
                     log.log('RDF marshaller error for context[field]'
                             ' "%s[%s]": \n%s: %s' %
                             (context.absolute_url(), fieldName,
@@ -257,6 +263,8 @@ class ATCT2Surf(object):
                     try:
                         setattr(resource, '%s_%s' % (prefix, fieldName), value)
                     except Exception:
+                        if DEBUG:
+                            raise
                         log.log('RDF marshaller error for context[field]'
                                 '"%s[%s]": \n%s: %s' %
                                 (context.absolute_url(), fieldName,
@@ -452,6 +460,8 @@ class FTI2Surf(ATCT2Surf):
                             'rdfstype')
                 instance.unindexObject()
             except Exception:   #might be a tool class
+                if DEBUG:
+                    raise
                 log.log('RDF marshaller error for FTI'
                         ' "%s": \n%s: %s' %
                         (context.absolute_url(),
@@ -602,5 +612,5 @@ def add_translation_info(context, resource):
                                         for o in translations.values()]
     else:
         resource.eea_isTranslationOf = \
-            context.getCanonical().absolute_url()
+            rdflib.URIRef( context.getCanonical().absolute_url())
 
