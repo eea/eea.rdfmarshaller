@@ -602,7 +602,7 @@ def add_translation_info(context, resource):
     """
     #ZZZ: should watch for availability of Products.LinguaPlone
 
-    if not getattr(context, 'isCanonical'):
+    if not getattr(context, 'isCanonical', None):
         return
 
     if context.isCanonical():
