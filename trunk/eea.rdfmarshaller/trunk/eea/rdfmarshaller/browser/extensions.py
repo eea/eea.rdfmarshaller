@@ -1,7 +1,10 @@
-import surf
-import rdflib
+"""rdf extensions 
+"""
+
 from Products.Five import BrowserView
 import logging
+#import rdflib
+import surf
 
 
 class RDFExtensions(BrowserView):
@@ -14,8 +17,6 @@ class RDFExtensions(BrowserView):
         store.log.setLevel(logging.CRITICAL)
         store.writer.log.setLevel(logging.CRITICAL)
         session = surf.Session(store)
-        content_type = 'text/xml; charset=UTF-8'
-        length = data = 0
 
         self.enhance(session)
 
@@ -30,4 +31,6 @@ class RDFExtensions(BrowserView):
         ZZZ: we should add a subscribers mechanism to make it possible to 
         discover additions to the published extensions
         """
-        pass
+        
+        #eea:isTranslationOf
+        session.rdf_Property = None

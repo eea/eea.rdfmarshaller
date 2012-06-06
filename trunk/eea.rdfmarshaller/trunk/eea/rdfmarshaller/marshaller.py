@@ -518,7 +518,7 @@ class PortalTypesUtil2Surf(ATCT2Surf):
     @property
     def subject(self):
         """subject"""
-        return '%s#%s' % (self.context.absolute_url(),self.rdfId)
+        return '%s#%s' % (self.context.absolute_url(), self.rdfId)
 
     def _schema2surf(self):
         """_schema2surf"""
@@ -531,7 +531,7 @@ class PortalTypesUtil2Surf(ATCT2Surf):
         resource.rdf_id = self.rdfId
         resource.save()
 
-    def at2surf(self, **kwargs):
+    def at2surf(self currentLevel=0, endLevel=1, **kwargs):
         """at2surf
         """
         res = self._schema2surf() 
@@ -570,7 +570,7 @@ class MimetypesRegistry2Surf(ATCT2Surf):
     @property
     def subject(self):
         """subject"""
-        return '%s#%s' % (self.context.absolute_url(),self.rdfId)
+        return '%s#%s' % (self.context.absolute_url(), self.rdfId)
 
     def _schema2surf(self):
         """_schema2surf"""
@@ -588,7 +588,7 @@ class MimetypesRegistry2Surf(ATCT2Surf):
 
         resource.save()
 
-    def at2surf(self):
+    def at2surf(self currentLevel=0, endLevel=1, **kwargs):
         """at2surf"""
         res = self._schema2surf() 
 
