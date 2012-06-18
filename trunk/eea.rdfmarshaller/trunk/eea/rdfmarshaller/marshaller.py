@@ -606,10 +606,10 @@ def add_translation_info(context, resource):
         return
 
     if context.isCanonical():
-        #ZZZ: needs check for review state?
         translations = context.getTranslations(review_state=False)
-        resource.eea_hasTranslation = [(o.absolute_url(), None) 
-                                        for o in translations.values()]
+        resource.eea_hasTranslation = \
+                [(o.absolute_url(), None) for o in translations.values()
+                if o.absolute_url()!=context.absolute_url()]
     else:
         resource.eea_isTranslationOf = \
             rdflib.URIRef( context.getCanonical().absolute_url())
