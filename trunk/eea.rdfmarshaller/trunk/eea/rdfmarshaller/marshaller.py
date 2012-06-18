@@ -410,7 +410,10 @@ class FTI2Surf(ATCT2Surf):
                      'expirationDate',
                      'contributors',
                      'allowDiscussion',
-                     'rights'
+                     'rights',
+                     'nextPreviousEnabled',
+                     'excludeFromNav',
+                     'creator'
                      ]
 
     @property
