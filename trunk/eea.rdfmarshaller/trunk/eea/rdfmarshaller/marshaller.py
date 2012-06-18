@@ -26,7 +26,7 @@ DEBUG = True
 
 logging.basicConfig(level=logging.CRITICAL)
 
-surf.ns.register(EEA="http://www.eea.europa.eu/extensions.rdf#")
+surf.ns.register(EEA="http://www.eea.europa.eu/ontologies.rdf#")
 
 class RDFMarshaller(Marshaller):
     """ Marshal content types instances into RDF format """
