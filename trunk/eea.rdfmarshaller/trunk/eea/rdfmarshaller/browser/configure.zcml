@@ -18,7 +18,7 @@
 
   <browser:page
     for="*"
-    name="extensions.rdf"
+    name="ontologies.rdf"
     class=".extensions.RDFExtensions"
     permission="zope.Public"
     />
