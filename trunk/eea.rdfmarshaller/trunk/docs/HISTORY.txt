@@ -3,6 +3,9 @@
 
 4.8-dev - (unreleased)
 ----------------------
+* Bug fix: hasTranslations must also be an rdf:resource (not a literal value) 
+  in coherence with the isTranslationOf and other dcterms relations.
+  [demarant refs #5130]
 * Bug fix: fixed hasTranslation recursive relation to itself.
   [demarant refs #5130]
 
