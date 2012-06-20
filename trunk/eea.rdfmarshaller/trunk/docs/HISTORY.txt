@@ -8,6 +8,8 @@
   [demarant refs #5130]
 * Bug fix: fixed hasTranslation recursive relation to itself.
   [demarant refs #5130]
+* Bug fix: blacklisted nextPreviousEnabled and excludeFromNav
+  [tiberich refs #5130]
 
 4.7 - (2012-06-12)
 ------------------
