@@ -1,6 +1,9 @@
 ﻿Changelog
 =========
 
+4.9-dev - (unreleased)
+----------------------
+
 4.8 - (2012-06-20)
 ------------------
 * Bug fix: hasTranslations must also be an rdf:resource (not a literal value) 
