@@ -1,5 +1,4 @@
 """ Marshaller module """
-from Products.MimetypesRegistry.interfaces import IMimetypesRegistry
 from Acquisition import aq_inner
 from DateTime.DateTime import DateTime
 from OFS.interfaces import IFolder
@@ -11,10 +10,12 @@ from Products.CMFCore.interfaces._tools import ITypesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import log
 from Products.CMFPlone.utils import _createObjectByType
+from Products.MimetypesRegistry.interfaces import IMimetypesRegistry
+from chardet import detect
 from eea.rdfmarshaller.interfaces import IATVocabularyTerm
 from eea.rdfmarshaller.interfaces import IArchetype2Surf, IATField2Surf
-from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
+from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
 from zope.component import adapts, queryMultiAdapter, subscribers
 from zope.interface import implements, Interface
 import logging
@@ -236,7 +237,6 @@ class ATCT2Surf(object):
 
                 if (value and value != "None") or \
                         (isinstance(value, basestring) and value.strip()) :
-                    prefix = self.prefix
 
                     if isinstance(value, (list, tuple)):
                         value = list(value)
@@ -244,7 +244,14 @@ class ATCT2Surf(object):
                         value = (value.HTML4(), None,
                                 'http://www.w3.org/2001/XMLSchema#dateTime')
                     elif isinstance(value, str):
-                        value = (value, language)
+                        encoding = detect(value)['encoding']
+                        try:
+                            value = value.decode(encoding)
+                        except LookupError:
+                            log.log("Could not decode to %s in rdfmarshaller" % 
+                                     encoding)
+                            value = value.decode('utf-8','replace')
+                        value = (value.encode('utf-8'), language)
                     elif isinstance(value, unicode):
                         pass
                     else:
@@ -254,6 +261,7 @@ class ATCT2Surf(object):
                         except TypeError:
                             value = str(value)
 
+                    prefix = self.prefix
                     if fieldName in self.field_map:
                         fieldName = self.field_map.get(fieldName)
                     elif fieldName in self.dc_map:

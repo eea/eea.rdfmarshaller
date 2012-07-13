@@ -1,8 +1,10 @@
-﻿Changelog
+Changelog
 =========
 
 4.9-dev - (unreleased)
 ----------------------
+* Bug fix: avoid unicode decode errors in @@rdf 
+  [tiberich refs #5308]
 
 4.8 - (2012-06-20)
 ------------------

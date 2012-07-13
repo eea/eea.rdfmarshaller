@@ -33,6 +33,7 @@ setup(name=name,
           'surf',
           'surf.rdflib',
           'Products.ATVocabularyManager',
+          'chardet',
       ],
       entry_points="""
       # -*- Entry points: -*-
