@@ -247,7 +247,7 @@ class ATCT2Surf(object):
                         encoding = detect(value)['encoding']
                         try:
                             value = value.decode(encoding)
-                        except LookupError:
+                        except (LookupError, UnicodeDecodeError):
                             log.log("Could not decode to %s in rdfmarshaller" % 
                                      encoding)
                             value = value.decode('utf-8','replace')

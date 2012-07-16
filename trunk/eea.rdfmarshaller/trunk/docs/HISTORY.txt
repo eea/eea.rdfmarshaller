@@ -3,6 +3,9 @@ Changelog
 
 5.0-dev - (unreleased)
 ----------------------
+* Bug fix: also handle UnicodeDecodeError in when trying to convert text
+  using chardet.detect 
+  [tiberich refs #5308]
 
 4.9 - (2012-07-13)
 ------------------
