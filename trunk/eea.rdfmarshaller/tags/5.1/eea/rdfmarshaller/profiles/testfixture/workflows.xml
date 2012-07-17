@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<object name="portal_workflow" meta_type="Plone Workflow Tool">
+    <bindings>
+        <default>
+            <bound-workflow workflow_id="plone_workflow"/>
+        </default>
+
+        <type type_id="SimpleVocabulary">
+            <bound-workflow workflow_id="plone_workflow"/>
+        </type>
+        <type type_id="SimpleVocabularyTerm">
+            <bound-workflow workflow_id="plone_workflow"/>
+        </type>
+    </bindings>
+</object>
