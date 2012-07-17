@@ -3,6 +3,9 @@ Changelog
 
 5.1-dev - (unreleased)
 ----------------------
+* Bug fix: only provide rdf view for real archetypes content, FTI and portal
+  tools
+  [tiberich refs #5301]
 
 5.0 - (2012-07-16)
 ------------------
