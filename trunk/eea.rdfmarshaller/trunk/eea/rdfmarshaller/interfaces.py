@@ -19,7 +19,7 @@ class IATField2Surf(Interface):
 
 
 class IATVocabulary(Interface):
-    """ Marker interface for ATVocabularyManager Simple Vocabularym """
+    """ Marker interface for ATVocabularyManager Simple Vocabulary """
 
 class IATVocabularyTerm(Interface):
     """ Marker interface for ATVocabularyManager Simple Term """
@@ -28,7 +28,7 @@ class IReferenceField(IField):
     """ Marker interface for Products.Archetypes.Field.ReferenceField """
 
 class ITextField(IField):
-    """ Marker interface for Products.Archetypes.Field.ReferenceField """
+    """ Marker interface for Products.Archetypes.Field.TextField """
 
 
 class ISurfResourceModifier(Interface):
