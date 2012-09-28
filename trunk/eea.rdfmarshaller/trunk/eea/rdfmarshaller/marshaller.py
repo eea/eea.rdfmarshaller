@@ -302,7 +302,7 @@ class ATCT2Surf(object):
         res = self._schema2surf() 
 
         for modifier in subscribers([self.context], ISurfResourceModifier):
-            modifier.run(res)
+            modifier.run(res, self.session)
         return res
 
 
@@ -497,7 +497,7 @@ class FTI2Surf(ATCT2Surf):
         res = self._schema2surf() 
 
         for modifier in subscribers([self.context], ISurfResourceModifier):
-            modifier.run(res)
+            modifier.run(res, self.session)
         return res
 
 
@@ -548,7 +548,7 @@ class PortalTypesUtil2Surf(ATCT2Surf):
         res = self._schema2surf() 
 
         for modifier in subscribers([self.context], ISurfResourceModifier):
-            modifier.run(res)
+            modifier.run(res, self.session)
         return res
 
 
@@ -604,7 +604,7 @@ class MimetypesRegistry2Surf(ATCT2Surf):
         res = self._schema2surf() 
 
         for modifier in subscribers([self.context], ISurfResourceModifier):
-            modifier.run(res)
+            modifier.run(res, self.session)
         return res
 
 

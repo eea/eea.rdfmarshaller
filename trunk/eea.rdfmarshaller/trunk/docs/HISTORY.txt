@@ -3,6 +3,8 @@ Changelog
 
 5.2-dev - (unreleased)
 ----------------------
+* Feature: pass the ssession as a parameters to run marshaller modifiers
+  [tiberich #5545]
 
 5.1 - (2012-07-17)
 ------------------
