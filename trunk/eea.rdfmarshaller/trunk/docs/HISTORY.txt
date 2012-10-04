@@ -3,6 +3,8 @@ Changelog
 
 5.2-dev - (unreleased)
 ----------------------
+* Bug fix: also register the geo namespace, for pretty printing
+  [tiberich refs #3425]
 
 5.1 - (2012-07-17)
 ------------------

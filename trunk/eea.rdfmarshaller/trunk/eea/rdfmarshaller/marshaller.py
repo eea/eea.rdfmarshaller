@@ -23,7 +23,7 @@ import rdflib
 import surf
 import sys
 
-DEBUG = True
+DEBUG = False
 
 logging.basicConfig(level=logging.CRITICAL)
 
@@ -61,6 +61,9 @@ class RDFMarshaller(Marshaller):
                                 override=True)
         store.reader.graph.bind('eea',
                                 surf.ns.EEA,
+                                override=True)
+        store.reader.graph.bind('geo',
+                                surf.ns.GEO,
                                 override=True)
         data = store.reader.graph.serialize(format='pretty-xml')
         return (content_type, length, data)
