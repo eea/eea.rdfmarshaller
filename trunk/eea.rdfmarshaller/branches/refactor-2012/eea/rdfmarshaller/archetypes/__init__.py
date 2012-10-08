@@ -2,7 +2,7 @@ class Archetype2Surf(GenericObject2Surf):
     """IArchetype2Surf implementation for AT based content items"""
 
     implements(IArchetype2Surf)
-    adapts(Interface, ISurfSession)
+    adapts(IBaseContent, ISurfSession)
 
     dc_map = dict([('title', 'title'),
                    ('description', 'description'),
@@ -38,82 +38,38 @@ class Archetype2Surf(GenericObject2Surf):
         """ Subject """
         return self.context.absolute_url()
 
-    def update_resource(self, resource):
+    def update_resource(self, resource, *args, **kwds):
         """ Schema to Surf """
         language = self.context.Language()
 
-        add_translation_info(self.context, resource)
-
         for field in self.context.Schema().fields():
+
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
                 continue
+
             fieldAdapter = queryMultiAdapter((field, self.context, self.session),
                                               interface=IATField2Surf)
+            if not fieldAdapter.exportable:
+                continue
 
-            if fieldAdapter.exportable:
-                try:
-                    value = fieldAdapter.value(self.context)
-                except TypeError:
-                    if DEBUG:
-                        raise
-                    log.log('RDF marshaller error for context[field]'
-                            ' "%s[%s]": \n%s: %s' %
-                            (self.context.absolute_url(), fieldName,
-                             sys.exc_info()[0], sys.exc_info()[1]),
-                             severity=log.logging.WARN)
-                    continue
+            value = fieldAdapter.value(self.context)
+            valueAdapter = queryAdapter(value, interface="IValue2Surf")
+            if valueAdapter:
+                value = valueAdapter()
+            if not value or value == "None":
+                continue
 
-                valueAdapter = queryAdapter(value, interface="IValue2Surf")
-                if valueAdapter:
-                    value = valueAdapter()
+            prefix = self.prefix
+            if fieldName in self.field_map:
+                fieldName = self.field_map.get(fieldName)
+            elif fieldName in self.dc_map:
+                fieldName = self.dc_map.get(fieldName)
+                prefix = 'dcterms'
 
-                #this logic should be refactored
-                if (value and value != "None"):
+            setattr(resource, '%s_%s' % (prefix, fieldName), value)
 
-                    prefix = self.prefix
-                    if fieldName in self.field_map:
-                        fieldName = self.field_map.get(fieldName)
-                    elif fieldName in self.dc_map:
-                        fieldName = self.dc_map.get(fieldName)
-                        prefix = 'dcterms'
-
-                    try:
-                        setattr(resource, '%s_%s' % (prefix, fieldName), value)
-                    except Exception:
-                        if DEBUG:
-                            raise
-                        log.log('RDF marshaller error for context[field]'
-                                '"%s[%s]": \n%s: %s' %
-                                (self.context.absolute_url(), fieldName,
-                                 sys.exc_info()[0], sys.exc_info()[1]),
-                                 severity=log.logging.WARN)
-
-        parent = getattr(aq_inner(self.context), 'aq_parent', None)
-        wftool = getToolByName(self.context, 'portal_workflow')
-        if (parent is not None):
-            try:
-                state = wftool.getInfoFor(parent, 'review_state')
-            except WorkflowException:
-                #object has no workflow, we assume public, see #4418
-                state = 'published'
-
-            if state == 'published':
-                parent_url = parent.absolute_url()
-                resource.dcterms_isPartOf = \
-                    rdflib.URIRef(parent_url) #pylint: disable-msg = W0612
-
-        #resource.save()
         return resource
-
-    #def at2surf(self, currentLevel=0, endLevel=1, **kwargs):
-        #""" AT to Surf """
-
-        #res = self._schema2surf() 
-
-        #for modifier in subscribers([self.context], ISurfResourceModifier):
-            #modifier.run(res)
-        #return res
 
 
 class ATVocabularyTerm2Surf(Archetype2Surf):
@@ -129,18 +85,17 @@ class ATVocabularyTerm2Surf(Archetype2Surf):
                 ['creation_date', 'modification_date', 'creators']
 
 
-class ATFolderish2Surf(ATCT2Surf):
+class ATFolderish2Surf(Archetype2Surf):
     """IArchetype2Surf implemention for Folders"""
 
     implements(IArchetype2Surf)
     adapts(IFolder, ISurfSession)
 
-    def at2surf(self, currentLevel=0, endLevel=1, **kwargs):
+    def update_resource(self, resource, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
         currentLevel += 1
-        resource = super(ATFolderish2Surf, self).at2surf(
-                currentLevel=currentLevel, endLevel=endLevel)
-        add_translation_info(self.context, resource)
+        resource = super(ATFolderish2Surf, self).update_resource(
+                         currentLevel=currentLevel, endLevel=endLevel)
         if currentLevel <= endLevel or endLevel == 0:
             resource.dcterms_hasPart = []
 
@@ -160,7 +115,7 @@ class ATFolderish2Surf(ATCT2Surf):
         return resource
 
 
-class ATField2RdfSchema(ATCT2Surf):
+class ATField2RdfSchema(GenericObject2Surf):
     """IArchetype2Surf implemention for Fields"""
 
     implements(IArchetype2Surf)
@@ -195,10 +150,9 @@ class ATField2RdfSchema(ATCT2Surf):
         """ subject """
         return '%s#%s' % (self.fti.absolute_url(), self.context.getName())
 
-    def _schema2surf(self):
+    def update_resource(self, resource, *args, **kwargs):
         """ Schema to Surf """
         context = self.context
-        resource = self.surfResource
 
         widget_label = (context.widget.label, u'en')
         widget_description = (context.widget.description, u'en')
@@ -208,5 +162,4 @@ class ATField2RdfSchema(ATCT2Surf):
         setattr(resource, 'rdfs_comment', widget_description)
         setattr(resource, 'rdf_id', self.rdfId)
         setattr(resource, 'rdf_domain', fti_title)
-        resource.save()
         return resource

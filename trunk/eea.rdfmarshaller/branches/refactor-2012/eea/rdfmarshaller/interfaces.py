@@ -27,7 +27,7 @@ class IGenericObject2Surf(IObject2Surf):
                            u"will be used as resource class")
     rdfId      = Attribute(u"The Id of the resource")
 
-    def update_resource():
+    def update_resource(resource, *args, **kwds):
         """Override to modify the resource and return a new one
         """
 
@@ -37,5 +37,5 @@ class ISurfResourceModifier(Interface):
     """
 
     def run(resource):
-        """Gets the rdf resource as argument, to allow it to be changed inplace
+        """Gets the rdf resource as argument, to allow it to be changed in place
         """

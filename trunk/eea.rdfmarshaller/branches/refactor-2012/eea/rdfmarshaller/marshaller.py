@@ -161,7 +161,7 @@ class GenericObject2Surf(object):
         self._resource = resource
         return resource
 
-    def update_resource(self, resource):
+    def update_resource(self, resource, *args, **kwds):
         """We allow modification of resource here """
         return resource
 
@@ -171,7 +171,7 @@ class GenericObject2Surf(object):
         resource = self.resource
 
         #we modify the resource and then allow subscriber plugins to modify it
-        resource = self.update_resource(self.resource)
+        resource = self.update_resource(self.resource, *args, **kwds)
         for modifier in subscribers([self.context], ISurfResourceModifier):
             modifier.run(resource, **kwds)
 
@@ -191,7 +191,7 @@ class PortalTypesUtil2Surf(Object2Surf):
         """portal type"""
         return u'PloneUtility'
 
-    def update_resource(self):
+    def update_resource(self, self.resource, *args, **kwds):
         """_schema2surf"""
         resource = self.surfResource
 
@@ -217,10 +217,8 @@ class MimetypesRegistry2Surf(Object2Surf):
 
         return u'PloneUtility'
 
-    def update_resource(self):
+    def update_resource(self, resource, *args, **kwds):
         """_schema2surf"""
-
-        resource = self.resource
 
         resource.rdfs_label = (u"Plone Mimetypes Registry Tool", None)
         resource.rdfs_comment = (u"Holds definitions of mimetypes", None)
@@ -259,12 +257,11 @@ class FTI2Surf(Object2Surf):
                      'creator'
                      ]
 
-    def update_resource(self):
+    def update_resource(self, resource, *args, **kwds):
         """ Schema to Surf """
 
         context = self.context
         session = self.session
-        resource = self.resource
 
         setattr(resource, 'rdfs_label', (context.Title(), u'en'))
         setattr(resource, 'rdfs_comment', (context.Description(), u'en'))
@@ -292,7 +289,7 @@ class FTI2Surf(Object2Surf):
                          sys.exc_info()[0], sys.exc_info()[1]),
                          severity=log.logging.WARN)
 
-                return
+                return resource
 
         if hasattr(instance, 'Schema'):
             schema = instance.Schema()
