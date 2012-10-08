@@ -8,11 +8,27 @@ class ISurfSession(Interface):
 
 
 class IObject2Surf(Interface):
-    """ An adapter that writes surf info into a ISurfSession
+    """ An object that writes surf info into a ISurfSession
     """
 
     def write():
-        """Add necessary info into the session
+        """Add the surf resource info into the session """
+
+
+class IGenericObject2Surf(IObject2Surf):
+    """ An implementation of IObject2Surf 
+    """
+
+    resource   = Attribute(u"A surf resource that is written into the sesion")
+    namespace  = Attribute(u"The namespace that is attached to the resource")
+    subject    = Attribute(u"The subject (URI) of the resource")
+    prefix     = Attribute(u"The subject (URI) of the resource")
+    portalType = Attribute(u"The portal type of the context, "
+                           u"will be used as resource class")
+    rdfId      = Attribute(u"The Id of the resource")
+
+    def update_resource():
+        """Override to modify the resource and return a new one
         """
 
 
@@ -21,5 +37,5 @@ class ISurfResourceModifier(Interface):
     """
 
     def run(resource):
-        """Gets the rdf resource as argument, to allow it to change inplace
+        """Gets the rdf resource as argument, to allow it to be changed inplace
         """

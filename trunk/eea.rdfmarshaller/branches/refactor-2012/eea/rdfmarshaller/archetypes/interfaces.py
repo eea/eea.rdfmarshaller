@@ -2,8 +2,16 @@ from zope.interface import Interface, Attribute
 from Products.Archetypes.interfaces import IField
 
 
-class IArchetype2Surf(IObject2Surf):
+class IArchetype2Surf(IGenericObject2Surf):
     """ IObject2Surf implementations for Archetype objects"""
+
+
+    dc_map = Attribute(u"Mapping of field names to rdf names, for which  "
+                       u"the prefix will be dcterms")
+    field_map = Attribute(u"Mapping of fields to rdf names. It can be used "
+                          u"to remap the field names in the rdf output ")
+    blacklist_map = Attribute(u"A list of field names for fields that "
+                              u"won't be exported")
 
 
 class IATField2Surf(Interface):
@@ -15,7 +23,17 @@ class IATField2Surf(Interface):
     exportable = Attribute("Is this field exportable to RDF?")
 
 
-#now comes the marker interfaces
+class IValue2Surf(Interface):
+    """Transform a python value in a format suitable for Surf
+    """
+
+    def __call__(*args, **kwds):
+        """Return a value suitable to be assigned as a value to an 
+        rdf resource attribute
+        """
+
+
+#===============[ Marker Interfaces ]=================
 
 class IATVocabulary(Interface):
     """ Marker interface for ATVocabularyManager Simple Vocabulary """

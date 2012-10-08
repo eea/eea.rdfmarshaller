@@ -88,13 +88,13 @@ class RDFMarshaller(Marshaller):
         return (content_type, length, data)
 
 
-class Object2Surf(object):
+class GenericObject2Surf(object):
     """Generic implementation of IObject2Surf
 
     This is meant to be subclassed and not used directly.
     """
 
-    implements(IObject2Surf)
+    implements(IGenericObject2Surf)
     adapts(Interface, ISurfSession)
 
     _resource = None    #stores the surf resource
@@ -125,7 +125,7 @@ class Object2Surf(object):
         ttool = getToolByName(context, 'portal_types')
         surf.ns.register(**{ self.prefix : '%s#' %
                              ttool[context.portal_type].absolute_url()} )
-        self._namespace = getattr(surf.ns, self.prefix)
+        self._namespace = getattr(surf.ns, self.prefix.upper())
         return self._namespace
 
     @property
@@ -161,14 +161,17 @@ class Object2Surf(object):
         self._resource = resource
         return resource
 
+    def update_resource(self, resource):
+        """We allow modification of resource here """
+        return resource
+
     def write(self, **kwds):
-        """Write its resource into the session
-        """
+        """Write its resource into the session """
 
         resource = self.resource
 
         #we modify the resource and then allow subscriber plugins to modify it
-        resource = self.update_resource()
+        resource = self.update_resource(self.resource)
         for modifier in subscribers([self.context], ISurfResourceModifier):
             modifier.run(resource, **kwds)
 
@@ -230,7 +233,7 @@ class MimetypesRegistry2Surf(Object2Surf):
 
 
 class FTI2Surf(Object2Surf):
-    """ IArchetype2Surf implemention for TypeInformations """
+    """ IObject2Surf implemention for TypeInformations """
 
     adapts(ITypeInformation, ISurfSession)
 

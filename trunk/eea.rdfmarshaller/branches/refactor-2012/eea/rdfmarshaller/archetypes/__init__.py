@@ -1,64 +1,5 @@
-class ATCTDublinCore2Surf(object):
-    """Base implementation of IArchetype2Surf 
-    
-    comment: is this used anywhere?
-    """
-    implements(IArchetype2Surf)
-    adapts(Interface, ISurfSession)
-
-    def __init__(self, context, session):
-        self.context = context
-        self.session = session
-
-
-class ATField2Surf(object):
-    """Base implementation of IATField2Surf
-    
-    ZZZ: this should be refactored to take the real content into account
-    """
-
-    implements(IATField2Surf)
-    adapts(IField, ISurfSession)
-
-    exportable = True
-
-    def __init__(self, context, session):
-        self.field = context
-        self.session = session
-
-    def value(self, context):
-        """ Value """
-        return self.field.getAccessor(context)()
-
-
-class ATFileField2Surf(ATField2Surf):
-    """IATField2Surf implementation for File fields"""
-    implements(IATField2Surf)
-    adapts(IFileField, ISurfSession)
-
-    exportable = False
-
-
-class ATReferenceField2Surf(ATField2Surf):
-    """IATField2Surf implementation for Reference fields"""
-    implements(IATField2Surf)
-    adapts(IReferenceField, ISurfSession)
-
-    def value(self, context):
-        """ Value """
-        value = self.field.getAccessor(context)()
-
-        #some reference fields are single value only
-        if not isinstance(value, (list, tuple)):
-            value = [value]
-
-        value = [v for v in value if v] #the field might have been empty
-
-        return [ rdflib.URIRef(obj.absolute_url()) for obj in value ]
-
-
-class ATCT2Surf(object):
-    """IArchetype2Surf implementation for ATCT"""
+class Archetype2Surf(GenericObject2Surf):
+    """IArchetype2Surf implementation for AT based content items"""
 
     implements(IArchetype2Surf)
     adapts(Interface, ISurfSession)
@@ -74,124 +15,61 @@ class ATCT2Surf(object):
                    ('rights', 'rights'),
                    ])
 
-    field_map = {}
-
-    def __init__(self, context, session):
-        self.context = context
-        self.session = session
-        if self.namespace is None:
-            ttool = getToolByName(context, 'portal_types')
-            surf.ns.register(**{ self.prefix : '%s#' %
-                                 ttool[context.portal_type].absolute_url()} )
-
-    @property
-    def blacklist_map(self):
-        """ Blacklist map """
-        ptool = getToolByName(self.context,'portal_properties')
-        props = getattr(ptool, 'rdfmarshaller_properties', None)
-        # fields not to export
-        blacklist = ['constrainTypesMode',
+    _blacklist = [   'constrainTypesMode', 
                      'locallyAllowedTypes',
                      'immediatelyAddableTypes',
                      'language',
                      'allowDiscussion']
+    field_map = {}
+
+    @property
+    def blacklist_map(self):
+        """ These fields shouldn't be exported """
+        ptool = getToolByName(self.context,'portal_properties')
+        props = getattr(ptool, 'rdfmarshaller_properties', None)
         if props:
-            blacklist = list(props.getProperty('%s_blacklist' %
+            return list(props.getProperty('%s_blacklist' %
                 self.portalType.lower(), props.getProperty('blacklist')))
-        return blacklist
-
-    @property
-    def namespace(self):
-        """ Namespace """
-        return getattr(surf.ns, self.prefix.upper(), None)
-
-    @property
-    def prefix(self):
-        """ Prefix """
-        return self.portalType.lower()
-
-    @property
-    def portalType(self):
-        """ Portal type """
-        return self.context.portal_type.replace(' ','')
-
-    @property
-    def surfResource(self):
-        """ Surf resource """
-        try:
-            resource = self.session.get_class(
-                self.namespace[self.portalType])(self.subject)
-        except Exception:
-            if DEBUG:
-                raise
-            log.log('RDF marshaller error \n%s: %s' %
-                    (sys.exc_info()[0], sys.exc_info()[1]),
-                    severity=log.logging.WARN)
-            return None
-
-        resource.bind_namespaces([self.prefix])
-        resource.session = self.session
-        return resource
+        else:
+                return self._blacklist
 
     @property
     def subject(self):
         """ Subject """
         return self.context.absolute_url()
 
-    def _schema2surf(self):
+    def update_resource(self, resource):
         """ Schema to Surf """
-        context = self.context
-        #session = self.session
-        resource = self.surfResource
-        language = context.Language()
+        language = self.context.Language()
 
         add_translation_info(self.context, resource)
 
-        for field in context.Schema().fields():
+        for field in self.context.Schema().fields():
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
                 continue
-            fieldAdapter = queryMultiAdapter((field, self.session),
-                    interface=IATField2Surf)
+            fieldAdapter = queryMultiAdapter((field, self.context, self.session),
+                                              interface=IATField2Surf)
 
             if fieldAdapter.exportable:
                 try:
-                    value = fieldAdapter.value(context)
+                    value = fieldAdapter.value(self.context)
                 except TypeError:
                     if DEBUG:
                         raise
                     log.log('RDF marshaller error for context[field]'
                             ' "%s[%s]": \n%s: %s' %
-                            (context.absolute_url(), fieldName,
+                            (self.context.absolute_url(), fieldName,
                              sys.exc_info()[0], sys.exc_info()[1]),
                              severity=log.logging.WARN)
                     continue
 
-                if (value and value != "None") or \
-                        (isinstance(value, basestring) and value.strip()) :
+                valueAdapter = queryAdapter(value, interface="IValue2Surf")
+                if valueAdapter:
+                    value = valueAdapter()
 
-                    if isinstance(value, (list, tuple)):
-                        value = list(value)
-                    elif isinstance(value, DateTime):
-                        value = (value.HTML4(), None,
-                                'http://www.w3.org/2001/XMLSchema#dateTime')
-                    elif isinstance(value, str):
-                        encoding = detect(value)['encoding']
-                        try:
-                            value = value.decode(encoding)
-                        except (LookupError, UnicodeDecodeError):
-                            log.log("Could not decode to %s in rdfmarshaller" % 
-                                     encoding)
-                            value = value.decode('utf-8','replace')
-                        value = (value.encode('utf-8'), language)
-                    elif isinstance(value, unicode):
-                        pass
-                    else:
-                        try:
-                            value = (unicode(value, 'utf-8', 'replace'),
-                                    language)
-                        except TypeError:
-                            value = str(value)
+                #this logic should be refactored
+                if (value and value != "None"):
 
                     prefix = self.prefix
                     if fieldName in self.field_map:
@@ -207,12 +85,12 @@ class ATCT2Surf(object):
                             raise
                         log.log('RDF marshaller error for context[field]'
                                 '"%s[%s]": \n%s: %s' %
-                                (context.absolute_url(), fieldName,
+                                (self.context.absolute_url(), fieldName,
                                  sys.exc_info()[0], sys.exc_info()[1]),
                                  severity=log.logging.WARN)
 
-        parent = getattr(aq_inner(context), 'aq_parent', None)
-        wftool = getToolByName(context, 'portal_workflow')
+        parent = getattr(aq_inner(self.context), 'aq_parent', None)
+        wftool = getToolByName(self.context, 'portal_workflow')
         if (parent is not None):
             try:
                 state = wftool.getInfoFor(parent, 'review_state')
@@ -225,21 +103,22 @@ class ATCT2Surf(object):
                 resource.dcterms_isPartOf = \
                     rdflib.URIRef(parent_url) #pylint: disable-msg = W0612
 
-        resource.save()
+        #resource.save()
         return resource
 
-    def at2surf(self, currentLevel=0, endLevel=1, **kwargs):
-        """ AT to Surf """
+    #def at2surf(self, currentLevel=0, endLevel=1, **kwargs):
+        #""" AT to Surf """
 
-        res = self._schema2surf() 
+        #res = self._schema2surf() 
 
-        for modifier in subscribers([self.context], ISurfResourceModifier):
-            modifier.run(res)
-        return res
+        #for modifier in subscribers([self.context], ISurfResourceModifier):
+            #modifier.run(res)
+        #return res
 
 
-class ATVocabularyTerm2Surf(ATCT2Surf):
+class ATVocabularyTerm2Surf(Archetype2Surf):
     """IArchetype2Surf implemention for ATVocabularyTerms"""
+
     implements(IArchetype2Surf)
     adapts(IATVocabularyTerm, ISurfSession)
 
