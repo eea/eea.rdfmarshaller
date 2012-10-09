@@ -13,10 +13,8 @@ from Products.CMFPlone import log
 from Products.CMFPlone.utils import _createObjectByType
 from Products.MimetypesRegistry.interfaces import IMimetypesRegistry
 from chardet import detect
-from eea.rdfmarshaller.interfaces import IATVocabularyTerm
-from eea.rdfmarshaller.interfaces import IArchetype2Surf, IATField2Surf
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
-from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
+from eea.rdfmarshaller.interfaces import ISurfSession   #, IReferenceField
 from zope.component import adapts, queryMultiAdapter, subscribers
 from zope.interface import implements, Interface
 import logging
@@ -191,9 +189,8 @@ class PortalTypesUtil2Surf(Object2Surf):
         """portal type"""
         return u'PloneUtility'
 
-    def modify_resource(self, self.resource, *args, **kwds):
+    def modify_resource(self, resource, *args, **kwds):
         """_schema2surf"""
-        resource = self.surfResource
 
         resource.rdfs_label = (u"Plone PortalTypes Tool", None)
         resource.rdfs_comment = (u"Holds definitions of portal types", None)
