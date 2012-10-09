@@ -38,7 +38,7 @@ class Archetype2Surf(GenericObject2Surf):
         """ Subject """
         return self.context.absolute_url()
 
-    def update_resource(self, resource, *args, **kwds):
+    def modify_resource(self, resource, *args, **kwds):
         """ Schema to Surf """
         language = self.context.Language()
 
@@ -72,29 +72,16 @@ class Archetype2Surf(GenericObject2Surf):
         return resource
 
 
-class ATVocabularyTerm2Surf(Archetype2Surf):
-    """IArchetype2Surf implemention for ATVocabularyTerms"""
-
-    implements(IArchetype2Surf)
-    adapts(IATVocabularyTerm, ISurfSession)
-
-    @property
-    def blacklist_map(self):
-        """ Blacklist map """
-        return super(ATVocabularyTerm2Surf, self).blacklist_map + \
-                ['creation_date', 'modification_date', 'creators']
-
-
 class ATFolderish2Surf(Archetype2Surf):
     """IArchetype2Surf implemention for Folders"""
 
     implements(IArchetype2Surf)
     adapts(IFolder, ISurfSession)
 
-    def update_resource(self, resource, currentLevel=0, endLevel=1, **kwargs):
+    def modify_resource(self, resource, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
         currentLevel += 1
-        resource = super(ATFolderish2Surf, self).update_resource(
+        resource = super(ATFolderish2Surf, self).modify_resource(
                          currentLevel=currentLevel, endLevel=endLevel)
         if currentLevel <= endLevel or endLevel == 0:
             resource.dcterms_hasPart = []
@@ -116,10 +103,17 @@ class ATFolderish2Surf(Archetype2Surf):
 
 
 class ATField2RdfSchema(GenericObject2Surf):
-    """IArchetype2Surf implemention for Fields"""
+    """IFieldDefinition2Surf implemention for Fields;
+    
+    This is used to define rdfs schemas for objects, 
+    extracting their field definitions
+    """
 
-    implements(IArchetype2Surf)
+    implements(IFieldDefinition2Surf)
     adapts(IField, Interface, ISurfSession)
+
+    _namespace = surf.ns.RDFS
+    _prefix = 'rdfs'
 
     def __init__(self, context, fti, session):
         super(ATField2RdfSchema, self).__init__(context, session)
@@ -131,16 +125,6 @@ class ATField2RdfSchema(GenericObject2Surf):
         return u'Property'
 
     @property
-    def namespace(self):
-        """ namespace """
-        return surf.ns.RDFS
-
-    @property
-    def prefix(self):
-        """ prefix """
-        return 'rdfs'
-
-    @property
     def rdfId(self):
         """ rdf id """
         return self.context.getName().replace(' ','')
@@ -150,7 +134,7 @@ class ATField2RdfSchema(GenericObject2Surf):
         """ subject """
         return '%s#%s' % (self.fti.absolute_url(), self.context.getName())
 
-    def update_resource(self, resource, *args, **kwargs):
+    def modify_resource(self, resource, *args, **kwargs):
         """ Schema to Surf """
         context = self.context
 
@@ -163,3 +147,97 @@ class ATField2RdfSchema(GenericObject2Surf):
         setattr(resource, 'rdf_id', self.rdfId)
         setattr(resource, 'rdf_domain', fti_title)
         return resource
+
+
+class FTI2Surf(Object2Surf):
+    """ IObject2Surf implemention for TypeInformations, 
+    
+    The type informations are persistent objects found in the portal_types """
+
+    adapts(ITypeInformation, ISurfSession)
+
+    _namespace = surf.ns.RDFS
+    _prefix = 'rdfs'
+
+    # fields not to export, i.e Dublin Core
+    blacklist_map = ['constrainTypesMode',
+                     'locallyAllowedTypes',
+                     'immediatelyAddableTypes',
+                     'language',
+                     'creation_date',
+                     'modification_date',
+                     'creators',
+                     'subject',
+                     'effectiveDate',
+                     'expirationDate',
+                     'contributors',
+                     'allowDiscussion',
+                     'rights',
+                     'nextPreviousEnabled',
+                     'excludeFromNav',
+                     'creator'
+                     ]
+
+    def modify_resource(self, resource, *args, **kwds):
+        """ Schema to Surf """
+
+        context = self.context
+        session = self.session
+
+        setattr(resource, 'rdfs_label', (context.Title(), u'en'))
+        setattr(resource, 'rdfs_comment', (context.Description(), u'en'))
+        setattr(resource, 'rdf_id', self.rdfId)
+        resource.update()
+
+        # the following hack creates a new instance of a content to 
+        # allow extracting the full schema, with extended fields
+        # Is this the only way to do this?
+        # Another way would be to do a catalog search for a portal_type,
+        # grab the first object from there and use that as context
+
+        portal_type = context.getId()
+        tmpFolder = getToolByName(context, 'portal_url').getPortalObject().\
+                            portal_factory._getTempFolder(portal_type)
+        instance = getattr(tmpFolder, 'rdfstype', None)
+
+        if instance is None:
+            try:
+                instance = _createObjectByType(portal_type, tmpFolder,
+                                               'rdfstype')
+                instance.unindexObject()
+            except Exception:   #might be a tool class
+                if DEBUG:
+                    raise
+                log.log('RDF marshaller error for FTI "%s": \n%s: %s' %
+                        (context.absolute_url(),
+                         sys.exc_info()[0], sys.exc_info()[1]),
+                         severity=log.logging.WARN)
+
+                return resource
+
+        if hasattr(instance, 'Schema'):
+            schema = instance.Schema()
+            for field in schema.fields():
+                fieldName = field.getName()
+                if fieldName in self.blacklist_map:
+                    continue
+
+                field2surf = queryMultiAdapter((field, context, session),
+                                                interface=IFieldDefinition2Surf)
+                field2surf.write()
+
+        return resource
+
+
+class ATVocabularyTerm2Surf(Archetype2Surf):
+    """IArchetype2Surf implemention for ATVocabularyTerms"""
+
+    implements(IArchetype2Surf)
+    adapts(IATVocabularyTerm, ISurfSession)
+
+    @property
+    def blacklist_map(self):
+        """ Blacklist map """
+        return super(ATVocabularyTerm2Surf, self).blacklist_map + \
+                ['creation_date', 'modification_date', 'creators']
+

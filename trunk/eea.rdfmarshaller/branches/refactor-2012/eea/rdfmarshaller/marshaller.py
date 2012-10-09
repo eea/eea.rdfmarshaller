@@ -161,7 +161,7 @@ class GenericObject2Surf(object):
         self._resource = resource
         return resource
 
-    def update_resource(self, resource, *args, **kwds):
+    def modify_resource(self, resource, *args, **kwds):
         """We allow modification of resource here """
         return resource
 
@@ -171,9 +171,9 @@ class GenericObject2Surf(object):
         resource = self.resource
 
         #we modify the resource and then allow subscriber plugins to modify it
-        resource = self.update_resource(self.resource, *args, **kwds)
+        resource = self.modify_resource(self.resource, *args, **kwds)
         for modifier in subscribers([self.context], ISurfResourceModifier):
-            modifier.run(resource, **kwds)
+            modifier.run(resource, *args, **kwds)
 
         resource.save()
 
@@ -191,7 +191,7 @@ class PortalTypesUtil2Surf(Object2Surf):
         """portal type"""
         return u'PloneUtility'
 
-    def update_resource(self, self.resource, *args, **kwds):
+    def modify_resource(self, self.resource, *args, **kwds):
         """_schema2surf"""
         resource = self.surfResource
 
@@ -217,7 +217,7 @@ class MimetypesRegistry2Surf(Object2Surf):
 
         return u'PloneUtility'
 
-    def update_resource(self, resource, *args, **kwds):
+    def modify_resource(self, resource, *args, **kwds):
         """_schema2surf"""
 
         resource.rdfs_label = (u"Plone Mimetypes Registry Tool", None)
@@ -229,78 +229,4 @@ class MimetypesRegistry2Surf(Object2Surf):
 
         return resource
 
-
-class FTI2Surf(Object2Surf):
-    """ IObject2Surf implemention for TypeInformations """
-
-    adapts(ITypeInformation, ISurfSession)
-
-    _namespace = surf.ns.RDFS
-    _prefix = 'rdfs'
-
-    # fields not to export, i.e Dublin Core
-    blacklist_map = ['constrainTypesMode',
-                     'locallyAllowedTypes',
-                     'immediatelyAddableTypes',
-                     'language',
-                     'creation_date',
-                     'modification_date',
-                     'creators',
-                     'subject',
-                     'effectiveDate',
-                     'expirationDate',
-                     'contributors',
-                     'allowDiscussion',
-                     'rights',
-                     'nextPreviousEnabled',
-                     'excludeFromNav',
-                     'creator'
-                     ]
-
-    def update_resource(self, resource, *args, **kwds):
-        """ Schema to Surf """
-
-        context = self.context
-        session = self.session
-
-        setattr(resource, 'rdfs_label', (context.Title(), u'en'))
-        setattr(resource, 'rdfs_comment', (context.Description(), u'en'))
-        setattr(resource, 'rdf_id', self.rdfId)
-        resource.update()
-
-        # the following hack creates a new instance of a content to 
-        # allow extracting the full schema, with extended fields
-        # Is this the only way to do this?
-        portal_type = context.getId()
-        tmpFolder = getToolByName(context, 'portal_url').getPortalObject().\
-                portal_factory._getTempFolder(portal_type)
-        instance = getattr(tmpFolder, 'rdfstype', None)
-
-        if instance is None:
-            try:
-                instance = _createObjectByType(portal_type, tmpFolder,
-                            'rdfstype')
-                instance.unindexObject()
-            except Exception:   #might be a tool class
-                if DEBUG:
-                    raise
-                log.log('RDF marshaller error for FTI "%s": \n%s: %s' %
-                        (context.absolute_url(),
-                         sys.exc_info()[0], sys.exc_info()[1]),
-                         severity=log.logging.WARN)
-
-                return resource
-
-        if hasattr(instance, 'Schema'):
-            schema = instance.Schema()
-            for field in schema.fields():
-                fieldName = field.getName()
-                if fieldName in self.blacklist_map:
-                    continue
-
-                field_surf = queryMultiAdapter((field, context, session),
-                                              interface=IObject2Surf)
-                field_surf.write()
-
-        return resource
 

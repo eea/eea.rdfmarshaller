@@ -32,6 +32,10 @@ class IValue2Surf(Interface):
         rdf resource attribute
         """
 
+class IFieldDefinition2Surf(IGenericObject2Surf):
+    """A three-way adapter to get rdf information from field definitions
+    """
+
 
 #===============[ Marker Interfaces ]=================
 

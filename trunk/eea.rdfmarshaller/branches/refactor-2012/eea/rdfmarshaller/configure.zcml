@@ -12,7 +12,6 @@
   </class>
 
   <adapter factory=".marshaller.FTI2Surf" />
-  <adapter factory=".marshaller.ATFolderish2Surf" />
   <adapter factory=".marshaller.PortalTypesUtil2Surf" /> 
   <adapter factory=".marshaller.MimetypesRegistry2Surf" /> 
 

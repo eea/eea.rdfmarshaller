@@ -59,6 +59,8 @@ Lets verify our export
   ...    for obj in NewsItem.all().order()]
   [(u'news1', u'<p>my news rocks!</p>')]
 
+TODO: do a real printing here
+
 If we print data we should get something like
 
     <?xml version="1.0" encoding="utf-8"?>
