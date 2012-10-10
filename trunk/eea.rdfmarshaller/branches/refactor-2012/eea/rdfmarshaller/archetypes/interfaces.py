@@ -4,8 +4,12 @@ from eea.rdfmarshaller.interfaces import IGenericObject2Surf
 
 
 class IArchetype2Surf(IGenericObject2Surf):
-    """ IObject2Surf implementations for Archetype objects"""
+    """ IObject2Surf implementations for Archetype objects
 
+    This interface is only used to describe the Archetype2Surf
+    implementation. The IObject2Surf interface should be used as
+    adapter interface
+    """
 
     dc_map = Attribute(u"Mapping of field names to rdf names, for which  "
                        u"the prefix will be dcterms")

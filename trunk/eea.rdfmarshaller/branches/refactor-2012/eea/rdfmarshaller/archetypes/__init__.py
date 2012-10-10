@@ -3,7 +3,7 @@ from DateTime.DateTime import DateTime
 from OFS.interfaces import IFolder
 from Products.Archetypes.Marshall import Marshaller
 from Products.Archetypes.interfaces import IField, IFileField
-from Products.Archetypes.interfaces import IBaseContent
+from Products.Archetypes.interfaces import IBaseContent, IBaseObject
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFCore.interfaces._tools import ITypesTool
@@ -33,8 +33,8 @@ import sys
 class Archetype2Surf(GenericObject2Surf):
     """IArchetype2Surf implementation for AT based content items"""
 
-    implements(IArchetype2Surf)
-    adapts(IBaseContent, ISurfSession)
+    implements(IObject2Surf)
+    adapts(IBaseObject, ISurfSession)
 
     dc_map = dict([('title', 'title'),
                    ('description', 'description'),
@@ -119,7 +119,7 @@ class Archetype2Surf(GenericObject2Surf):
 
 
 class ATFolderish2Surf(Archetype2Surf):
-    """IArchetype2Surf implemention for Folders"""
+    """IObject2Surf implemention for Folders"""
 
     implements(IArchetype2Surf)
     adapts(IFolder, ISurfSession)
@@ -127,7 +127,7 @@ class ATFolderish2Surf(Archetype2Surf):
     def modify_resource(self, resource, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
         currentLevel += 1
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
         resource = super(ATFolderish2Surf, self).modify_resource(
                          resource, currentLevel=currentLevel, endLevel=endLevel)
         if currentLevel <= endLevel or endLevel == 0:

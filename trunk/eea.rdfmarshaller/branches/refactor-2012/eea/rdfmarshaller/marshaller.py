@@ -181,7 +181,7 @@ class GenericObject2Surf(object):
 
 
 class PortalTypesUtil2Surf(GenericObject2Surf):
-    """IArchetype2Surf implemention for TypeInformations"""
+    """IObject2Surf implemention for TypeInformations"""
 
     adapts(ITypesTool, ISurfSession)
 
@@ -204,7 +204,7 @@ class PortalTypesUtil2Surf(GenericObject2Surf):
 
 
 class MimetypesRegistry2Surf(GenericObject2Surf):
-    """IArchetype2Surf implementation for mimetypes_registry
+    """IObject2Surf implementation for mimetypes_registry
     """
 
     adapts(IMimetypesRegistry, ISurfSession)

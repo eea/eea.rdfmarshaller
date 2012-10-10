@@ -17,6 +17,9 @@ class IObject2Surf(Interface):
 
 class IGenericObject2Surf(IObject2Surf):
     """ An implementation of IObject2Surf 
+
+    This interface is only used to describe the GenericObject2Surf
+    class; The IObject2Surf interface should be used as adapter interface
     """
 
     resource   = Attribute(u"A surf resource that is written into the sesion")
