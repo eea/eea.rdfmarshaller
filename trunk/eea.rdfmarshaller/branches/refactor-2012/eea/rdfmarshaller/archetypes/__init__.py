@@ -20,7 +20,7 @@ from eea.rdfmarshaller.archetypes.interfaces import IReferenceField
 from eea.rdfmarshaller.archetypes.interfaces import IFieldDefinition2Surf
 from eea.rdfmarshaller.archetypes.interfaces import IArchetype2Surf, IATField2Surf
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
-from eea.rdfmarshaller.interfaces import ISurfSession
+from eea.rdfmarshaller.interfaces import ISurfSession, IObject2Surf
 from eea.rdfmarshaller.marshaller import GenericObject2Surf
 from zope.component import adapts, queryMultiAdapter, subscribers, getMultiAdapter, queryAdapter
 from zope.interface import implements, Interface
@@ -28,6 +28,7 @@ import logging
 import rdflib
 import surf
 import sys
+
 
 class Archetype2Surf(GenericObject2Surf):
     """IArchetype2Surf implementation for AT based content items"""
@@ -126,6 +127,7 @@ class ATFolderish2Surf(Archetype2Surf):
     def modify_resource(self, resource, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
         currentLevel += 1
+        import pdb; pdb.set_trace()
         resource = super(ATFolderish2Surf, self).modify_resource(
                          resource, currentLevel=currentLevel, endLevel=endLevel)
         if currentLevel <= endLevel or endLevel == 0:
@@ -137,13 +139,13 @@ class ATFolderish2Surf(Archetype2Surf):
             for obj in objs:
                 resource.dcterms_hasPart.append(rdflib.URIRef(
                                                     obj.absolute_url()))
-                atsurf = queryMultiAdapter((obj, self.session),
-                                            interface=IArchetype2Surf)
-                if atsurf is not None:
+                obj2surf = queryMultiAdapter((obj, self.session),
+                                            interface=IObject2Surf)
+                if obj2surf is not None:
                     self.session.default_store.reader.graph.bind(
-                            atsurf.prefix, atsurf.namespace, override=False)
-                    atsurf.at2surf(currentLevel=currentLevel, endLevel=endLevel)
-        resource.save()
+                            obj2surf.prefix, obj2surf.namespace, override=False)
+                    obj2surf.write(currentLevel=currentLevel, endLevel=endLevel)
+        #resource.save()
         return resource
 
 

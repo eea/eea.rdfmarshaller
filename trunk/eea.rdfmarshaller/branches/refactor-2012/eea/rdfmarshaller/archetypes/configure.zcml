@@ -8,7 +8,12 @@
   <include file="atvocabulary.zcml" />
 
   <adapter factory=".Archetype2Surf" provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
+
   <adapter factory=".ATFolderish2Surf" provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
+  <adapter factory=".ATFolderish2Surf" 
+    for="Products.Archetypes.interfaces.IBaseFolder eea.rdfmarshaller.interfaces.ISurfSession" 
+    provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
+
   <adapter factory=".ATField2RdfSchema" provides="eea.rdfmarshaller.archetypes.interfaces.IFieldDefinition2Surf" />
   <adapter factory=".FTI2Surf" />
 
