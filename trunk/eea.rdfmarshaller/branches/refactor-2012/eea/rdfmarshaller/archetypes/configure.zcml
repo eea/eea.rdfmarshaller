@@ -7,13 +7,16 @@
   <include file="archetypes.zcml" />
   <include file="atvocabulary.zcml" />
 
-  <adapter factory=".Archetype2Surf" />
-  <adapter factory=".ATFolderish2Surf" />
-  <adapter factory=".ATField2RdfSchema" />
+  <adapter factory=".Archetype2Surf" provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
+  <adapter factory=".ATFolderish2Surf" provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
+  <adapter factory=".ATField2RdfSchema" provides="eea.rdfmarshaller.archetypes.interfaces.IFieldDefinition2Surf" />
+  <adapter factory=".FTI2Surf" />
 
+  <adapter factory=".fields.ATField2Surf" />
   <adapter factory=".fields.ATField2Surf"
-           for=".interfaces.ITextField
-                .interfaces.ISurfSession" />
+           for="eea.rdfmarshaller.archetypes.interfaces.ITextField 
+                zope.interface.Interface
+                eea.rdfmarshaller.interfaces.ISurfSession" />
   <adapter factory=".fields.ATFileField2Surf" />
   <adapter factory=".fields.ATReferenceField2Surf" />
 

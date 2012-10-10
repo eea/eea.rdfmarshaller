@@ -13,14 +13,14 @@ from Products.MimetypesRegistry.interfaces import IMimetypesRegistry
 from chardet import detect
 from eea.rdfmarshaller.archetypes.interfaces import IATField2Surf
 from eea.rdfmarshaller.archetypes.interfaces import IATVocabularyTerm
+from eea.rdfmarshaller.archetypes.interfaces import IATVocabularyTerm
+from eea.rdfmarshaller.archetypes.interfaces import IArchetype2Surf, IATField2Surf
+from eea.rdfmarshaller.archetypes.interfaces import IReferenceField
 from eea.rdfmarshaller.archetypes.interfaces import IValue2Surf
-from eea.rdfmarshaller.interfaces import IATVocabularyTerm
-from eea.rdfmarshaller.interfaces import IArchetype2Surf, IATField2Surf
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
-from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
-from zope.component import adapts, queryMultiAdapter, subscribers
+from eea.rdfmarshaller.interfaces import ISurfSession
+from zope.component import adapts, queryMultiAdapter, subscribers, queryAdapter
 from zope.interface import implements, Interface
-from zope.interfaces import Interface
 import logging
 import rdflib
 import surf
@@ -44,7 +44,7 @@ class Value2Surf(object):
                     language)
         except TypeError:
             value = str(self.value)
-        return self
+        return value
 
 
 class Tuple2Surf(Value2Surf):
@@ -59,7 +59,7 @@ class Tuple2Surf(Value2Surf):
 class List2Surf(Value2Surf):
     """IValue2Surf implementation for tuples.
     """
-    adapts(tuple)
+    adapts(list)
 
     def __call__(self, *args, **kwds):
         return self.value
@@ -71,16 +71,19 @@ class String2Surf(Value2Surf):
     adapts(str)
 
     def __call__(self, *args, **kwds):
+        if not self.value.strip():
+            return None
         language = kwds['language']
-        encoding = detect(value)['encoding']
+        encoding = detect(self.value)['encoding']
+    
         try:
-            value = value.decode(encoding)
+            value = self.value.decode(encoding)
         except (LookupError, UnicodeDecodeError):
             log.log("Could not decode to %s in rdfmarshaller" % 
                      encoding)
-            value = value.decode('utf-8','replace')
-        value = (value.encode('utf-8'), language)
-        return value.strip() or None
+            value = self.value.decode('utf-8','replace')
+        value = (value.encode('utf-8').strip(), language)
+        return value
 
 
 class DateTime2Surf(Value2Surf):
@@ -130,7 +133,7 @@ class ATReferenceField2Surf(ATField2Surf):
 
     def value(self):
         """ Value """
-        value = self.field.getAccessor(context)()
+        value = self.field.getAccessor(self.context)()
 
         #some reference fields are single value only
         if not isinstance(value, (list, tuple)):

@@ -3,6 +3,7 @@ from DateTime.DateTime import DateTime
 from OFS.interfaces import IFolder
 from Products.Archetypes.Marshall import Marshaller
 from Products.Archetypes.interfaces import IField, IFileField
+from Products.Archetypes.interfaces import IBaseContent
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFCore.interfaces._tools import ITypesTool
@@ -14,13 +15,15 @@ from chardet import detect
 from eea.rdfmarshaller.archetypes.interfaces import IATField2Surf
 from eea.rdfmarshaller.archetypes.interfaces import IATVocabularyTerm
 from eea.rdfmarshaller.archetypes.interfaces import IValue2Surf
-from eea.rdfmarshaller.interfaces import IATVocabularyTerm
-from eea.rdfmarshaller.interfaces import IArchetype2Surf, IATField2Surf
+from eea.rdfmarshaller.archetypes.interfaces import IATVocabularyTerm
+from eea.rdfmarshaller.archetypes.interfaces import IReferenceField
+from eea.rdfmarshaller.archetypes.interfaces import IFieldDefinition2Surf
+from eea.rdfmarshaller.archetypes.interfaces import IArchetype2Surf, IATField2Surf
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
-from eea.rdfmarshaller.interfaces import ISurfSession, IReferenceField
-from zope.component import adapts, queryMultiAdapter, subscribers
+from eea.rdfmarshaller.interfaces import ISurfSession
+from eea.rdfmarshaller.marshaller import GenericObject2Surf
+from zope.component import adapts, queryMultiAdapter, subscribers, getMultiAdapter, queryAdapter
 from zope.interface import implements, Interface
-from zope.interfaces import Interface
 import logging
 import rdflib
 import surf
@@ -60,6 +63,15 @@ class Archetype2Surf(GenericObject2Surf):
                 self.portalType.lower(), props.getProperty('blacklist')))
         else:
                 return self._blacklist
+    @property
+    def portalType(self):
+        """ Portal type """
+        return self.context.portal_type.replace(' ','')
+
+    @property
+    def prefix(self):
+        """ Prefix """
+        return self.portalType.lower()
 
     @property
     def subject(self):
@@ -76,15 +88,20 @@ class Archetype2Surf(GenericObject2Surf):
             if fieldName in self.blacklist_map:
                 continue
 
+            #first we try with a named adapter, then a generic one
             fieldAdapter = queryMultiAdapter((field, self.context, self.session),
-                                              interface=IATField2Surf)
+                                      interface=IATField2Surf, name=fieldName)
+            if not fieldAdapter:
+                fieldAdapter = getMultiAdapter((field, self.context, self.session),
+                                      interface=IATField2Surf)
+
             if not fieldAdapter.exportable:
                 continue
 
-            value = fieldAdapter.value(self.context)
-            valueAdapter = queryAdapter(value, interface="IValue2Surf")
+            value = fieldAdapter.value()
+            valueAdapter = queryAdapter(value, interface=IValue2Surf)
             if valueAdapter:
-                value = valueAdapter()
+                value = valueAdapter(language=language)
             if not value or value == "None":
                 continue
 
@@ -110,7 +127,7 @@ class ATFolderish2Surf(Archetype2Surf):
         """ AT to Surf """
         currentLevel += 1
         resource = super(ATFolderish2Surf, self).modify_resource(
-                         currentLevel=currentLevel, endLevel=endLevel)
+                         resource, currentLevel=currentLevel, endLevel=endLevel)
         if currentLevel <= endLevel or endLevel == 0:
             resource.dcterms_hasPart = []
 
@@ -177,7 +194,7 @@ class ATField2RdfSchema(GenericObject2Surf):
         return resource
 
 
-class FTI2Surf(Object2Surf):
+class FTI2Surf(GenericObject2Surf):
     """ IObject2Surf implemention for TypeInformations, 
     
     The type informations are persistent objects found in the portal_types """

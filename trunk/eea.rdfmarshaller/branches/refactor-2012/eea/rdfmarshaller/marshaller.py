@@ -15,6 +15,7 @@ from Products.MimetypesRegistry.interfaces import IMimetypesRegistry
 from chardet import detect
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 from eea.rdfmarshaller.interfaces import ISurfSession   #, IReferenceField
+from eea.rdfmarshaller.interfaces import IGenericObject2Surf, IObject2Surf
 from zope.component import adapts, queryMultiAdapter, subscribers
 from zope.interface import implements, Interface
 import logging
@@ -51,9 +52,7 @@ class RDFMarshaller(Marshaller):
                            rdflib_store = 'IOMemory')
         store.log.setLevel(logging.CRITICAL)
         store.writer.log.setLevel(logging.CRITICAL)
-        store.reader.graph.bind(atsurf.prefix,
-                                atsurf.namespace,
-                                override=False)
+
         store.reader.graph.bind('dc',
                                 surf.ns.DC,
                                 override=True)
@@ -78,7 +77,11 @@ class RDFMarshaller(Marshaller):
         length = data = 0   #is this line required? should be len(data)
 
         obj2surf = queryMultiAdapter((instance, session),
-                                      interface=IArchetype2Surf)
+                                      interface=IObject2Surf)
+
+        self.store.reader.graph.bind(obj2surf.prefix,
+                                obj2surf.namespace,
+                                override=False)
         endLevel = kwargs.get('endLevel', 1)
         obj2surf.write(endLevel=endLevel)
 
@@ -120,9 +123,9 @@ class GenericObject2Surf(object):
         if self._namespace is not None:
             return self._namespace
 
-        ttool = getToolByName(context, 'portal_types')
+        ttool = getToolByName(self.context, 'portal_types')
         surf.ns.register(**{ self.prefix : '%s#' %
-                             ttool[context.portal_type].absolute_url()} )
+                             ttool[self.context.portal_type].absolute_url()} )
         self._namespace = getattr(surf.ns, self.prefix.upper())
         return self._namespace
 
@@ -163,7 +166,7 @@ class GenericObject2Surf(object):
         """We allow modification of resource here """
         return resource
 
-    def write(self, **kwds):
+    def write(self, *args, **kwds):
         """Write its resource into the session """
 
         resource = self.resource
@@ -173,10 +176,11 @@ class GenericObject2Surf(object):
         for modifier in subscribers([self.context], ISurfResourceModifier):
             modifier.run(resource, *args, **kwds)
 
+        resource.update()
         resource.save()
 
 
-class PortalTypesUtil2Surf(Object2Surf):
+class PortalTypesUtil2Surf(GenericObject2Surf):
     """IArchetype2Surf implemention for TypeInformations"""
 
     adapts(ITypesTool, ISurfSession)
@@ -199,7 +203,7 @@ class PortalTypesUtil2Surf(Object2Surf):
         return resource
 
 
-class MimetypesRegistry2Surf(Object2Surf):
+class MimetypesRegistry2Surf(GenericObject2Surf):
     """IArchetype2Surf implementation for mimetypes_registry
     """
 
@@ -225,5 +229,4 @@ class MimetypesRegistry2Surf(Object2Surf):
         resource.rdfs_mimetype = [(i, None) for i in mimes]
 
         return resource
-
 
