@@ -1,25 +1,16 @@
 """ Marshaller module """
 
-from Acquisition import aq_inner
-from DateTime.DateTime import DateTime
-from OFS.interfaces import IFolder
 from Products.Archetypes.Marshall import Marshaller
-from Products.Archetypes.interfaces import IField, IFileField
-from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFCore.interfaces._tools import ITypesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import log
-from Products.CMFPlone.utils import _createObjectByType
 from Products.MimetypesRegistry.interfaces import IMimetypesRegistry
-from chardet import detect
+from eea.rdfmarshaller.interfaces import IGenericObject2Surf, IObject2Surf
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 from eea.rdfmarshaller.interfaces import ISurfSession   #, IReferenceField
-from eea.rdfmarshaller.interfaces import IGenericObject2Surf, IObject2Surf
 from zope.component import adapts, queryMultiAdapter, subscribers
 from zope.interface import implements, Interface
 import logging
-import rdflib
 import surf
 import sys
 

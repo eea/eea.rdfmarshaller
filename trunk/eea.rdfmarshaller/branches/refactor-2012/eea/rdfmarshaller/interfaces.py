@@ -1,6 +1,5 @@
 """ Interfaces """
 from zope.interface import Interface, Attribute
-from Products.Archetypes.interfaces import IField
 
 
 class ISurfSession(Interface):

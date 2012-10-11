@@ -1,29 +1,11 @@
 from Acquisition import aq_inner
-from DateTime.DateTime import DateTime
-from OFS.interfaces import IFolder
-from Products.Archetypes.Marshall import Marshaller
-from Products.Archetypes.interfaces import IField, IFileField, IBaseContent
+from Products.Archetypes.interfaces import IBaseContent
 from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFCore.interfaces import ITypeInformation
-from Products.CMFCore.interfaces._tools import ITypesTool
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import log
-from Products.CMFPlone.utils import _createObjectByType
-from Products.MimetypesRegistry.interfaces import IMimetypesRegistry
-from chardet import detect
-from eea.rdfmarshaller.archetypes.interfaces import IATField2Surf
-from eea.rdfmarshaller.archetypes.interfaces import IATVocabularyTerm
-from eea.rdfmarshaller.archetypes.interfaces import IValue2Surf
-from eea.rdfmarshaller.archetypes.interfaces import IATVocabularyTerm
-from eea.rdfmarshaller.archetypes.interfaces import IArchetype2Surf, IATField2Surf
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
-from eea.rdfmarshaller.interfaces import ISurfSession
-from zope.component import adapts, queryMultiAdapter, subscribers
-from zope.interface import implements, Interface
-import logging
+from zope.component import adapts
+from zope.interface import implements
 import rdflib
-import surf
-import sys
 
 
 class IsPartOfModifier(object):
