@@ -41,12 +41,20 @@ Add an Image so we can test marshalling binary objects.
   >>> surf.ns.register(NEWSITEM='%s#' % self.portal.portal_types['News Item'].absolute_url())
   >>> surf.ns.register(FOLDER='%s#' % self.portal.portal_types['Folder'].absolute_url())
   >>> content_type, length, data = marshaller.marshall(folder)
+  >>> #print data
 
 Lets verify our export
 
   >>> from StringIO import StringIO
   >>> store = surf.Store(reader='rdflib',  writer='rdflib', rdflib_store ='IOMemory')
   >>> session = surf.Session(store)
+
+
+  >>> from eea.rdfmarshaller.interfaces import IObject2Surf
+  >>> from zope.component import getMultiAdapter
+  >>> adapter = getMultiAdapter((folder, session), interface=IObject2Surf)
+
+
   >>> store.load_triples(source=StringIO(data))
   True
   >>> Folder = session.get_class(surf.ns.FOLDER['Folder'])
@@ -58,6 +66,8 @@ Lets verify our export
   >>> [(obj.newsitem_id.first.strip(), obj.newsitem_text.first.strip())
   ...    for obj in NewsItem.all().order()]
   [(u'news1', u'<p>my news rocks!</p>')]
+
+TODO: do a real printing here
 
 If we print data we should get something like
 

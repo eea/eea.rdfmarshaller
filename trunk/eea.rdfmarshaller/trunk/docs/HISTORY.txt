@@ -5,6 +5,13 @@ Changelog
 ----------------------
 * Bug fix: also register the geo namespace, for pretty printing
   [tiberich refs #3425]
+* Refactor: improve the API to make it more clear about the intent of classes
+  and interfaces. Now we no longer assume that all exported objects are archetypes,
+  we have a more pluggable way to override, per field_type + fieldname +
+  context_type the output. Also make the value extracting logic a bit easier to 
+  follow by having adapters for each type of value (list, string, datetime,
+  etc).
+  [tiberich refs #3981]
 
 5.1 - (2012-07-17)
 ------------------

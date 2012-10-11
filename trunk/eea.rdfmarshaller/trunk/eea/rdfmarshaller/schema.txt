@@ -86,6 +86,7 @@ an other content type that is named 'NewsItem', but why should you have that? :)
   rdflib.Literal(u'An announcement that will show up in news listings.', lang=u'en')
 
 Schema extender
+~~~~~~~~~~~~~~~
 
 First we create an schema extender
 

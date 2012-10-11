@@ -10,6 +10,6 @@
      <implements interface=".interfaces.IATVocabulary" />
   </class>
 
-  <adapter factory=".marshaller.ATVocabularyTerm2Surf" />
+  <adapter factory=".ATVocabularyTerm2Surf" provides="eea.rdfmarshaller.interfaces.IObject2Surf"/>
 
 </configure>

@@ -1,34 +1,37 @@
 """ Interfaces """
 from zope.interface import Interface, Attribute
-from Products.Archetypes.interfaces import IField
+
 
 class ISurfSession(Interface):
-    """ Marker interface """
-
-class IArchetype2Surf(Interface):
-    """ IArchetype2Surf interface """
-
-class IATField2Surf(Interface):
-    """ IATField2Surf interface """
-
-    def value(context):
-        """ Returns the value in RDF format """
-
-    exportable = Attribute("Return True if it is possible to export the value "
-                           "to RDF")
+    """The surf.Session objects"""
 
 
-class IATVocabulary(Interface):
-    """ Marker interface for ATVocabularyManager Simple Vocabulary """
+class IObject2Surf(Interface):
+    """ An object that writes surf info into a ISurfSession
+    """
 
-class IATVocabularyTerm(Interface):
-    """ Marker interface for ATVocabularyManager Simple Term """
+    def write():
+        """Add the surf resource info into the session """
 
-class IReferenceField(IField):
-    """ Marker interface for Products.Archetypes.Field.ReferenceField """
 
-class ITextField(IField):
-    """ Marker interface for Products.Archetypes.Field.TextField """
+class IGenericObject2Surf(IObject2Surf):
+    """ An implementation of IObject2Surf 
+
+    This interface is only used to describe the GenericObject2Surf
+    class; The IObject2Surf interface should be used as adapter interface
+    """
+
+    resource   = Attribute(u"A surf resource that is written into the sesion")
+    namespace  = Attribute(u"The namespace that is attached to the resource")
+    subject    = Attribute(u"The subject (URI) of the resource")
+    prefix     = Attribute(u"The subject (URI) of the resource")
+    portalType = Attribute(u"The portal type of the context, "
+                           u"will be used as resource class")
+    rdfId      = Attribute(u"The Id of the resource")
+
+    def modify_resource(resource, *args, **kwds):
+        """Override to modify the resource and return a new one
+        """
 
 
 class ISurfResourceModifier(Interface):
@@ -36,5 +39,5 @@ class ISurfResourceModifier(Interface):
     """
 
     def run(resource):
-        """Gets the rdf resource as argument, to allow it to change inplace
+        """Gets the rdf resource as argument, to allow it to be changed in place
         """
