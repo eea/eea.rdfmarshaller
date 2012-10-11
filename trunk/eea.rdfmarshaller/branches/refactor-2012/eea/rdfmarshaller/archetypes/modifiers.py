@@ -36,7 +36,7 @@ class IsPartOfModifier(object):
     def __init__(self, context):
         self.context = context
 
-    def run(self, resource):
+    def run(self, resource, *args, **kwds):
         """Change the rdf resource
         """
         parent = getattr(aq_inner(self.context), 'aq_parent', None)
@@ -50,7 +50,7 @@ class IsPartOfModifier(object):
 
             if state == 'published':
                 parent_url = parent.absolute_url()
-                rdf.dcterms_isPartOf = \
+                resource.dcterms_isPartOf = \
                     rdflib.URIRef(parent_url) #pylint: disable-msg = W0612
 
 
@@ -64,7 +64,7 @@ class TranslationInfoModifier(object):
     def __init__(self, context):
         self.context = context
 
-    def run(self, resource):
+    def run(self, resource, *args, **kwds):
         """Change the rdf resource
         """
         context = self.context

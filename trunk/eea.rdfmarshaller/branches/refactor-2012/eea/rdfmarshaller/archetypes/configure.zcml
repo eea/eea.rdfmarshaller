@@ -31,7 +31,9 @@
   <adapter factory=".fields.String2Surf" />
   <adapter factory=".fields.DateTime2Surf" />
 
-  <subscriber handler=".modifiers.IsPartOfModifier" />
-  <subscriber handler=".modifiers.TranslationInfoModifier" />
+  <subscriber factory=".modifiers.IsPartOfModifier" 
+          provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+  <subscriber factory=".modifiers.TranslationInfoModifier"
+          provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier"/>
 
 </configure>
