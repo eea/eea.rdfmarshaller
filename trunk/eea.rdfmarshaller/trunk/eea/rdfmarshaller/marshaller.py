@@ -170,6 +170,8 @@ class GenericObject2Surf(object):
         resource.update()
         resource.save()
 
+        return resource
+
 
 class PortalTypesUtil2Surf(GenericObject2Surf):
     """IObject2Surf implemention for TypeInformations"""
