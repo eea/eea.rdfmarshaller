@@ -9,6 +9,10 @@ from eea.rdfmarshaller.interfaces import ISurfSession
 from zope.component import adapts
 from zope.interface import implements, Interface
 import rdflib
+import sys
+
+#import logging
+#logging.basicConfig(level=logging.CRITICAL)
 
 #===============[ Value Adapters ]=================
 
@@ -97,8 +101,17 @@ class ATField2Surf(object):
 
     def value(self):
         """ Value """
-        return self.field.getAccessor(self.context)()
+        try:
+            return self.field.getAccessor(self.context)()
+        except Exception:
 
+            log.log('RDF marshaller error for context[field]'
+                    '"%s[%s]": \n%s: %s' %
+                    (self.context.absolute_url(), self.field.getName(),
+                     sys.exc_info()[0], sys.exc_info()[1]),
+                     severity=log.logging.WARN)
+
+            return None
 
 class ATFileField2Surf(ATField2Surf):
     """IATField2Surf implementation for File fields"""
