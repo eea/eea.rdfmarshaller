@@ -23,6 +23,11 @@
                 zope.interface.Interface
                 eea.rdfmarshaller.interfaces.ISurfSession" />
   <adapter factory=".fields.ATFileField2Surf" />
+  <adapter factory=".fields.ATFileField2Surf" 
+        for="plone.app.blob.interfaces.IBlobField 
+             zope.interface.Interface 
+             eea.rdfmarshaller.interfaces.ISurfSession" />
+
   <adapter factory=".fields.ATReferenceField2Surf" />
 
   <adapter factory=".fields.Value2Surf" />
