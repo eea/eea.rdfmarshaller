@@ -3,6 +3,8 @@ Changelog
 
 5.2-dev - (unreleased)
 ----------------------
+* Bug fix: Map plone location field to dcterms:spatial for geotag information.
+  [demarant refs #3425]
 * Bug fix: also register the geo namespace, for pretty printing
   [tiberich refs #3425]
 * Refactor: improve the API to make it more clear about the intent of classes

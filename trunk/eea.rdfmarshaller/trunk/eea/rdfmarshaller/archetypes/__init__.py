@@ -35,6 +35,7 @@ class Archetype2Surf(GenericObject2Surf):
                    ('effectiveDate', 'issued'),
                    ('expirationDate', 'expires'),
                    ('rights', 'rights'),
+                   ('location', 'spatial'),
                    ])
 
     _blacklist = [   'constrainTypesMode', 
