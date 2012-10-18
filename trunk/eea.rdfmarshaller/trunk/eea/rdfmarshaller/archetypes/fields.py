@@ -93,6 +93,8 @@ class ATField2Surf(object):
     adapts(IField, Interface, ISurfSession)
 
     exportable = True
+    prefix = None   #override the prefix for this predicate
+    name = None     #this will be the predicate name (fieldname)
 
     def __init__(self, field, context, session):
         self.field = field
@@ -112,6 +114,7 @@ class ATField2Surf(object):
                      severity=log.logging.WARN)
 
             return None
+
 
 class ATFileField2Surf(ATField2Surf):
     """IATField2Surf implementation for File fields"""

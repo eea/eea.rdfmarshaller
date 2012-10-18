@@ -97,8 +97,11 @@ class Archetype2Surf(GenericObject2Surf):
             if not value or value == "None":
                 continue
 
-            prefix = self.prefix
-            if fieldName in self.field_map:
+            prefix = fieldAdapter.prefix or self.prefix
+
+            if fieldAdapter.name:
+                fieldName = fieldAdapter.name
+            elif fieldName in self.field_map:
                 fieldName = self.field_map.get(fieldName)
             elif fieldName in self.dc_map:
                 fieldName = self.dc_map.get(fieldName)
