@@ -107,7 +107,15 @@ class Archetype2Surf(GenericObject2Surf):
                 fieldName = self.dc_map.get(fieldName)
                 prefix = 'dcterms'
 
-            setattr(resource, '%s_%s' % (prefix, fieldName), value)
+            try:
+                setattr(resource, '%s_%s' % (prefix, fieldName), value)
+            except Exception:
+
+                log.log('RDF marshaller error for context[field]'
+                        '"%s[%s]": \n%s: %s' %
+                        (self.context.absolute_url(), fieldName,
+                         sys.exc_info()[0], sys.exc_info()[1]),
+                         severity=log.logging.WARN)
 
         return resource
 
