@@ -90,7 +90,15 @@ class Archetype2Surf(GenericObject2Surf):
             if not fieldAdapter.exportable:
                 continue
 
-            value = fieldAdapter.value()
+            try:
+                value = fieldAdapter.value()
+            except Exception:
+                log.log('RDF marshaller error for context[field]'
+                        '"%s[%s]": \n%s: %s' %
+                        (self.context.absolute_url(), fieldName,
+                         sys.exc_info()[0], sys.exc_info()[1]),
+                         severity=log.logging.WARN)
+
             valueAdapter = queryAdapter(value, interface=IValue2Surf)
             if valueAdapter:
                 value = valueAdapter(language=language)
