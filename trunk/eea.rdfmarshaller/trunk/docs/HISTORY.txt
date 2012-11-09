@@ -46,7 +46,7 @@ Changelog
 ------------------
 * Bug fix: fixed markup of HISTORY.txt file
   [ciobabog refs #5231]
-* WIP: added eea:isTranslationOf to point to translations 
+* Change: added eea:isTranslationOf to point to translations
   [tiberich #5130]
 * Bug fix: use dcterms:issued instead of dcterms:effective for DC
   [tiberich #5135]
