@@ -56,6 +56,9 @@ class RDFMarshaller(Marshaller):
         store.reader.graph.bind('geo',
                                 surf.ns.GEO,
                                 override=True)
+        store.reader.graph.bind('owl',
+                                 surf.ns.OWL,
+                                 override=True)
 
         self._store = store
         return store

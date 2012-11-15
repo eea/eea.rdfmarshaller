@@ -3,6 +3,8 @@ Changelog
 
 5.2-dev - (unreleased)
 ----------------------
+* Change: registered OWL namespace globally as it is often needed.
+  [demarant refs #7409]
 * Bug fix: fixed more occurences of UnicodeDecodeError. 
   Do not try to encode already unicode strings.
   [demarant refs #9293]
