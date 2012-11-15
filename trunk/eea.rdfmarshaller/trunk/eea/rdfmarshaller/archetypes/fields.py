@@ -27,6 +27,8 @@ class Value2Surf(object):
 
     def __call__(self, *args, **kwds):
         language = kwds['language']
+        if isinstance(self.value,unicode):
+           return (self.value,language)
         try:
             value = (unicode(self.value, 'utf-8', 'replace'),
                     language)

@@ -3,6 +3,9 @@ Changelog
 
 5.2-dev - (unreleased)
 ----------------------
+* Bug fix: fixed more occurences of UnicodeDecodeError. 
+  Do not try to encode already unicode strings.
+  [demarant refs #9293]
 * Bug fix: Map plone location field to dcterms:spatial for geotag information.
   [demarant refs #3425]
 * Bug fix: also register the geo namespace, for pretty printing
