@@ -1,6 +1,9 @@
 Changelog
 =========
 
+5.3-dev - (unreleased)
+----------------------
+
 5.2 - (2012-11-22)
 ------------------
 * Change: registered OWL namespace globally as it is often needed.
