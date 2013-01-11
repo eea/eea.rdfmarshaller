@@ -3,6 +3,10 @@ Changelog
 
 5.3-dev - (unreleased)
 ----------------------
+* Change: do not export children objects when requesting an RDF export 
+  of a folderish content. Keep only hasPart statements. 
+  This is to avoid redundancy and speed-up rdf export of large folderish content.
+  [demarant fixes #13589] 
 
 5.2 - (2012-11-22)
 ------------------

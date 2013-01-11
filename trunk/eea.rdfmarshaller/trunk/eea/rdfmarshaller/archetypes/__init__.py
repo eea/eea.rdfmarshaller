@@ -149,13 +149,6 @@ class ATFolderish2Surf(Archetype2Surf):
             for obj in objs:
                 resource.dcterms_hasPart.append(rdflib.URIRef(
                                                     obj.absolute_url()))
-                obj2surf = queryMultiAdapter((obj, self.session),
-                                            interface=IObject2Surf)
-                if obj2surf is not None:
-                    self.session.default_store.reader.graph.bind(
-                            obj2surf.prefix, obj2surf.namespace, override=False)
-                    obj2surf.write(currentLevel=currentLevel, endLevel=endLevel)
-        #resource.save()
         return resource
 
 
