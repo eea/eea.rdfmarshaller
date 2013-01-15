@@ -1,6 +1,9 @@
 Changelog
 =========
 
+5.4-dev - (unreleased)
+----------------------
+
 5.3 - (2013-01-15)
 ------------------
 * Change: do not export children objects when requesting an RDF export 
