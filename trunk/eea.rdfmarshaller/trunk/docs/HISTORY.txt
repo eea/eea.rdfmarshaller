@@ -3,6 +3,8 @@ Changelog
 
 5.4-dev - (unreleased)
 ----------------------
+* Change: Updated and cleaned up broken doctests.
+  [demarant refs #13589]   
 
 5.3 - (2013-01-15)
 ------------------
