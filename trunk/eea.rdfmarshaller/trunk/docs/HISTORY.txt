@@ -1,6 +1,9 @@
 Changelog
 =========
 
+5.5-dev - (unreleased)
+----------------------
+
 5.4 - (2013-01-28)
 ------------------
 * Change: Updated and cleaned up broken doctests.
