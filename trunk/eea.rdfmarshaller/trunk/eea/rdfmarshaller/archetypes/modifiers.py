@@ -79,7 +79,6 @@ class ProvidedInterfacesModifier(object):
     def run(self, resource, *args, **kwds):
         """Change the rdf resource
         """
-        context = self.context
         provides = ["%s.%s" % (iface.__module__ or '', iface.__name__) 
                         for iface in providedBy(self.context)]
 
