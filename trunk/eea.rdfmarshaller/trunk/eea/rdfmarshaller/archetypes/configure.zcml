@@ -40,5 +40,7 @@
           provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
   <subscriber factory=".modifiers.TranslationInfoModifier"
           provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier"/>
+  <subscriber factory=".modifiers.ProvidedInterfacesModifier" 
+          provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 
 </configure>

@@ -104,8 +104,14 @@ Load all the vocabolary terms into store
   [(u'air pollution', u'Air pollution'), (u'biodiversity', u'Nature protection and biodiversity'), (u'climate change', u'Climate change mitigation'), (u'freshwater', u'Freshwater'), (u'land', u'Land use'), (u'waste', u'Waste')]
 
 
-Testing hasPart
+AT modifiers
 ---------------
+rdfmarshaller allows arbitrary constructs to change the @@rdf output. These
+are called "modifiers" and are registered as ZCA subscribers to the
+ISurfResourceModifier, adapting the intended context type.
+
+The hasPart modifier
+~~~~~~~~~~~~~~~~~~~~
 
 A folder uses dcterms:hasPart to tell which content it has.
 
@@ -122,4 +128,12 @@ A folder uses dcterms:hasPart to tell which content it has.
   [rdflib.URIRef('http://nohost/plone/myfolder/news1'), rdflib.URIRef('http://nohost/plone/myfolder/news2')]
 
 
+The objectProvides modifier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+All AT objects have eea:objectProvides information:
+
+  >>> folder = list(session.get_class(surf.ns.FOLDER['Folder']).all())[0]
+  >>> provides = list(folder.eea_objectProvides.order())
+  >>> print provides[0]
+  AccessControl.interfaces.IOwned

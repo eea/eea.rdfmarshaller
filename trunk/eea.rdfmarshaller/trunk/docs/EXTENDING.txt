@@ -48,5 +48,14 @@ nothing will be written in the rdf resource. This splits the implementation of
 various logic in multiple places, which can then be extended/overrided,
 instead of having this logic in the Archetype2Surf implementation.
 
-TODO: is it needed to have the same mechanism, with named multiadapter for the
-IValue2Surf implementation? Let's hope not.
+
+
+Extending through the use of modifiers
+--------------------------------------
+
+A new mechanism for extending the surf resource was introduced, in the form of
+ISurfResourceModifier subscribers that are allowed to change the surf
+resource. This mechanism allows arbitrary plugins to be written in any package
+and extend, very easily, the output of @@rdf. For pointers on how to implement
+such modifiers, look at the source code in
+eea.rdfmarshaller.archetypes.modifiers

@@ -4,7 +4,7 @@ from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.utils import getToolByName
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 from zope.component import adapts
-from zope.interface import implements
+from zope.interface import implements, providedBy
 import rdflib
 
 
@@ -65,3 +65,22 @@ class TranslationInfoModifier(object):
             resource.eea_isTranslationOf = \
                 rdflib.URIRef( context.getCanonical().absolute_url())
 
+
+class ProvidedInterfacesModifier(object):
+    """Adds information about provided interfaces 
+    """
+
+    implements (ISurfResourceModifier)
+    adapts(IBaseContent)
+
+    def __init__(self, context):
+        self.context = context
+
+    def run(self, resource, *args, **kwds):
+        """Change the rdf resource
+        """
+        context = self.context
+        provides = ["%s.%s" % (iface.__module__ or '', iface.__name__) 
+                        for iface in providedBy(self.context)]
+
+        resource.eea_objectProvides = provides
