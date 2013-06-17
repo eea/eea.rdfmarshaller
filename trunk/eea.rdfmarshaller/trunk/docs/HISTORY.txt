@@ -1,8 +1,8 @@
 Changelog
 =========
 
-5.5-dev - (unreleased)
-----------------------
+5.5 - (2013-06-17)
+------------------
 * Feature: implemented the eea:objectProvides modifier. This add information
   about provided interfaces to the @@rdf output
   [tiberich #14718]
