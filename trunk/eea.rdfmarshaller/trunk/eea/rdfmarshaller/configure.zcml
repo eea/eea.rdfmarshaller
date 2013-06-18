@@ -6,6 +6,8 @@
   <include package=".browser" />
   <include package=".upgrades" />
   <include package=".archetypes" />
+  <include package=".controlpanel" />
+  <include package=".events" />
 
   <class class="surf.Session">
      <implements interface=".interfaces.ISurfSession" />

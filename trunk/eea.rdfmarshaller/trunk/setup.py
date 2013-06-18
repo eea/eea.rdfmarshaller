@@ -34,6 +34,7 @@ setup(name=name,
           'surf.rdflib',
           'Products.ATVocabularyManager',
           'chardet',
+          'plone.app.async',
       ],
       entry_points="""
       # -*- Entry points: -*-

@@ -1,0 +1,17 @@
+<configure
+  xmlns="http://namespaces.zope.org/zope"
+  i18n_domain="eea">
+
+  <subscriber
+    for="Products.Archetypes.interfaces.IBaseObject
+        zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+    handler=".subscribers.schedule_ping_CRSDS_created"
+    />
+
+  <subscriber
+    for="Products.Archetypes.interfaces.IBaseObject
+        zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+    handler=".subscribers.schedule_ping_CRSDS_modified"
+    />
+
+</configure>

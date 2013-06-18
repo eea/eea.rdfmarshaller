@@ -3,6 +3,8 @@ Changelog
 
 5.6-dev - (unreleased)
 ----------------------
+* WIP: Implementing SDS Ping feature when resource was created or changed
+  [szabozo0 refs #14473]
 
 5.5 - (2013-06-17)
 ------------------
