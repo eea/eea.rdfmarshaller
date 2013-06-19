@@ -3,6 +3,7 @@
 import logging
 import urllib2
 import urllib
+import lxml.etree
 
 from zope.component import getUtility, queryUtility
 from plone.registry.interfaces import IRegistry
@@ -24,10 +25,9 @@ def ping_CRSDS(context, options):
     while True:
         try:
             params = {}
-            params['obj_url'] = options['obj_url']
+            params['uri'] = options['obj_url']
             if options['create']:
-                params['create'] = True
-
+                params['create'] = options['create']
             encoded_params = urllib.urlencode(params)
             url = "%s?%s" % (options['service_to_ping'], encoded_params)
             logger.info("Pinging: %s for object: %s with create=%s" \
@@ -36,11 +36,17 @@ def ping_CRSDS(context, options):
                     options['create']))
             ping_con = urllib2.urlopen(url)
             ping_response = ping_con.read()
-            # TODO check if error message is '<?xml version="1.0"?>\r\n<response>\r\n    <message>URL not in catalogue of sources, no action taken.</message>\r\n    <flerror>0</flerror>\r\n</response>'
-            # if so, try to ping with create = true
             ping_con.close()
+            response = lxml.etree.fromstring(ping_response)
+            message = response.find("message").text
+            logger.info("Ping response: %s" % message)
+            if (not options['create']) and \
+                message == 'URL not in catalogue of sources, no action taken.':
+                logger.info("Retry ping with create=true")
+                options['create'] = True
+                continue
         except urllib2.HTTPError, err:
-            logger.info(err.msg)
+            logger.info("Ping failed with message %s" % err.msg)
 
         break
 
