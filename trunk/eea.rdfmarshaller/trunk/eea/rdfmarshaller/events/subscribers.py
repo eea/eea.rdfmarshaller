@@ -9,7 +9,12 @@ from plone.registry.interfaces import IRegistry
 from plone.app.async.interfaces import IAsyncService
 
 from eea.rdfmarshaller.controlpanel.interfaces import IRDFMarshallerSettings
-from eea.versions.interfaces import IGetVersions, IVersionEnhanced
+
+hasVersionsInstalled = True
+try:
+    from eea.versions.interfaces import IGetVersions, IVersionEnhanced
+except ImportError:
+    hasVersionsInstalled = False
 
 logger = logging.getLogger("eea.rdfmarshaller")
 
@@ -55,9 +60,8 @@ def schedule_ping_CRSDS(context, create):
         return
 
 
-    if IVersionEnhanced.providedBy(context):
+    if hasVersionsInstalled and IVersionEnhanced.providedBy(context):
         obj_versions = IGetVersions(context)
-
     else:
         obj_versions = [context]
 
