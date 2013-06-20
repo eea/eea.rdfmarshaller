@@ -4,7 +4,7 @@
 
   <subscriber
     for="Products.Archetypes.interfaces.IBaseObject
-        zope.lifecycleevent.interfaces.IObjectCreatedEvent"
+        Products.Archetypes.interfaces.IObjectInitializedEvent"
     handler=".subscribers.schedule_ping_CRSDS_created"
     />
 
