@@ -45,14 +45,4 @@
     permission="zope.Public"
     />
 
-
-  <!--
-  <browser:page
-    for="Products.Archetypes.interfaces.IBaseObject"
-    name="ontologies.rdf"
-    class=".extensions.RDFExtensions"
-    permission="zope.Public"
-    />
-    -->
-
 </configure>

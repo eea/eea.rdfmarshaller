@@ -5,6 +5,9 @@ Changelog
 ----------------------
 * WIP: Implementing SDS Ping feature when resource was created or changed
   [szabozo0 refs #14473]
+* Upgrade Step: in
+  http://www.eea.europa.eu/aq_parent/portal_properties/rdfmarshaller_properties
+  remove the "provenances" field from the "blacklist" list.
 
 5.5 - (2013-06-17)
 ------------------
