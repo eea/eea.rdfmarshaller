@@ -59,15 +59,14 @@ def schedule_ping_CRSDS(context, create):
     if not registry:
         return
 
-    settings = registry.forInterface(IRDFMarshallerSettings)
+    settings = registry.forInterface(IRDFMarshallerSettings, False)
     if not settings:
         return
     if not settings.services_to_ping:
         return
 
-
     if hasVersionsInstalled and IVersionEnhanced.providedBy(context):
-        obj_versions = IGetVersions(context)
+        obj_versions = IGetVersions(context).versions()
     else:
         obj_versions = [context]
 
