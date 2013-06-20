@@ -9,6 +9,12 @@ from zope.component import getUtility, queryUtility
 from plone.registry.interfaces import IRegistry
 from plone.app.async.interfaces import IAsyncService
 
+hasLinguaPloneInstalled = True
+try:
+    from Products.LinguaPlone.interfaces import ITranslatable
+except ImportError:
+    hasLinguaPloneInstalled = False
+
 from eea.rdfmarshaller.controlpanel.interfaces import IRDFMarshallerSettings
 
 hasVersionsInstalled = True
@@ -30,7 +36,7 @@ def ping_CRSDS(context, options):
                 params['create'] = options['create']
             encoded_params = urllib.urlencode(params)
             url = "%s?%s" % (options['service_to_ping'], encoded_params)
-            logger.info("Pinging: %s for object: %s with create=%s" \
+            logger.info("Pinging %s for object %s with create=%s" \
                 % (options['service_to_ping'], 
                     options['obj_url'], 
                     options['create']))
@@ -39,14 +45,20 @@ def ping_CRSDS(context, options):
             ping_con.close()
             response = lxml.etree.fromstring(ping_response)
             message = response.find("message").text
-            logger.info("Ping response: %s" % message)
+            logger.info("Response for pinging %s for object %s: %s" \
+                % (options['service_to_ping'],
+                    options['obj_url'],
+                    message))
             if (not options['create']) and \
                 message == 'URL not in catalogue of sources, no action taken.':
                 logger.info("Retry ping with create=true")
                 options['create'] = True
                 continue
         except urllib2.HTTPError, err:
-            logger.info("Ping failed with message %s" % err.msg)
+            logger.info("Pinging %s for object %s failed with message: %s" \
+                % (options['service_to_ping'],
+                    options['obj_url'],
+                    err.msg))
 
         break
 
@@ -54,7 +66,6 @@ def ping_CRSDS(context, options):
 def schedule_ping_CRSDS(context, create):
     """ generic event
     """
-    # TODO check canonicals
     registry = queryUtility(IRegistry)
     if not registry:
         return
@@ -64,6 +75,9 @@ def schedule_ping_CRSDS(context, create):
         return
     if not settings.services_to_ping:
         return
+
+    if hasLinguaPloneInstalled and ITranslatable.providedBy(context):
+        context = context.getCanonical()
 
     if hasVersionsInstalled and IVersionEnhanced.providedBy(context):
         obj_versions = IGetVersions(context).versions()
