@@ -3,8 +3,12 @@ Changelog
 
 5.6-dev - (unreleased)
 ----------------------
-* WIP: Implementing SDS Ping feature when resource was created or changed
+* Feature: Implemented SDS Ping feature when resource was created or changed
   [szabozo0 refs #14473]
+*  Upgrade Step:
+  in ZMI -> portal_setup -> upgrades
+  select the profile: eea.rdfmarshaller:default
+  upgrade to 5.6
 * Upgrade Step: in
   http://www.eea.europa.eu/aq_parent/portal_properties/rdfmarshaller_properties
   remove the "provenances" field from the "blacklist" list.
