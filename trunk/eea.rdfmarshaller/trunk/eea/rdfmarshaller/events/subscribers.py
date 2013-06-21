@@ -87,7 +87,7 @@ def schedule_ping_CRSDS(context, create):
     async = getUtility(IAsyncService)
     for service_to_ping in settings.services_to_ping:
         for obj in obj_versions:
-            obj_url = obj.absolute_url()
+            obj_url = "%s/@@rdf" % obj.absolute_url()
             options = {}
             options['service_to_ping'] = service_to_ping
             options['obj_url'] = obj_url
