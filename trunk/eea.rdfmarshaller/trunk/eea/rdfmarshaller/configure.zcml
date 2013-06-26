@@ -7,7 +7,7 @@
   <include package=".upgrades" />
   <include package=".archetypes" />
   <include package=".controlpanel" />
-  <include package=".events" />
+  <include package=".actions" />
 
   <class class="surf.Session">
      <implements interface=".interfaces.ISurfSession" />
