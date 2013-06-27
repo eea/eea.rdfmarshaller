@@ -1,2 +1,0 @@
-""" RDF Marshaller events
-"""

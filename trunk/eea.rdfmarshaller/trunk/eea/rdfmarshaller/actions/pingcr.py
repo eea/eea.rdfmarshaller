@@ -140,28 +140,28 @@ def ping_CRSDS(context, options):
                 params['create'] = options['create']
             encoded_params = urllib.urlencode(params)
             url = "%s?%s" % (options['service_to_ping'], encoded_params)
-            logger.info("Pinging %s for object %s with create=%s" \
-                % (options['service_to_ping'], 
-                    options['obj_url'], 
-                    options['create']))
+            logger.info("Pinging %s for object %s with create=%s",
+                    options['service_to_ping'],
+                    options['obj_url'],
+                    options['create'])
             ping_con = urllib2.urlopen(url)
             ping_response = ping_con.read()
             ping_con.close()
             response = lxml.etree.fromstring(ping_response)
             message = response.find("message").text
-            logger.info("Response for pinging %s for object %s: %s" \
-                % (options['service_to_ping'],
+            logger.info("Response for pinging %s for object %s: %s", 
+                    options['service_to_ping'],
                     options['obj_url'],
-                    message))
+                    message)
             if (not options['create']) and \
                 message == 'URL not in catalogue of sources, no action taken.':
                 logger.info("Retry ping with create=true")
                 options['create'] = True
                 continue
         except urllib2.HTTPError, err:
-            logger.info("Pinging %s for object %s failed with message: %s" \
-                % (options['service_to_ping'],
+            logger.info("Pinging %s for object %s failed with message: %s",
+                    options['service_to_ping'],
                     options['obj_url'],
-                    err.msg))
+                    err.msg)
 
         break

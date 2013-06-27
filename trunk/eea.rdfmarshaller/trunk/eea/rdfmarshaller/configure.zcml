@@ -6,7 +6,6 @@
   <include package=".browser" />
   <include package=".upgrades" />
   <include package=".archetypes" />
-  <include package=".controlpanel" />
   <include package=".actions" />
 
   <class class="surf.Session">
