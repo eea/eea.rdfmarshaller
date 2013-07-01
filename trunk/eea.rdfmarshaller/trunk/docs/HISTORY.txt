@@ -5,6 +5,9 @@ Changelog
 ----------------------
 * Feature: Implemented SDS Ping feature when resource was created or changed
   [szabozo0 refs #14473]
+* Bug fix: when loading zcml, also include zcml for plone.contentrules and
+  plone.app.contentrules
+  [tiberich]
 *  Upgrade Step:
   in ZMI -> portal_setup -> upgrades
   select the profile: eea.rdfmarshaller:default

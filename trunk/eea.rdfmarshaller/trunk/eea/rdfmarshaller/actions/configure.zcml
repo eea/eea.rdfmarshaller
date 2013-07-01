@@ -5,6 +5,9 @@
 
     <!-- Ping CR action -->
 
+    <include package="plone.contentrules" file="meta.zcml" />
+    <include package="plone.app.contentrules" />
+
     <adapter factory=".pingcr.PingCRActionExecutor" />
 
     <browser:page
