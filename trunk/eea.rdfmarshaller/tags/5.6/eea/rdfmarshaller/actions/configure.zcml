@@ -1,0 +1,40 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone">
+
+    <!-- Ping CR action -->
+
+    <include package="plone.contentrules" file="meta.zcml" />
+    <include package="plone.app.contentrules" />
+
+    <adapter factory=".pingcr.PingCRActionExecutor" />
+
+    <browser:page
+        for="plone.app.contentrules.browser.interfaces.IRuleActionAdding"
+        name="eea.rdfmarshaller.actions.PingCR"
+        class=".pingcr.PingCRAddForm"
+        permission="plone.app.contentrules.ManageContentRules"
+      />
+
+    <browser:page
+        for="eea.rdfmarshaller.actions.pingcr.IPingCRAction"
+        name="edit"
+        class=".pingcr.PingCREditForm"
+        permission="plone.app.contentrules.ManageContentRules"
+      />
+
+    <plone:ruleAction
+        name="eea.rdfmarshaller.actions.PingCR"
+        title="Ping CR"
+        description="Ping CR"
+        for="*"
+        event="*"
+        addview="eea.rdfmarshaller.actions.PingCR"
+        editview="edit"
+        schema=".pingcr.IPingCRAction"
+        factory=".pingcr.PingCRAction"
+        />
+
+
+</configure>
