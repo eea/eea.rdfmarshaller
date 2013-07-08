@@ -1,6 +1,9 @@
 Changelog
 =========
 
+5.7-dev - (unreleased)
+----------------------
+
 5.6 - (2013-07-08)
 ------------------
 * Feature: Implemented SDS Ping feature when resource was created or changed
