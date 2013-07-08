@@ -38,7 +38,7 @@ class Archetype2Surf(GenericObject2Surf):
                    ('location', 'spatial'),
                    ])
 
-    _blacklist = [   'constrainTypesMode', 
+    _blacklist = [   'constrainTypesMode',
                      'locallyAllowedTypes',
                      'immediatelyAddableTypes',
                      'language',
@@ -137,7 +137,6 @@ class ATFolderish2Surf(Archetype2Surf):
     def modify_resource(self, resource, currentLevel=0, endLevel=1, **kwargs):
         """ AT to Surf """
         currentLevel += 1
-        #import pdb; pdb.set_trace()
         resource = super(ATFolderish2Surf, self).modify_resource(
                          resource, currentLevel=currentLevel, endLevel=endLevel)
         if currentLevel <= endLevel or endLevel == 0:
@@ -154,8 +153,8 @@ class ATFolderish2Surf(Archetype2Surf):
 
 class ATField2RdfSchema(GenericObject2Surf):
     """IFieldDefinition2Surf implemention for Fields;
-    
-    This is used to define rdfs schemas for objects, 
+
+    This is used to define rdfs schemas for objects,
     extracting their field definitions
     """
 
@@ -200,8 +199,8 @@ class ATField2RdfSchema(GenericObject2Surf):
 
 
 class FTI2Surf(GenericObject2Surf):
-    """ IObject2Surf implemention for TypeInformations, 
-    
+    """ IObject2Surf implemention for TypeInformations,
+
     The type informations are persistent objects found in the portal_types """
 
     adapts(ITypeInformation, ISurfSession)
@@ -239,7 +238,7 @@ class FTI2Surf(GenericObject2Surf):
         setattr(resource, 'rdf_id', self.rdfId)
         resource.update()
 
-        # the following hack creates a new instance of a content to 
+        # the following hack creates a new instance of a content to
         # allow extracting the full schema, with extended fields
         # Is this the only way to do this?
         # Another way would be to do a catalog search for a portal_type,
