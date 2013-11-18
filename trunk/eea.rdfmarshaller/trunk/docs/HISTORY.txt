@@ -1,8 +1,8 @@
 Changelog
 =========
 
-5.7-dev - (unreleased)
-----------------------
+5.7 - (2013-11-18)
+------------------
 * Bug fix: fixed encoding issues on rdf export
   [pasoviul refs #16747]
 
