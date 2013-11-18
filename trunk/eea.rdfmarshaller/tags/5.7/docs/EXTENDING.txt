@@ -1,0 +1,61 @@
+A guide on how to extend eea.rdfmarshaller
+==========================================
+
+The rdf marshaller is registered as a marshaller component for the
+Products.Marshaller utilities. 
+
+There are 2 marshalling components registerd with Products.Marshaller:
+the surfrdf and surfrdfs component.
+
+To achieve the rdf marshalling, the ```eea.marshaller.RDFMarshaller``` class will 
+look for a multiadapter implementing ```IObject2Surf``` and adapts 
+the context+ISurfSession. This adapter needs to write its rdf information 
+in the ISurfSession object by calling it's ```write``` method. 
+
+A generic implementation for an IObject2Surf adapter is written as the class
+```eea.rdfmarshaller.marshaller.GenericObject2Surf```. This generic class
+offers splits its namespace, prefix, subject and initial rdf resource
+generation in separate methods, so they can be overrided. Of interest if the
+implementation of the ```write``` method, which offers 2 plugin points. First, 
+it will call the ```self.modify_resource``` method, which does nothing in the
+GenericObject2Surf implementation and can be overrided by subclasses. Second,
+it will look for subscribers for the ISurfResourceModifier interface and call
+those with the resource as an argument, making it possible to change that
+resource from outside packages.
+
+Basic examples of how to use the GenericObject2Surf class are in the
+marshaller.py module, showing implementation for various portal utilities.
+
+For the Archetypes implementation we have a complete subpackage, the 
+```eea.rdfmarshaller.archetypes```. The Archetype2Surf subclasses
+GenericObject2Surf and overrides the modify_resource method. It will look
+through the ISchema of the context object, extract the values and write them
+in the resource. This implementation is not meant to be overriden, as it has
+been designed to be plugable.
+
+To achieve this, the values are extracted from fields with the help of 3
+adapter lookups,: 
+ * first, the most exact lookup:, a named multiadapter for (interface of field, interface
+of context, ISurfSession), where the adapter name is the name of the field.
+ * second, a more generic, unnamed multiadapter, for the same interfaces
+
+Look at IATField2Surf interface for details.
+
+After the value is extracted, the third adapter lookup is executed, with the
+(type of value, IValue2Surf) discriminator. This makes it possible to adapt
+the value to the format needed for the rdf resource. If None is returned, then
+nothing will be written in the rdf resource. This splits the implementation of
+various logic in multiple places, which can then be extended/overrided,
+instead of having this logic in the Archetype2Surf implementation.
+
+
+
+Extending through the use of modifiers
+--------------------------------------
+
+A new mechanism for extending the surf resource was introduced, in the form of
+ISurfResourceModifier subscribers that are allowed to change the surf
+resource. This mechanism allows arbitrary plugins to be written in any package
+and extend, very easily, the output of @@rdf. For pointers on how to implement
+such modifiers, look at the source code in
+eea.rdfmarshaller.archetypes.modifiers
