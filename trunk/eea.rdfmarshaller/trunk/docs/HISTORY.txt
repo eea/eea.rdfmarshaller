@@ -6,6 +6,8 @@ Changelog
 
 5.7 - (2013-11-18)
 ------------------
+* Bug fix: fixed HISTORY.txt to reflect changes
+  [ghicaale refs #17487]
 * Bug fix: fixed encoding issues on rdf export
   [pasoviul refs #16747]
 
