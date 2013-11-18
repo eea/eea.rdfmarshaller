@@ -3,6 +3,8 @@ Changelog
 
 5.8-dev - (unreleased)
 ----------------------
+* Bug fix: Handle wrong ping urls
+  [szabozo0 refs #17485]
 
 5.7 - (2013-11-18)
 ------------------

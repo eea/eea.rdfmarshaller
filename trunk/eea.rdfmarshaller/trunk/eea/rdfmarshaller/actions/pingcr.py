@@ -148,11 +148,17 @@ def ping_CRSDS(context, options):
             ping_response = ping_con.read()
             ping_con.close()
             response = lxml.etree.fromstring(ping_response)
-            message = response.find("message").text
-            logger.info("Response for pinging %s for object %s: %s", 
-                    options['service_to_ping'],
-                    options['obj_url'],
-                    message)
+            try:
+                message = response.find("message").text
+                logger.info("Response for pinging %s for object %s: %s",
+                        options['service_to_ping'],
+                        options['obj_url'],
+                        message)
+            except AttributeError:
+                message = 'no message'
+                logger.info("Pinging %s for object %s failed without message",
+                        options['service_to_ping'],
+                        options['obj_url'])
             if (not options['create']) and \
                 message == 'URL not in catalogue of sources, no action taken.':
                 logger.info("Retry ping with create=true")
