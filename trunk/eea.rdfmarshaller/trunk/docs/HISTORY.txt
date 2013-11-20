@@ -1,8 +1,8 @@
 Changelog
 =========
 
-5.8-dev - (unreleased)
-----------------------
+5.8 - (2013-11-20)
+------------------
 * Bug fix: Handle wrong ping urls
   [szabozo0 refs #17485]
 
