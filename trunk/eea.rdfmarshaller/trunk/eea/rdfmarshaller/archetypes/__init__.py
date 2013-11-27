@@ -262,10 +262,11 @@ class FTI2Surf(GenericObject2Surf):
                          severity=log.logging.WARN)
 
                 return resource
-            catalog = getToolByName(context, 'portal_catalog')
-            tmpPath = '%s/rdfstype' % '/'.join(tmpFolder.getPhysicalPath())
-            brains = catalog(path=tmpPath)
-            [ catalog.uncatalog_object(brain.getPath()) for brain in brains ]
+            finally:
+                catalog = getToolByName(context, 'portal_catalog')
+                tmpPath = '%s/rdfstype' % '/'.join(tmpFolder.getPhysicalPath())
+                brains = catalog(path=tmpPath)
+                [ catalog.uncatalog_object(br.getPath()) for br in brains ]
 
         if hasattr(instance, 'Schema'):
             schema = instance.Schema()
