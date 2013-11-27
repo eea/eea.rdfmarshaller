@@ -253,7 +253,6 @@ class FTI2Surf(GenericObject2Surf):
             try:
                 instance = _createObjectByType(portal_type, tmpFolder,
                                                'rdfstype')
-                instance.unindexObject()
             except Exception:   #might be a tool class
                 if DEBUG:
                     raise
@@ -263,6 +262,10 @@ class FTI2Surf(GenericObject2Surf):
                          severity=log.logging.WARN)
 
                 return resource
+            catalog = getToolByName(context, 'portal_catalog')
+            tmpPath = '%s/rdfstype' % '/'.join(tmpFolder.getPhysicalPath())
+            brains = catalog(path=tmpPath)
+            [ catalog.uncatalog_object(brain.getPath()) for brain in brains ]
 
         if hasattr(instance, 'Schema'):
             schema = instance.Schema()

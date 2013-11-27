@@ -3,6 +3,8 @@ Changelog
 
 5.9-dev - (unreleased)
 ----------------------
+* find and remove all related brains when creating tmp obj for schema
+  [simiamih refs #17298]
 
 5.8 - (2013-11-20)
 ------------------
