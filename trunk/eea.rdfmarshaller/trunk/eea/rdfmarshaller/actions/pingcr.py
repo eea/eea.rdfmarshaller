@@ -91,7 +91,10 @@ class PingCRActionExecutor(object):
             options['service_to_ping'] = service_to_ping
             options['obj_url'] = obj_url
             options['create'] = create
-            async.queueJob(ping_CRSDS, self.context, options)
+            try:
+                async.queueJob(ping_CRSDS, self.context, options)
+            except ComponentLookupError:
+                logger.info('No instance for async operations was defined.')
 
         if create:
             obj_url = "%s/@@rdf" % container.absolute_url()
@@ -99,7 +102,10 @@ class PingCRActionExecutor(object):
             options['service_to_ping'] = service_to_ping
             options['obj_url'] = obj_url
             options['create'] = False
-            async.queueJob(ping_CRSDS, self.context, options)
+            try:
+                async.queueJob(ping_CRSDS, self.context, options)
+            except ComponentLookupError:
+                logger.info('No instance for async operations was defined.')
 
         return True
 
@@ -133,6 +139,12 @@ def ping_CRSDS(context, options):
     """ ping the CR/SDS service
     """
     while True:
+        # temporal fix till #17667 will be implemented
+        if "webdev.eea.europa.eu" in options['obj_url']:
+            logger.info("Pinging %s for object %s failed: development portal",
+                    options['service_to_ping'],
+                    options['obj_url'])
+
         try:
             params = {}
             params['uri'] = options['obj_url']
