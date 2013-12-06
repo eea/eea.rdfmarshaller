@@ -6,7 +6,7 @@ import urllib
 import lxml.etree
 
 from zope import schema
-from zope.component import adapts, getUtility
+from zope.component import adapts, getUtility, ComponentLookupError
 from zope.formlib import form
 from zope.interface import implements, Interface
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
