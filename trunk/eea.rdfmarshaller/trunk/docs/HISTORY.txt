@@ -1,8 +1,8 @@
 Changelog
 =========
 
-5.9-dev - (unreleased)
-----------------------
+5.9 - (2013-12-06)
+------------------
 * Bug fix: find and remove all related brains when creating tmp obj for schema
   [simiamih refs #17298]
 * Feature: do not ping SDS from *.webdev.eea.europa.eu
