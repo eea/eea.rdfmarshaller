@@ -144,6 +144,7 @@ def ping_CRSDS(context, options):
             logger.info("Pinging %s for object %s failed: development portal",
                     options['service_to_ping'],
                     options['obj_url'])
+            break
 
         try:
             params = {}
