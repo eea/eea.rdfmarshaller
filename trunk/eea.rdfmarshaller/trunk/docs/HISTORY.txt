@@ -3,12 +3,14 @@ Changelog
 
 6.0-dev - (unreleased)
 ----------------------
+* Bug fix: fixed ReST markup of HISTORY.txt
+  [ghicaale refs #17716]
 
 5.9 - (2013-12-06)
 ------------------
 * Bug fix: find and remove all related brains when creating tmp obj for schema
   [simiamih refs #17298]
-* Feature: do not ping SDS from *.webdev.eea.europa.eu
+* Feature: do not ping SDS from .webdev.eea.europa.eu
   [ghicaale refs #17664]
 
 5.8 - (2013-11-20)
@@ -31,9 +33,9 @@ Changelog
   plone.app.contentrules
   [tiberich]
 *  Upgrade Step:
-  in ZMI -> portal_setup -> upgrades
-  select the profile: eea.rdfmarshaller:default
-  upgrade to 5.6
+   - in ZMI -> portal_setup -> upgrades
+   - select the profile: eea.rdfmarshaller:default
+   - upgrade to 5.6
 * Upgrade Step: in
   http://www.eea.europa.eu/aq_parent/portal_properties/rdfmarshaller_properties
   remove the "provenances" field from the "blacklist" list.
@@ -222,4 +224,3 @@ Changelog
 0.1 (2010-05-19)
 ----------------
 * Initial release
-
