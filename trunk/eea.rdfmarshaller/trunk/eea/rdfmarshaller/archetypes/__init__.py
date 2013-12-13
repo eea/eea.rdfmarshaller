@@ -74,7 +74,25 @@ class Archetype2Surf(GenericObject2Surf):
         """ Schema to Surf """
         language = self.context.Language()
 
+        workflowTool = getToolByName(self.context, "portal_workflow")
+        status = workflowTool.getInfoFor(self.context, "review_state")
+        if status is None:
+            status = "published"
+        status = ''.join(["http://www.eea.europa.eu/"
+                          "portal_vocabularies/workflow_states/",
+                          status])
+        try:
+            setattr(resource, '%s_%s' % ("eea", "hasWorkflowState"),
+                    rdflib.URIRef(status))
+        except Exception:
+            log.log('RDF marshaller error for context[workflow_state]'
+                    '"%s": \n%s: %s' %
+                    (self.context.absolute_url(),
+                     sys.exc_info()[0], sys.exc_info()[1]),
+                     severity=log.logging.WARN)
+
         for field in self.context.Schema().fields():
+         #   import pdb; pdb.set_trace()
 
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
