@@ -92,8 +92,6 @@ class Archetype2Surf(GenericObject2Surf):
                      severity=log.logging.WARN)
 
         for field in self.context.Schema().fields():
-         #   import pdb; pdb.set_trace()
-
             fieldName = field.getName()
             if fieldName in self.blacklist_map:
                 continue
