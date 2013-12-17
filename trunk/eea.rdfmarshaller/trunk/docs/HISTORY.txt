@@ -1,8 +1,8 @@
 Changelog
 =========
 
-6.1-dev - (unreleased)
-----------------------
+6.1 - (2013-12-17)
+------------------
 * Feature: marshaller exports workflow state
   [pasoviul refs #17675]
 
