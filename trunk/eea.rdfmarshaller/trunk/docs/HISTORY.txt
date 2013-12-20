@@ -3,6 +3,8 @@ Changelog
 
 6.2-dev - (unreleased)
 ----------------------
+* Bug fix: fixed encoding issues on rdf export
+  [ghicaale refs #17668]
 
 6.1 - (2013-12-17)
 ------------------

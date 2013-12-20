@@ -65,7 +65,7 @@ class String2Surf(Value2Surf):
             return None
         nonEUencodings = ['Big5', 'GB2312', 'EUC-TW', 'HZ-GB-2312',
                           'ISO-2022-CN', 'EUC-JP', 'SHIFT_JIS', 'ISO-2022-JP',
-                          'EUC-KR', 'ISO-2022-KR', 'TIS-620']
+                          'EUC-KR', 'ISO-2022-KR', 'TIS-620', 'ISO-8859-2']
         language = kwds['language']
         encoding = detect(self.value)['encoding']
 
@@ -79,12 +79,7 @@ class String2Surf(Value2Surf):
                         encoding)
                 value = self.value.decode('utf-8','replace')
 
-         #WIP: #17668
-#        if language in ['mt']:
-#            value = self.value.decode('utf-8','replace')
-#        value = (value.encode('utf-8').strip(), language)
-
-        return value
+        return (value.encode('utf-8').strip(), language)
 
 
 class DateTime2Surf(Value2Surf):
