@@ -73,13 +73,16 @@ class Archetype2Surf(GenericObject2Surf):
     def modify_resource(self, resource, *args, **kwds):
         """ Schema to Surf """
         language = self.context.Language()
+        plone_portal_state = self.context.restrictedTraverse(
+                '@@plone_portal_state')
+        portal_url = plone_portal_state.portal_url()
 
         workflowTool = getToolByName(self.context, "portal_workflow")
         status = workflowTool.getInfoFor(self.context, "review_state", None)
         if status is None:
             status = "published"
-        status = ''.join(["http://www.eea.europa.eu/"
-                          "portal_vocabularies/workflow_states/",
+        status = ''.join([portal_url,
+                          "/portal_vocabularies/workflow_states/",
                           status])
         try:
             setattr(resource, '%s_%s' % ("eea", "hasWorkflowState"),
