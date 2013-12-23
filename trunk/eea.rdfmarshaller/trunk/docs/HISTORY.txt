@@ -3,6 +3,8 @@ Changelog
 
 6.2-dev - (unreleased)
 ----------------------
+* Bug fix: no longer crash rdf export if object doesn't have a workflow enabled
+  [ichimdav refs #17811]
 * Bug fix: fixed encoding issues on rdf export
   [ghicaale refs #17668]
 

@@ -75,7 +75,7 @@ class Archetype2Surf(GenericObject2Surf):
         language = self.context.Language()
 
         workflowTool = getToolByName(self.context, "portal_workflow")
-        status = workflowTool.getInfoFor(self.context, "review_state")
+        status = workflowTool.getInfoFor(self.context, "review_state", None)
         if status is None:
             status = "published"
         status = ''.join(["http://www.eea.europa.eu/"
