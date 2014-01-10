@@ -3,6 +3,8 @@ Changelog
 
 6.2-dev - (unreleased)
 ----------------------
+* Change: RDF marshaller exports file size and download URL
+  [pasoviul refs #14872]
 * Change: no longer hardcode eea website link when exporting the workflow
   [ichimdav refs #17811]
 * Bug fix: no longer crash rdf export if object doesn't have a workflow enabled
