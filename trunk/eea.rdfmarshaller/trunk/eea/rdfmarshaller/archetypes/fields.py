@@ -135,24 +135,37 @@ class ATFileField2Surf(ATField2Surf):
     exportable = True
     prefix = "eea"
     name = "fileInfo"
+
     def __init__(self, field, context, session):
         self.field = field
         self.context = context
         self.session = session
 
     def value(self):
-        """ Value """
+        """ The desired output is similar to:
+        <datafile:DataFile ...
+        ...
+            <eea:fileInfo>
+                <dcat:Distribution rdf:about="#dist">
+                    <dcat:sizeInBytes rdf:datatype="http://www.w3.org/2001/XMLSchema#long">XXXXX</dcat:sizeInBytes>
+                    <dcat:downloadURL
+                    rdf:resource="[url]/at_download/file"/>
+        ...
+        </datafile:DataFile>
+        """
         #only the size and download ULR are returned
         Distribution = self.session.get_class(surf.ns.DCAT.Distribution)
-        fileDistribution = self.session.get_resource('#distribution', Distribution)
+        fileDistribution = self.session.get_resource('#distribution',
+                                                     Distribution)
 
         value = self.field.getAccessor(self.context)()
         fileDistribution[surf.ns.DCAT['sizeInBytes']] = value.get_size()
-        url = ''.join( [self.context.absolute_url(),
-                        "/at_download/",
-                        self.field.getName()])
+        url = ''.join([self.context.absolute_url(),
+                       "/at_download/",
+                       self.field.getName()])
         fileDistribution[surf.ns.DCAT['downloadURL']] = rdflib.URIRef(url)
         fileDistribution.update()
+
         return [fileDistribution]
 
 
