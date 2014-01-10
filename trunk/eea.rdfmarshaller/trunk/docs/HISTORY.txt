@@ -11,6 +11,8 @@ Changelog
   [ichimdav refs #17811]
 * Bug fix: fixed encoding issues on rdf export
   [ghicaale refs #17668]
+* Change: celanup unused code for mimetypes_registry rdf export
+  [ghicaale refs #9191]
 
 6.1 - (2013-12-17)
 ------------------

@@ -201,32 +201,3 @@ class PortalTypesUtil2Surf(GenericObject2Surf):
         resource.rdf_id = self.rdfId
 
         return resource
-
-
-class MimetypesRegistry2Surf(GenericObject2Surf):
-    """IObject2Surf implementation for mimetypes_registry
-    """
-
-    adapts(IMimetypesRegistry, ISurfSession)
-
-    _prefix = "rdfs"
-    _namespace = surf.ns.RDFS
-
-    @property
-    def portalType(self):
-        """portalType"""
-
-        return u'PloneUtility'
-
-    def modify_resource(self, resource, *args, **kwds):
-        """_schema2surf"""
-
-        resource.rdfs_label = (u"Plone Mimetypes Registry Tool", None)
-        resource.rdfs_comment = (u"Holds definitions of mimetypes", None)
-        resource.rdf_id = self.rdfId
-
-        mimes = self.context.list_mimetypes()
-        resource.rdfs_mimetype = [(i, None) for i in mimes]
-
-        return resource
-

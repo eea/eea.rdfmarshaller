@@ -12,7 +12,6 @@
      <implements interface=".interfaces.ISurfSession" />
   </class>
 
-  <adapter factory=".marshaller.PortalTypesUtil2Surf" /> 
-  <adapter factory=".marshaller.MimetypesRegistry2Surf" /> 
+  <adapter factory=".marshaller.PortalTypesUtil2Surf" />
 
 </configure>
