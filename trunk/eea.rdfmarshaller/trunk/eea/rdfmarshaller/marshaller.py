@@ -19,11 +19,12 @@ DEBUG = False
 logging.basicConfig(level=logging.CRITICAL)
 
 surf.ns.register(EEA="http://www.eea.europa.eu/ontologies.rdf#")
+surf.ns.register(DCAT="http://www.w3.org/ns/dcat#")
 
 
 class RDFMarshaller(Marshaller):
-    """ RDF Marshaller, used as a component by Products.Marshaller 
-    
+    """ RDF Marshaller, used as a component by Products.Marshaller
+
     Marshals content types instances into RDF format """
 
     _store = None
@@ -59,6 +60,9 @@ class RDFMarshaller(Marshaller):
         store.reader.graph.bind('owl',
                                  surf.ns.OWL,
                                  override=True)
+        store.reader.graph.bind('dcat',
+                                surf.ns.DCAT,
+                                override=True)
 
         self._store = store
         return store
@@ -207,7 +211,7 @@ class MimetypesRegistry2Surf(GenericObject2Surf):
 
     _prefix = "rdfs"
     _namespace = surf.ns.RDFS
-    
+
     @property
     def portalType(self):
         """portalType"""
