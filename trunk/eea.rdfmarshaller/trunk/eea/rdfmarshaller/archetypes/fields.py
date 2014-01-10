@@ -11,6 +11,8 @@ from zope.interface import implements, Interface
 import rdflib
 import sys
 
+import surf
+
 #import logging
 #logging.basicConfig(level=logging.CRITICAL)
 
@@ -130,7 +132,28 @@ class ATFileField2Surf(ATField2Surf):
     implements(IATField2Surf)
     adapts(IFileField, Interface, ISurfSession)
 
-    exportable = False
+    exportable = True
+    prefix = "eea"
+    name = "fileInfo"
+    def __init__(self, field, context, session):
+        self.field = field
+        self.context = context
+        self.session = session
+
+    def value(self):
+        """ Value """
+        #only the size and download ULR are returned
+        Distribution = self.session.get_class(surf.ns.DCAT.Distribution)
+        fileDistribution = self.session.get_resource('#distribution', Distribution)
+
+        value = self.field.getAccessor(self.context)()
+        fileDistribution[surf.ns.DCAT['sizeInBytes']] = value.get_size()
+        url = ''.join( [self.context.absolute_url(),
+                        "/at_download/",
+                        self.field.getName()])
+        fileDistribution[surf.ns.DCAT['downloadURL']] = rdflib.URIRef(url)
+        fileDistribution.update()
+        return [fileDistribution]
 
 
 class ATReferenceField2Surf(ATField2Surf):

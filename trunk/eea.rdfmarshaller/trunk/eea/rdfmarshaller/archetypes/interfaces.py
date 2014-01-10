@@ -22,7 +22,7 @@ class IArchetype2Surf(IGenericObject2Surf):
 class IATField2Surf(Interface):
     """ Extract values from Fields, to store them in the surf session """
 
-    def get_value(context):
+    def value(context):
         """ Returns the value in RDF format """
 
     exportable = Attribute("Is this field exportable to RDF?")
@@ -33,7 +33,7 @@ class IValue2Surf(Interface):
     """
 
     def __call__(*args, **kwds):
-        """Return a value suitable to be assigned as a value to an 
+        """Return a value suitable to be assigned as a value to an
         rdf resource attribute
         """
 
