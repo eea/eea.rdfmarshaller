@@ -4,7 +4,6 @@ from Products.Archetypes.Marshall import Marshaller
 from Products.CMFCore.interfaces._tools import ITypesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import log
-from Products.MimetypesRegistry.interfaces import IMimetypesRegistry
 from eea.rdfmarshaller.interfaces import IGenericObject2Surf, IObject2Surf
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 from eea.rdfmarshaller.interfaces import ISurfSession   #, IReferenceField
