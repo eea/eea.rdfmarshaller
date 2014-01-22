@@ -1,6 +1,9 @@
 Changelog
 =========
 
+6.3-dev - (unreleased)
+----------------------
+
 6.2 - (2014-01-22)
 ------------------
 * Change: RDF marshaller exports file size and download URL
