@@ -78,21 +78,27 @@ class Archetype2Surf(GenericObject2Surf):
         portal_url = plone_portal_state.portal_url()
 
         workflowTool = getToolByName(self.context, "portal_workflow")
+        wfs = workflowTool.getWorkflowsFor(self.context)
+        for wf in wfs:
+            if wf.isInfoSupported(self.context, "portal_workflow"):
+                break
+
         status = workflowTool.getInfoFor(self.context, "review_state", None)
-        if status is None:
-            status = "published"
-        status = ''.join([portal_url,
-                          "/portal_vocabularies/workflow_states/",
-                          status])
-        try:
-            setattr(resource, '%s_%s' % ("eea", "hasWorkflowState"),
+        if status is not None:
+            status = ''.join([portal_url,
+                              "/portal_workflow/",
+                              wf.getId(),
+                              "/states/",
+                              status])
+            try:
+                setattr(resource, '%s_%s' % ("eea", "hasWorkflowState"),
                     rdflib.URIRef(status))
-        except Exception:
-            log.log('RDF marshaller error for context[workflow_state]'
-                    '"%s": \n%s: %s' %
-                    (self.context.absolute_url(),
-                     sys.exc_info()[0], sys.exc_info()[1]),
-                     severity=log.logging.WARN)
+            except Exception:
+                log.log('RDF marshaller error for context[workflow_state]'
+                        '"%s": \n%s: %s' %
+                        (self.context.absolute_url(),
+                        sys.exc_info()[0], sys.exc_info()[1]),
+                        severity=log.logging.WARN)
 
         for field in self.context.Schema().fields():
             fieldName = field.getName()
