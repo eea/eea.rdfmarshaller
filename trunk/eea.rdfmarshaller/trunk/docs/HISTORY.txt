@@ -1,6 +1,9 @@
 Changelog
 =========
 
+6.4-dev - (unreleased)
+----------------------
+
 6.3 - (2014-02-13)
 ------------------
 * Change: Workflow state is linked to a new vocabulary
