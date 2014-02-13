@@ -1,8 +1,8 @@
 Changelog
 =========
 
-6.3-dev - (unreleased)
-----------------------
+6.3 - (2014-02-13)
+------------------
 * Change: Workflow state is linked to a new vocabulary
   [pasoviul refs #17675]
 
