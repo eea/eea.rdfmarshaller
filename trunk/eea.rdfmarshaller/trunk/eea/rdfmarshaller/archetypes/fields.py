@@ -8,7 +8,6 @@ from eea.rdfmarshaller.archetypes.interfaces import IValue2Surf
 from eea.rdfmarshaller.interfaces import ISurfSession
 from zope.component import adapts
 from zope.interface import implements, Interface
-from simplejson import encoder
 import rdflib
 import sys
 import re
