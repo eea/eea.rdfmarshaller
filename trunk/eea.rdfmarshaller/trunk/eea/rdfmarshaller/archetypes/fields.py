@@ -8,8 +8,10 @@ from eea.rdfmarshaller.archetypes.interfaces import IValue2Surf
 from eea.rdfmarshaller.interfaces import ISurfSession
 from zope.component import adapts
 from zope.interface import implements, Interface
+from simplejson import encoder
 import rdflib
 import sys
+import re
 
 import surf
 
@@ -62,7 +64,18 @@ class String2Surf(Value2Surf):
     """
     adapts(str)
 
+    _illegal_xml_chars = re.compile(u'[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]')
+
+    def escapeXMLIllegalCharacters(self):
+        """Replaces all the XML illegal characters with spaces
+        """
+        return self._illegal_xml_chars.sub(' ', self.value)
+
+
     def __call__(self, *args, **kwds):
+        # Stripped illegal xml characters from string
+        self.value = self.escapeXMLIllegalCharacters()
+
         if not self.value.strip():
             return None
         nonEUencodings = ['Big5', 'GB2312', 'EUC-TW', 'HZ-GB-2312',
@@ -80,7 +93,6 @@ class String2Surf(Value2Surf):
                 log.log("Could not decode to %s in rdfmarshaller" %
                         encoding)
                 value = self.value.decode('utf-8','replace')
-
         return (value.encode('utf-8').strip(), language)
 
 
