@@ -1,8 +1,8 @@
 Changelog
 =========
 
-6.4-dev - (unreleased)
-----------------------
+6.4 - (2014-03-10)
+------------------
 * Bug fix: stripped illegal characters out of xml
   [pasoviul refs #18511]
 
