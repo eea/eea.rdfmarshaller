@@ -1,0 +1,15 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="eea">
+
+    <genericsetup:registerProfile
+        name="testfixture"
+        title="eea.rdfmarshaller test fixture"
+        directory="profiles/testfixture"
+        description="Test fixture profile with eea.rdfmarshaller"
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        />
+
+</configure>
+
