@@ -4,15 +4,12 @@ import logging
 import urllib2
 import urllib
 import lxml.etree
-
 from zope import schema
 from zope.component import adapts, getUtility, ComponentLookupError
 from zope.formlib import form
 from zope.interface import implements, Interface
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
-
 from OFS.SimpleItem import SimpleItem
-
 from plone.contentrules.rule.interfaces import IExecutable, IRuleElementData
 from plone.app.async.interfaces import IAsyncService
 from plone.app.contentrules.browser.formhelper import AddForm, EditForm
@@ -38,7 +35,6 @@ class IPingCRAction(Interface):
     service_to_ping = schema.TextLine(title=u"Service to ping",
                               description=u"Service to ping.",
                               required=True)
-
 
 
 class PingCRAction(SimpleItem):
