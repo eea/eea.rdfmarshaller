@@ -135,13 +135,6 @@ def ping_CRSDS(context, options):
     """ ping the CR/SDS service
     """
     while True:
-        # temporal fix till #17667 will be implemented
-        if "webdev.eea.europa.eu" in options['obj_url']:
-            logger.info("Pinging %s for object %s failed: development portal",
-                    options['service_to_ping'],
-                    options['obj_url'])
-            break
-
         try:
             params = {}
             params['uri'] = options['obj_url']
