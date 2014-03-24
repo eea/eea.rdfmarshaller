@@ -3,6 +3,7 @@
            xmlns:browser="http://namespaces.zope.org/browser">
 
   <include file="profiles.zcml" />
+  <include file="patches.zcml" />
   <include package=".browser" />
   <include package=".upgrades" />
   <include package=".archetypes" />

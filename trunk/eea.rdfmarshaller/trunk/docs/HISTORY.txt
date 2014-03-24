@@ -3,6 +3,9 @@ Changelog
 
 6.5-dev - (unreleased)
 ----------------------
+* Bugfix: Monkeypatch for plone.app.contentrules.handlers.DuplicateRuleFilter,
+  so the ping is called also when an object is removed via actions->delete
+  [szabozo0 refs #18904]
 
 6.4 - (2014-03-10)
 ------------------

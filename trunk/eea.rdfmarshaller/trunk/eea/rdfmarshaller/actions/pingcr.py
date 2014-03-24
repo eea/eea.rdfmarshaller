@@ -61,10 +61,10 @@ class PingCRActionExecutor(object):
         self.event = event
 
     def __call__(self):
-        container = self.context
         event = self.event
         service_to_ping = self.element.service_to_ping
         obj = self.event.object
+        container = obj.getParentNode()
 
         create = IObjectAddedEvent.providedBy(event)
 
@@ -92,16 +92,15 @@ class PingCRActionExecutor(object):
             except ComponentLookupError:
                 logger.info('No instance for async operations was defined.')
 
-        if create:
-            obj_url = "%s/@@rdf" % container.absolute_url()
-            options = {}
-            options['service_to_ping'] = service_to_ping
-            options['obj_url'] = obj_url
-            options['create'] = False
-            try:
-                async.queueJob(ping_CRSDS, self.context, options)
-            except ComponentLookupError:
-                logger.info('No instance for async operations was defined.')
+        obj_url = "%s/@@rdf" % container.absolute_url()
+        options = {}
+        options['service_to_ping'] = service_to_ping
+        options['obj_url'] = obj_url
+        options['create'] = False
+        try:
+            async.queueJob(ping_CRSDS, self.context, options)
+        except ComponentLookupError:
+            logger.info('No instance for async operations was defined.')
 
         return True
 
