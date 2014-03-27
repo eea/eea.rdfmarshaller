@@ -36,5 +36,24 @@
         factory=".pingcr.PingCRAction"
         />
 
+    <!-- Make Object moved or renamed event selectable in content rules -->
+    <interface
+      interface="eea.rdfmarshaller.actions.interfaces.IObjectMovedOrRenamedEvent"
+      type="plone.contentrules.rule.interfaces.IRuleEventType"
+      name="Object moved or renamed"
+      />
+
+    <!-- Rule trigger -->
+    <subscriber
+      for="eea.rdfmarshaller.actions.interfaces.IObjectMovedOrRenamedEvent"
+      handler=".handlers.moved"
+      />
+
+    <!-- custom handler for ObjectMovedEvent what is not triggered when object is added or deleted -->
+    <subscriber
+      for="zope.lifecycleevent.interfaces.IObjectMovedEvent"
+      handler=".handlers.forwardevent"
+      />
+
 
 </configure>

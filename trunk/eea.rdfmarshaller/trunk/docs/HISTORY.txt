@@ -3,6 +3,9 @@ Changelog
 
 6.5-dev - (unreleased)
 ----------------------
+* Feature: Added new content rule for Object Moved Or Renamed event to allow, so
+  it can be configured from @@rules-controlpanel
+  [szabozo0 refs #18904]
 * Bugfix: Monkeypatch for plone.app.contentrules.handlers.DuplicateRuleFilter,
   so the ping is called also when an object is removed via actions->delete
   [szabozo0 refs #18904]

@@ -13,6 +13,7 @@ from OFS.SimpleItem import SimpleItem
 from plone.contentrules.rule.interfaces import IExecutable, IRuleElementData
 from plone.app.async.interfaces import IAsyncService
 from plone.app.contentrules.browser.formhelper import AddForm, EditForm
+from eea.rdfmarshaller.actions.interfaces import IObjectMovedOrRenamedEvent
 
 hasLinguaPloneInstalled = True
 try:
@@ -80,6 +81,27 @@ class PingCRActionExecutor(object):
             obj_versions = [obj]
 
         async = getUtility(IAsyncService)
+
+        if IObjectMovedOrRenamedEvent.providedBy(event):
+            # If object was moved or renamed
+            # first ping the SDS with the url of the old object
+            obj_url = "%s/%s/@@rdf" % (event.oldParent.absolute_url(),\
+                                     event.oldName)
+            options = {}
+            options['service_to_ping'] = service_to_ping
+            options['obj_url'] = obj_url
+            options['create'] = False
+            try:
+                async.queueJob(ping_CRSDS, self.context, options)
+            except ComponentLookupError:
+                logger.info('No instance for async operations was defined.')
+            # then ping with the container of the old object
+            obj_url = "%s/@@rdf" % event.oldParent.absolute_url()
+            options['obj_url'] = obj_url
+            try:
+                async.queueJob(ping_CRSDS, self.context, options)
+            except ComponentLookupError:
+                logger.info('No instance for async operations was defined.')
 
         for obj in obj_versions:
             obj_url = "%s/@@rdf" % obj.absolute_url()
