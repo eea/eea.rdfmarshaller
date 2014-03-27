@@ -85,7 +85,7 @@ class PingCRActionExecutor(object):
         if IObjectMovedOrRenamedEvent.providedBy(event):
             # If object was moved or renamed
             # first ping the SDS with the url of the old object
-            obj_url = "%s/%s/@@rdf" % (event.oldParent.absolute_url(),\
+            obj_url = "%s/%s/@@rdf" % (event.oldParent.absolute_url(), \
                                      event.oldName)
             options = {}
             options['service_to_ping'] = service_to_ping
