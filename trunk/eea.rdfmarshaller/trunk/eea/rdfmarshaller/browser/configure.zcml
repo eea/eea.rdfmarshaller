@@ -6,14 +6,14 @@
     for="Products.Archetypes.interfaces.IBaseObject"
     name="rdf"
     class=".export.RDFExport"
-    permission="zope.Public"
+    permission="zope2.View"
     />
 
   <browser:page
     for="Products.Archetypes.interfaces.IBaseObject"
     name="rdfs"
     class=".export.RDFSExport"
-    permission="zope.Public"
+    permission="zope2.View"
     />
 
 
@@ -21,28 +21,28 @@
     for="Products.CMFDynamicViewFTI.interfaces.IDynamicViewTypeInformation"
     name="rdf"
     class=".export.RDFExport"
-    permission="zope.Public"
+    permission="zope2.View"
     />
 
   <browser:page
     for="Products.CMFDynamicViewFTI.interfaces.IDynamicViewTypeInformation"
     name="rdfs"
     class=".export.RDFSExport"
-    permission="zope.Public"
+    permission="zope2.View"
     />
 
   <browser:page
     for="Products.CMFPlone.interfaces.basetool.IPloneBaseTool"
     name="rdf"
     class=".export.RDFExport"
-    permission="zope.Public"
+    permission="zope2.View"
     />
 
   <browser:page
     for="Products.CMFPlone.interfaces.basetool.IPloneBaseTool"
     name="rdfs"
     class=".export.RDFSExport"
-    permission="zope.Public"
+    permission="zope2.View"
     />
 
 </configure>

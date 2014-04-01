@@ -3,6 +3,9 @@ Changelog
 
 6.5-dev - (unreleased)
 ----------------------
+* Bugfix: Changed permission for @@rdf and @@rdfs to zope2.View so it can be
+  viewed by anonymous users only if the object was published
+  [szabozo0 refs #18904]
 * Feature: Added new content rule for Object Moved Or Renamed event to allow, so
   it can be configured from @@rules-controlpanel
   [szabozo0 refs #18904]
