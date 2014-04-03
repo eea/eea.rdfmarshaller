@@ -13,6 +13,7 @@ from OFS.SimpleItem import SimpleItem
 from plone.contentrules.rule.interfaces import IExecutable, IRuleElementData
 from plone.app.async.interfaces import IAsyncService
 from plone.app.contentrules.browser.formhelper import AddForm, EditForm
+from Products.Five.browser import BrowserView
 from eea.rdfmarshaller.actions.interfaces import IObjectMovedOrRenamedEvent
 
 hasLinguaPloneInstalled = True
@@ -151,6 +152,19 @@ class PingCREditForm(EditForm):
     description = u"A ping cr action."
     form_name = u"Configure element"
 
+
+class PingCRView(BrowserView):
+    """
+    """
+    def __call__(self, url, **kwargs):
+       context = self.context
+       request = self.request
+
+       options = {}
+       options['create'] = False
+       options['service_to_ping'] = 'http://semantic.eea.europa.eu/'
+       options['obj_url'] = url
+       ping_CRSDS(context, options)
 
 def ping_CRSDS(context, options):
     """ ping the CR/SDS service

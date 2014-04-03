@@ -10,6 +10,14 @@
 
     <adapter factory=".pingcr.PingCRActionExecutor" />
 
+
+    <browser:page
+        for="*"
+        name="ping_cr"
+        class=".pingcr.PingCRView"
+        permission="cmf.ModifyPortalContent"
+      />
+
     <browser:page
         for="plone.app.contentrules.browser.interfaces.IRuleActionAdding"
         name="eea.rdfmarshaller.actions.PingCR"
