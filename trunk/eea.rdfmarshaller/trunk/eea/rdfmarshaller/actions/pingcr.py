@@ -158,7 +158,6 @@ class PingCRView(BrowserView):
     """
     def __call__(self, url, **kwargs):
         context = self.context
-        request = self.request
 
         options = {}
         options['create'] = False
