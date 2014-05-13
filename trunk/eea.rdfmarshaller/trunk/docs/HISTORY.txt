@@ -1,8 +1,8 @@
 Changelog
 =========
 
-6.5-dev - (unreleased)
-----------------------
+6.5 - (2014-05-13)
+------------------
 * Change: Added a view to allow adding an external method to ping all elements
   of a known portal type and their aliases
   [pasoviul refs #18928] 
