@@ -59,7 +59,7 @@
 
     <!-- custom handler for ObjectMovedEvent what is not triggered when object is added or deleted -->
     <subscriber
-      for="zope.lifecycleevent.interfaces.IObjectMovedEvent"
+      for="Products.Archetypes.interfaces.IBaseObject zope.lifecycleevent.interfaces.IObjectMovedEvent"
       handler=".handlers.forwardevent"
       />
 
