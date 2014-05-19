@@ -3,6 +3,9 @@ Changelog
 
 6.7-dev - (unreleased)
 ----------------------
+* Fix: Event handler for IObjectMovedEvent subscriber
+  now needs two arguments
+  [batradav refs #19725]
 
 6.6 - (2014-05-19)
 ------------------

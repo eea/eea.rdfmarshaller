@@ -23,7 +23,7 @@ def moved(event):
     else:
         return
 
-def forwardevent(event):
+def forwardevent(obj, event):
     """ Trigger an ObjectMovedOrRenamedEvent only
     if it's not an ObjectAddedEvent or an ObjectRemovedEvent"""
     if IObjectAddedEvent.providedBy(event) \
