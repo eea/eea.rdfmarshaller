@@ -1,6 +1,9 @@
 Changelog
 =========
 
+6.7-dev - (unreleased)
+----------------------
+
 6.6 - (2014-05-19)
 ------------------
 * Fix: IObjectMovedEvent subscriber only for Archetypes
