@@ -158,12 +158,10 @@ class PingCREditForm(EditForm):
 
 
 class PingCRView(BrowserView):
-    """
+    """ Ping CR View
     """
     def __call__(self, url, **kwargs):
        context = self.context
-       request = self.request
-
        options = {}
        options['create'] = False
        options['service_to_ping'] = 'http://semantic.eea.europa.eu/'
