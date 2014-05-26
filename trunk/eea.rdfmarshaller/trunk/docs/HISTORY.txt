@@ -1,6 +1,9 @@
 Changelog
 =========
 
+7.0-dev - (unreleased)
+----------------------
+
 6.9 - (2014-05-26)
 ------------------
 * Bug fix: fixed the CR PING not to endup in AttributeError: REQUEST when is called
