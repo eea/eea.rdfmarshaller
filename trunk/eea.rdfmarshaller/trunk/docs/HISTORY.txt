@@ -3,6 +3,9 @@ Changelog
 
 6.8-dev - (unreleased)
 ----------------------
+* Bug fix: fixed the CR PING not to endup in AttributeError: REQUEST when is called
+  from a async task.
+  [ghicaale refs #19830]
 
 6.7 - (2014-05-19)
 ------------------

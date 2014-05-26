@@ -68,12 +68,16 @@ class PingCRActionExecutor(object):
         obj = self.event.object
         container = obj.getParentNode()
 
+        # When no request the task is called from a async task, see #19830
+        request = getattr(obj, 'REQUEST', None)
+
         create = IObjectAddedEvent.providedBy(event)
 
         if service_to_ping == "":
             return
 
-        if hasLinguaPloneInstalled and ITranslatable.providedBy(obj):
+        if hasLinguaPloneInstalled and ITranslatable.providedBy(obj) \
+                                                              and request:
             obj = obj.getCanonical()
 
         if hasVersionsInstalled and IVersionEnhanced.providedBy(obj):
@@ -154,16 +158,17 @@ class PingCREditForm(EditForm):
 
 
 class PingCRView(BrowserView):
-    """ Ping CR View
+    """
     """
     def __call__(self, url, **kwargs):
-        context = self.context
+       context = self.context
+       request = self.request
 
-        options = {}
-        options['create'] = False
-        options['service_to_ping'] = 'http://semantic.eea.europa.eu/'
-        options['obj_url'] = url
-        ping_CRSDS(context, options)
+       options = {}
+       options['create'] = False
+       options['service_to_ping'] = 'http://semantic.eea.europa.eu/'
+       options['obj_url'] = url
+       ping_CRSDS(context, options)
 
 def ping_CRSDS(context, options):
     """ ping the CR/SDS service
