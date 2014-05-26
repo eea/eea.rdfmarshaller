@@ -1,0 +1,21 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five"
+           xmlns:browser="http://namespaces.zope.org/browser">
+
+  <class class="Products.Archetypes.Field.Field">
+     <implements interface="Products.Archetypes.interfaces.IField" />
+  </class>
+
+  <class class="Products.Archetypes.Field.FileField">
+     <implements interface="Products.Archetypes.interfaces.IFileField" />
+  </class>
+
+  <class class="Products.Archetypes.Field.TextField">
+     <implements interface=".interfaces.ITextField" />
+  </class>
+
+  <class class="Products.Archetypes.Field.ReferenceField">
+     <implements interface=".interfaces.IReferenceField" />
+  </class>
+
+</configure>
