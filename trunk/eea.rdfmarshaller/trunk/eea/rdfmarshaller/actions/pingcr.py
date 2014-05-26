@@ -76,11 +76,11 @@ class PingCRActionExecutor(object):
         if service_to_ping == "":
             return
 
-        if hasLinguaPloneInstalled and ITranslatable.providedBy(obj) \
-                                                              and request:
+        if hasLinguaPloneInstalled and ITranslatable.providedBy(obj):
             obj = obj.getCanonical()
 
-        if hasVersionsInstalled and IVersionEnhanced.providedBy(obj):
+        if hasVersionsInstalled and IVersionEnhanced.providedBy(obj) \
+                                                              and request:
             obj_versions = IGetVersions(obj).versions()
         else:
             obj_versions = [obj]
