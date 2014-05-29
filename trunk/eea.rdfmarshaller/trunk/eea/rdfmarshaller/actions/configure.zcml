@@ -51,10 +51,21 @@
       name="Object moved or renamed"
       />
 
-    <!-- Rule trigger -->
+    <interface
+      interface="zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+      type="plone.contentrules.rule.interfaces.IRuleEventType"
+      name="Object copied"
+      />
+
+    <!-- Rule triggers -->
     <subscriber
       for="eea.rdfmarshaller.actions.interfaces.IObjectMovedOrRenamedEvent"
       handler=".handlers.moved"
+      />
+
+    <subscriber
+      for="zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+      handler=".handlers.copied"
       />
 
     <!-- custom handler for ObjectMovedEvent what is not triggered when object is added or deleted -->

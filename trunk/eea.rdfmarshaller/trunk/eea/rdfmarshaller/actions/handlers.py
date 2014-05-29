@@ -1,11 +1,13 @@
 """ Handlers for object moved events
 """
 from zope.event import notify
+from Acquisition import aq_inner, aq_parent
 from eea.rdfmarshaller.actions.events import ObjectMovedOrRenamedEvent
 from zope.lifecycleevent.interfaces import IObjectAddedEvent, \
                                             IObjectRemovedEvent
 from eea.rdfmarshaller.actions.interfaces import IObjectMovedOrRenamedEvent
 from plone.app.contentrules.handlers import is_portal_factory, execute
+from plone.app.discussion.interfaces import IComment
 from Products.CMFCore.interfaces import IContentish
 
 def moved(event):
@@ -22,6 +24,18 @@ def moved(event):
         execute(event.newParent, event)
     else:
         return
+
+def copied(event):
+    """When an object is copied, execute rules assigned to its parent
+    """
+    obj = event.object
+    if not (IContentish.providedBy(obj) or IComment.providedBy(obj)):
+        return
+
+    if is_portal_factory(obj):
+        return
+
+    execute(aq_parent(aq_inner(event.original)), event)
 
 def forwardevent(obj, event):
     """ Trigger an ObjectMovedOrRenamedEvent only

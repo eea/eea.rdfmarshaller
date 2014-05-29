@@ -3,6 +3,8 @@ Changelog
 
 7.0-dev - (unreleased)
 ----------------------
+* Feature: added content rule event for copy&paste.
+  [ghicaale refs #18904]
 
 6.9 - (2014-05-26)
 ------------------
