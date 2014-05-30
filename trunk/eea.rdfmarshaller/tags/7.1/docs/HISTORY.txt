@@ -1,0 +1,304 @@
+Changelog
+=========
+
+7.1 - (2014-05-30)
+------------------
+* Bug fix: detect special object used to force acquisition and fix case when
+  there is no Aquisition there is no container.
+  [ghicaale refs #18904]
+
+7.0 - (2014-05-29)
+------------------
+* Feature: added content rule event for copy&paste.
+  [ghicaale refs #18904]
+
+6.9 - (2014-05-26)
+------------------
+* Bug fix: fixed the CR PING not to endup in AttributeError: REQUEST when is called
+  from a async task.
+  [ghicaale refs #19830]
+
+6.8 - (2014-05-26)
+------------------
+* Bug fix: fixed the CR PING not to endup in AttributeError: REQUEST when is called
+  from a async task.
+  [ghicaale refs #19830]
+
+6.7 - (2014-05-19)
+------------------
+* Fix: Event handler for IObjectMovedEvent subscriber
+  now needs two arguments
+  [batradav refs #19725]
+
+6.6 - (2014-05-19)
+------------------
+* Fix: IObjectMovedEvent subscriber only for Archetypes
+  [batradav refs #19725]
+
+6.5 - (2014-05-13)
+------------------
+* Change: Added a view to allow adding an external method to ping all elements
+  of a known portal type and their aliases
+  [pasoviul refs #18928]
+* Bugfix: Changed permission for @@rdf and @@rdfs to zope2.View so it can be
+  viewed by anonymous users only if the object was published
+  [szabozo0 refs #18904]
+* Feature: Added new content rule for Object Moved Or Renamed event to allow, so
+  it can be configured from @@rules-controlpanel
+  [szabozo0 refs #18904]
+* Bugfix: Monkeypatch for plone.app.contentrules.handlers.DuplicateRuleFilter,
+  so the ping is called also when an object is removed via actions->delete
+  [szabozo0 refs #18904]
+
+6.4 - (2014-03-10)
+------------------
+* Bug fix: stripped illegal characters out of xml
+  [pasoviul refs #18511]
+
+6.3 - (2014-02-13)
+------------------
+* Change: Workflow state is linked to a new vocabulary
+  [pasoviul refs #17675]
+
+6.2 - (2014-01-22)
+------------------
+* Change: RDF marshaller exports file size and download URL
+  [pasoviul refs #14872]
+* Change: no longer hardcode eea website link when exporting the workflow
+  [ichimdav refs #17811]
+* Bug fix: no longer crash rdf export if object doesn't have a workflow enabled
+  [ichimdav refs #17811]
+* Bug fix: fixed encoding issues on rdf export
+  [ghicaale refs #17668]
+* Change: celanup unused code for mimetypes_registry rdf export
+  [ghicaale refs #9191]
+
+6.1 - (2013-12-17)
+------------------
+* Feature: marshaller exports workflow state
+  [pasoviul refs #17675]
+
+6.0 - (2013-12-10)
+------------------
+* Bug fix: fixed ReST markup of HISTORY.txt
+  [ghicaale refs #17716]
+
+5.9 - (2013-12-06)
+------------------
+* Bug fix: find and remove all related brains when creating tmp obj for schema
+  [simiamih refs #17298]
+* Feature: do not ping SDS from .webdev.eea.europa.eu
+  [ghicaale refs #17664]
+
+5.8 - (2013-11-20)
+------------------
+* Bug fix: Handle wrong ping urls
+  [szabozo0 refs #17485]
+
+5.7 - (2013-11-18)
+------------------
+* Bug fix: fixed HISTORY.txt to reflect changes
+  [ghicaale refs #17487]
+* Bug fix: fixed encoding issues on rdf export
+  [pasoviul refs #16747]
+
+5.6 - (2013-07-08)
+------------------
+* Feature: Implemented SDS Ping feature when resource was created or changed
+  [szabozo0 refs #14473]
+* Bug fix: when loading zcml, also include zcml for plone.contentrules and
+  plone.app.contentrules
+  [tiberich]
+*  Upgrade Step:
+   - in ZMI -> portal_setup -> upgrades
+   - select the profile: eea.rdfmarshaller:default
+   - upgrade to 5.6
+* Upgrade Step: in
+  http://www.eea.europa.eu/aq_parent/portal_properties/rdfmarshaller_properties
+  remove the "provenances" field from the "blacklist" list.
+
+5.5 - (2013-06-17)
+------------------
+* Feature: implemented the eea:objectProvides modifier. This add information
+  about provided interfaces to the @@rdf output
+  [tiberich #14718]
+
+5.4 - (2013-01-28)
+------------------
+* Change: Updated and cleaned up broken doctests.
+  [demarant refs #13589]
+
+5.3 - (2013-01-15)
+------------------
+* Change: do not export children objects when requesting an RDF export
+  of a folderish content. Keep only hasPart statements.
+  This is to avoid redundancy and speed-up rdf export of large folderish content.
+  [demarant fixes #13589]
+
+5.2 - (2012-11-22)
+------------------
+* Change: registered OWL namespace globally as it is often needed.
+  [demarant refs #7409]
+* Bug fix: fixed more occurences of UnicodeDecodeError.
+  Do not try to encode already unicode strings.
+  [demarant refs #9293]
+* Bug fix: Map plone location field to dcterms:spatial for geotag information.
+  [demarant refs #3425]
+* Bug fix: also register the geo namespace, for pretty printing
+  [tiberich refs #3425]
+* Refactor: improve the API to make it more clear about the intent of classes
+  and interfaces. Now we no longer assume that all exported objects are archetypes,
+  we have a more pluggable way to override, per field_type + fieldname +
+  context_type the output. Also make the value extracting logic a bit easier to
+  follow by having adapters for each type of value (list, string, datetime,
+  etc).
+  [tiberich refs #3981]
+
+5.1 - (2012-07-17)
+------------------
+* Bug fix: only provide rdf view for real archetypes content, FTI and portal
+  tools
+  [tiberich refs #5301]
+
+5.0 - (2012-07-16)
+------------------
+* Bug fix: also handle UnicodeDecodeError in when trying to convert text
+  using chardet.detect
+  [tiberich refs #5308]
+
+4.9 - (2012-07-13)
+------------------
+* Bug fix: avoid unicode decode errors in @@rdf
+  [tiberich refs #5308]
+
+4.8 - (2012-06-20)
+------------------
+* Bug fix: hasTranslations must also be an rdf:resource (not a literal value)
+  in coherence with the isTranslationOf and other dcterms relations.
+  [demarant refs #5130]
+* Bug fix: fixed hasTranslation recursive relation to itself.
+  [demarant refs #5130]
+* Bug fix: blacklisted nextPreviousEnabled and excludeFromNav
+  [tiberich refs #5130]
+
+4.7 - (2012-06-12)
+------------------
+* Bug fix: fixed markup of HISTORY.txt file
+  [ciobabog refs #5231]
+* Change: added eea:isTranslationOf to point to translations
+  [tiberich #5130]
+* Bug fix: use dcterms:issued instead of dcterms:effective for DC
+  [tiberich #5135]
+* Feature: use a mechanism of subscribers to allow modification of the surf
+  resource by package plugins
+  [tiberich #5129]
+* Bug fix: fix @@rdf view for mimetypes_registry
+  [tiberich #5206]
+
+4.6 - (2012-03-30)
+------------------
+* Empty release
+
+4.5 - (2012-02-15)
+------------------
+* Bug fix: fixed tests
+  [tiberich]
+
+4.4 - (2012-02-10)
+------------------
+* Bug fix: fixed a problem with related fields that are empty
+  [tiberich #4942]
+
+4.3 - (2012-02-02)
+------------------
+* Bug fix: fixed a problem inserting related items in rdf stream when relation field is single value
+  [tiberich #4992]
+
+4.2 - (2011-12-07)
+------------------
+* Bug fix: Unindex temporary objects created in portal_factory
+  [voineali #4822]
+
+4.1 - (2011-11-18)
+------------------
+* Rerelease broken egg
+
+4.0 - (2011-11-18)
+------------------
+* Bug fix: use getFolderContents instead of objectValues() to retrieve
+  children (v0.13 backport)
+  [tiberich #4418]
+* Bug fix: Fix tests for eea.rdfmarshaller
+  [ichimdav #4340]
+* Change: use dcterm namespace for metadata instead of dc
+  [tiberich #4250]
+* Cleaned: pyflakes warnings
+  [ichimdav #4141]
+* Cleaned: pylint violations
+  [ichimdav #4140]
+* Feature: Added upgrade steps
+  [voineali #4392]
+* Feature: Plone 4.0.4 compatible release
+  [ghicaale #4258]
+
+0.8 - (2011-02-09)
+------------------
+* Bug fix: skip fields for which the accessor cannot be determined
+  [tiberich #3982]
+
+0.7 - (2010-12-16)
+------------------
+* set surf logging level to CRITICAL to avoid all INFO messages
+  [vincisas #3951]
+
+0.6 - (2010-11-10)
+------------------
+* typo fix for tests
+  [vincisas]
+
+0.5 - (2010-09-30)
+------------------
+* dcterms:hasPart added to folderish content
+  [vincisas #3519]
+* dcterms:isPartOf added to contained content
+  [vincisas #3519]
+
+0.4 (2010-09-06)
+----------------
+* use accessor to get the value of fields
+  [tiberich #3550]
+* 'file' added to blacklist as a temporary fix for encode error
+  [ghicaale]
+* under marshaller.py added temporary fix for: 'tuple' object has no attribute 'replace'
+  [ghicaale]
+* Silent failure with schema or rdf generation, errors are logged
+  [vincisas #3564]
+* Schemageneration contains extended fields too
+  [vincisas #3577]
+
+0.3 (2010-08-03)
+----------------
+* blacklist is configurable through ZMI in properties_tool/rdfmarshaller_properties
+  [vincisas]
+* lowercased dc elements
+  [vincisas]
+* rdf schema generation from portal type FTIs added
+  [vincisas]
+* rdf export done with autogenerated schemas and portal type specific namespaces
+  [vincisas]
+* folderish export added
+  [vincisas]
+* ATVocabularyManager vocabularies exported as RDF
+  [vincisas]
+
+0.2 (2010-06-15)
+----------------
+* Cleanup and more generic export moved here from eea.soer
+  [vincisas]
+* Blacklist added
+  [vincisas]
+
+0.1 (2010-05-19)
+----------------
+* Initial release
+
