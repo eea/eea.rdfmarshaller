@@ -1,6 +1,9 @@
 Changelog
 =========
 
+7.2-dev - (unreleased)
+----------------------
+
 7.1 - (2014-05-30)
 ------------------
 * Bug fix: detect special object used to force acquisition and fix case when
