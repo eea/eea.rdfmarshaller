@@ -70,6 +70,9 @@ class PingCRActionExecutor(object):
 
         # When no request the task is called from a async task, see #19830
         request = getattr(obj, 'REQUEST', None)
+        # Detect special object used to force acquisition, see #18904
+        if isinstance(request, str):
+            request = None
 
         create = IObjectAddedEvent.providedBy(event)
 
@@ -119,15 +122,17 @@ class PingCRActionExecutor(object):
             except ComponentLookupError:
                 logger.info('No instance for async operations was defined.')
 
-        obj_url = "%s/@@rdf" % container.absolute_url()
-        options = {}
-        options['service_to_ping'] = service_to_ping
-        options['obj_url'] = obj_url
-        options['create'] = False
-        try:
-            async.queueJob(ping_CRSDS, self.context, options)
-        except ComponentLookupError:
-            logger.info('No instance for async operations was defined.')
+        # If no Aquisition there is no container, see #18904
+        if container:
+            obj_url = "%s/@@rdf" % container.absolute_url()
+            options = {}
+            options['service_to_ping'] = service_to_ping
+            options['obj_url'] = obj_url
+            options['create'] = False
+            try:
+                async.queueJob(ping_CRSDS, self.context, options)
+            except ComponentLookupError:
+                logger.info('No instance for async operations was defined.')
 
         return True
 

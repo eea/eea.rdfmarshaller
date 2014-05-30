@@ -3,6 +3,9 @@ Changelog
 
 7.1-dev - (unreleased)
 ----------------------
+* Bug fix: detect special object used to force acquisition and fix case when
+  there is no Aquisition there is no container.
+  [ghicaale refs #18904]
 
 7.0 - (2014-05-29)
 ------------------
