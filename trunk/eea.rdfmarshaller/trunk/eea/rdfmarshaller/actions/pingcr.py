@@ -169,7 +169,7 @@ class PingCRView(BrowserView):
         context = self.context
         options = {}
         options['create'] = False
-        options['service_to_ping'] = 'http://semantic.eea.europa.eu/'
+        options['service_to_ping'] = 'http://semantic.eea.europa.eu/ping'
         options['obj_url'] = url
         ping_CRSDS(context, options)
 
