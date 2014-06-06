@@ -1,8 +1,8 @@
 Changelog
 =========
 
-7.2-dev - (unreleased)
-----------------------
+7.2 - (2014-06-06)
+------------------
 * Bug fix: fixed the URL for the Ping service
   [ghicaale refs #18928]
 
