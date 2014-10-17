@@ -10,8 +10,8 @@
   <adapter factory=".Archetype2Surf" provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
 
   <adapter factory=".ATFolderish2Surf" provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
-  <adapter factory=".ATFolderish2Surf" 
-    for="Products.Archetypes.interfaces.IBaseFolder eea.rdfmarshaller.interfaces.ISurfSession" 
+  <adapter factory=".ATFolderish2Surf"
+    for="Products.Archetypes.interfaces.IBaseFolder eea.rdfmarshaller.interfaces.ISurfSession"
     provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
 
   <adapter factory=".ATField2RdfSchema" provides="eea.rdfmarshaller.archetypes.interfaces.IFieldDefinition2Surf" />
@@ -19,13 +19,13 @@
 
   <adapter factory=".fields.ATField2Surf" />
   <adapter factory=".fields.ATField2Surf"
-           for="eea.rdfmarshaller.archetypes.interfaces.ITextField 
+           for="eea.rdfmarshaller.archetypes.interfaces.ITextField
                 zope.interface.Interface
                 eea.rdfmarshaller.interfaces.ISurfSession" />
   <adapter factory=".fields.ATFileField2Surf" />
-  <adapter factory=".fields.ATFileField2Surf" 
-        for="plone.app.blob.interfaces.IBlobField 
-             zope.interface.Interface 
+  <adapter factory=".fields.ATFileField2Surf"
+        for="plone.app.blob.interfaces.IBlobField
+             zope.interface.Interface
              eea.rdfmarshaller.interfaces.ISurfSession" />
 
   <adapter factory=".fields.ATReferenceField2Surf" />
@@ -36,11 +36,13 @@
   <adapter factory=".fields.String2Surf" />
   <adapter factory=".fields.DateTime2Surf" />
 
-  <subscriber factory=".modifiers.IsPartOfModifier" 
+  <subscriber factory=".modifiers.IsPartOfModifier"
           provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
   <subscriber factory=".modifiers.TranslationInfoModifier"
           provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier"/>
-  <subscriber factory=".modifiers.ProvidedInterfacesModifier" 
+  <subscriber factory=".modifiers.ProvidedInterfacesModifier"
+          provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+  <subscriber factory=".modifiers.SearchableTextInModifier"
           provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 
 </configure>

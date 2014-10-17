@@ -37,7 +37,7 @@ class IsPartOfModifier(object):
 
 
 class TranslationInfoModifier(object):
-    """Adds translation info 
+    """Adds translation info
     """
 
     implements(ISurfResourceModifier)
@@ -67,7 +67,7 @@ class TranslationInfoModifier(object):
 
 
 class ProvidedInterfacesModifier(object):
-    """Adds information about provided interfaces 
+    """Adds information about provided interfaces
     """
 
     implements (ISurfResourceModifier)
@@ -79,7 +79,24 @@ class ProvidedInterfacesModifier(object):
     def run(self, resource, *args, **kwds):
         """Change the rdf resource
         """
-        provides = ["%s.%s" % (iface.__module__ or '', iface.__name__) 
+        provides = ["%s.%s" % (iface.__module__ or '', iface.__name__)
                         for iface in providedBy(self.context)]
 
         resource.eea_objectProvides = provides
+
+class SearchableTextInModifier(object):
+    """Adds searchable text info
+    """
+
+    implements (ISurfResourceModifier)
+    adapts(IBaseContent)
+
+    def __init__(self, context):
+        self.context = context
+
+    def run(self, resource, *args, **kwds):
+        """Change the rdf resource
+        """
+
+        resource.dcterms_abstract = self.context.SearchableText()
+
