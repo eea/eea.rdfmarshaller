@@ -9,6 +9,7 @@ from zope.component import adapts, getUtility, ComponentLookupError
 from zope.formlib import form
 from zope.interface import implements, Interface
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
+from zope.lifecycleevent.interfaces import IObjectRemovedEvent
 from OFS.SimpleItem import SimpleItem
 from plone.contentrules.rule.interfaces import IExecutable, IRuleElementData
 from plone.app.async.interfaces import IAsyncService
@@ -32,7 +33,7 @@ logger = logging.getLogger("eea.rdfmarshaller")
 
 
 class IPingCRAction(Interface):
-    """ Ping Action settings schema
+    """ Ping action settings schema
     """
     service_to_ping = schema.TextLine(title=u"Service to ping",
                               description=u"Service to ping.",
@@ -40,7 +41,7 @@ class IPingCRAction(Interface):
 
 
 class PingCRAction(SimpleItem):
-    """ Ping Action settings
+    """ Ping action settings
     """
     implements(IPingCRAction, IRuleElementData)
 
@@ -52,7 +53,7 @@ class PingCRAction(SimpleItem):
 
 
 class PingCRActionExecutor(object):
-    """ Ping Action executor
+    """ Ping action executor
     """
     implements(IExecutable)
     adapts(Interface, IPingCRAction, Interface)
@@ -67,9 +68,23 @@ class PingCRActionExecutor(object):
         service_to_ping = self.element.service_to_ping
         obj = self.event.object
         container = obj.getParentNode()
+        noasync_msg = 'No instance for async operations was defined.'
+
+        def pingCRSDS(service_to_ping, obj_url, create):
+            """ Ping the CR/SDS service
+            """
+            options = {}
+            options['service_to_ping'] = service_to_ping
+            options['obj_url'] = obj_url
+            options['create'] = create
+            try:
+                async.queueJob(ping_CRSDS, self.context, options)
+            except ComponentLookupError:
+                logger.info(noasync_msg)
 
         # When no request the task is called from a async task, see #19830
         request = getattr(obj, 'REQUEST', None)
+
         # Detect special object used to force acquisition, see #18904
         if isinstance(request, str):
             request = None
@@ -90,55 +105,45 @@ class PingCRActionExecutor(object):
 
         async = getUtility(IAsyncService)
 
+        # If object is deleted
+        if IObjectRemovedEvent.providedBy(event):
+            # Ping backward relations
+            back_relations = obj.getBRefs('relatesTo')
+            for obj in back_relations:
+                obj_url = "%s/@@rdf" % obj.absolute_url()
+                pingCRSDS(service_to_ping, obj_url, create)
+
+        # If object was moved/renamed first ping with the old object's URL
         if IObjectMovedOrRenamedEvent.providedBy(event):
-            # If object was moved or renamed
-            # first ping the SDS with the url of the old object
             obj_url = "%s/%s/@@rdf" % (event.oldParent.absolute_url(), \
                                        event.oldName)
-            options = {}
-            options['service_to_ping'] = service_to_ping
-            options['obj_url'] = obj_url
-            options['create'] = False
-            try:
-                async.queueJob(ping_CRSDS, self.context, options)
-            except ComponentLookupError:
-                logger.info('No instance for async operations was defined.')
+            pingCRSDS(service_to_ping, obj_url, False)
+
             # then ping with the container of the old object
             obj_url = "%s/@@rdf" % event.oldParent.absolute_url()
-            options['obj_url'] = obj_url
-            try:
-                async.queueJob(ping_CRSDS, self.context, options)
-            except ComponentLookupError:
-                logger.info('No instance for async operations was defined.')
+            pingCRSDS(service_to_ping, obj_url, False)
 
+            # Ping backward relations
+            back_relations = obj.getBRefs('relatesTo')
+            for obj in back_relations:
+                obj_url = "%s/@@rdf" % obj.absolute_url()
+                pingCRSDS(service_to_ping, obj_url, create)
+
+        # Ping SDS for each version
         for obj in obj_versions:
             obj_url = "%s/@@rdf" % obj.absolute_url()
-            options = {}
-            options['service_to_ping'] = service_to_ping
-            options['obj_url'] = obj_url
-            options['create'] = create
-            try:
-                async.queueJob(ping_CRSDS, self.context, options)
-            except ComponentLookupError:
-                logger.info('No instance for async operations was defined.')
+            pingCRSDS(service_to_ping, obj_url, create)
 
         # If no Aquisition there is no container, see #18904
         if container:
             obj_url = "%s/@@rdf" % container.absolute_url()
-            options = {}
-            options['service_to_ping'] = service_to_ping
-            options['obj_url'] = obj_url
-            options['create'] = False
-            try:
-                async.queueJob(ping_CRSDS, self.context, options)
-            except ComponentLookupError:
-                logger.info('No instance for async operations was defined.')
+            pingCRSDS(service_to_ping, obj_url, False)
 
         return True
 
 
 class PingCRAddForm(AddForm):
-    """ Ping Action addform
+    """ Ping action addform
     """
     form_fields = form.FormFields(IPingCRAction)
     label = u"Add Ping CR Action"
@@ -146,7 +151,7 @@ class PingCRAddForm(AddForm):
     form_name = u"Configure element"
 
     def create(self, data):
-        """ Ping Action Create method
+        """ Ping action create method
         """
         a = PingCRAction()
         form.applyChanges(a, self.form_fields, data)
@@ -154,7 +159,7 @@ class PingCRAddForm(AddForm):
 
 
 class PingCREditForm(EditForm):
-    """ Ping Action editform
+    """ Ping action editform
     """
     form_fields = form.FormFields(IPingCRAction)
     label = u"Edit Ping CR Action"
@@ -163,7 +168,7 @@ class PingCREditForm(EditForm):
 
 
 class PingCRView(BrowserView):
-    """ Ping CR View
+    """ Ping CR/SDS View
     """
     def __call__(self, url, **kwargs):
         context = self.context
@@ -174,7 +179,7 @@ class PingCRView(BrowserView):
         ping_CRSDS(context, options)
 
 def ping_CRSDS(context, options):
-    """ ping the CR/SDS service
+    """ Ping the CR/SDS service
     """
     while True:
         try:

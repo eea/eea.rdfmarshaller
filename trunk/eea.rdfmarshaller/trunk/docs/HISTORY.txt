@@ -5,6 +5,10 @@ Changelog
 ----------------------
 * Feature: added SearchableText() to the rdf export as dcterms:abstract
   [pasoviul refs #21415]
+* Feature: ping backward relations on rename/move and delete event
+  [ghicaale refs #21480]
+* Change: removed duplicate code from ping action implementation
+  [ghicaale refs #21480]
 
 7.2 - (2014-06-06)
 ------------------
@@ -36,13 +40,13 @@ Changelog
 
 6.7 - (2014-05-19)
 ------------------
-* Fix: Event handler for IObjectMovedEvent subscriber
+* Bug fix: Event handler for IObjectMovedEvent subscriber
   now needs two arguments
   [batradav refs #19725]
 
 6.6 - (2014-05-19)
 ------------------
-* Fix: IObjectMovedEvent subscriber only for Archetypes
+* Bug fix: IObjectMovedEvent subscriber only for Archetypes
   [batradav refs #19725]
 
 6.5 - (2014-05-13)
@@ -50,13 +54,13 @@ Changelog
 * Change: Added a view to allow adding an external method to ping all elements
   of a known portal type and their aliases
   [pasoviul refs #18928]
-* Bugfix: Changed permission for @@rdf and @@rdfs to zope2.View so it can be
+* Bug fix: Changed permission for @@rdf and @@rdfs to zope2.View so it can be
   viewed by anonymous users only if the object was published
   [szabozo0 refs #18904]
 * Feature: Added new content rule for Object Moved Or Renamed event to allow, so
   it can be configured from @@rules-controlpanel
   [szabozo0 refs #18904]
-* Bugfix: Monkeypatch for plone.app.contentrules.handlers.DuplicateRuleFilter,
+* Bug fix: Monkeypatch for plone.app.contentrules.handlers.DuplicateRuleFilter,
   so the ping is called also when an object is removed via actions->delete
   [szabozo0 refs #18904]
 
