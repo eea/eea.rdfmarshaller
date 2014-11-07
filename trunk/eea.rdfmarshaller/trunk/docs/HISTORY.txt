@@ -7,6 +7,10 @@ Changelog
   [pasoviul refs #21415]
 * Feature: ping backward relations on rename/move and delete event
   [ghicaale refs #21480]
+* Feature: ping translations
+  [ghicaale refs #21480]
+* Feature: ping all children recursively
+  [ghicaale refs #21480]
 * Change: removed duplicate code from ping action implementation
   [ghicaale refs #21480]
 

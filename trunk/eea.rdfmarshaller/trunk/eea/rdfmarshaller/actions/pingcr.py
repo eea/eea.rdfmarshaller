@@ -82,6 +82,22 @@ class PingCRActionExecutor(object):
             except ComponentLookupError:
                 logger.info(noasync_msg)
 
+        def pingCRSDS_backrel(service_to_ping, obj, create):
+            """ Ping backward relations
+            """
+            back_relations = obj.getBRefs('relatesTo')
+            for rel in back_relations:
+                obj_url = "%s/@@rdf" % rel.absolute_url()
+                pingCRSDS(service_to_ping, obj_url, create)
+
+        def pingCRSDS_children(service_to_ping, obj, create):
+            """ Ping all sub-objects
+            """
+            for child in obj.objectIds():
+                obj_url = "%s/@@rdf" % obj[child].absolute_url()
+                pingCRSDS(service_to_ping, obj_url, create)
+                pingCRSDS_children(service_to_ping, obj[child], create)
+
         # When no request the task is called from a async task, see #19830
         request = getattr(obj, 'REQUEST', None)
 
@@ -94,9 +110,6 @@ class PingCRActionExecutor(object):
         if service_to_ping == "":
             return
 
-        if hasLinguaPloneInstalled and ITranslatable.providedBy(obj):
-            obj = obj.getCanonical()
-
         if hasVersionsInstalled and IVersionEnhanced.providedBy(obj) \
                                                               and request:
             obj_versions = IGetVersions(obj).versions()
@@ -105,13 +118,28 @@ class PingCRActionExecutor(object):
 
         async = getUtility(IAsyncService)
 
-        # If object is deleted
+        # If object has translations
+        if hasLinguaPloneInstalled and ITranslatable.providedBy(obj):
+            if obj.isCanonical():
+                # Ping all translations
+                for trans in obj.getTranslations().items():
+                    if trans[0] != 'en':
+                        trans_obj = trans[1][0]
+                        obj_url = trans_obj.absolute_url()
+                        pingCRSDS(service_to_ping, obj_url, create)
+            else:
+                # Ping only canonical
+                can_obj = obj.getCanonical()
+                obj_url = can_obj.absolute_url()
+                pingCRSDS(service_to_ping, obj_url, create)
+
+        # If object was deleted
         if IObjectRemovedEvent.providedBy(event):
             # Ping backward relations
-            back_relations = obj.getBRefs('relatesTo')
-            for obj in back_relations:
-                obj_url = "%s/@@rdf" % obj.absolute_url()
-                pingCRSDS(service_to_ping, obj_url, create)
+            pingCRSDS_backrel(service_to_ping, obj, create)
+
+            # Ping all sub-objects
+            pingCRSDS_children(service_to_ping, obj, create)
 
         # If object was moved/renamed first ping with the old object's URL
         if IObjectMovedOrRenamedEvent.providedBy(event):
@@ -124,12 +152,12 @@ class PingCRActionExecutor(object):
             pingCRSDS(service_to_ping, obj_url, False)
 
             # Ping backward relations
-            back_relations = obj.getBRefs('relatesTo')
-            for obj in back_relations:
-                obj_url = "%s/@@rdf" % obj.absolute_url()
-                pingCRSDS(service_to_ping, obj_url, create)
+            pingCRSDS_backrel(service_to_ping, obj, create)
 
-        # Ping SDS for each version
+            # Ping all sub-objects
+            pingCRSDS_children(service_to_ping, obj, create)
+
+        # Ping each version
         for obj in obj_versions:
             obj_url = "%s/@@rdf" % obj.absolute_url()
             pingCRSDS(service_to_ping, obj_url, create)
