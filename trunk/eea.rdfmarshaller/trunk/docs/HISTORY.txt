@@ -1,6 +1,9 @@
 Changelog
 =========
 
+7.4-dev - (unreleased)
+----------------------
+
 7.3 - (2014-11-20)
 ------------------
 * Feature: added SearchableText() to the rdf export as dcterms:abstract
