@@ -93,10 +93,18 @@ class PingCRActionExecutor(object):
         def pingCRSDS_children(service_to_ping, obj, create):
             """ Ping all sub-objects
             """
+            if obj.portal_type == "Discussion Item":
+                # 22047 skip object if it's of type Discussion Item
+                return
             for child in obj.objectIds():
-                obj_url = "%s/@@rdf" % obj[child].absolute_url()
+                child_obj = obj.get(child)
+                if not child_obj:
+                    logger.info("Couldn't retrieve child id %s for %s", (
+                        child, obj.absolute_url()))
+                    continue
+                obj_url = "%s/@@rdf" % child_obj.absolute_url()
                 pingCRSDS(service_to_ping, obj_url, create)
-                pingCRSDS_children(service_to_ping, obj[child], create)
+                pingCRSDS_children(service_to_ping, child_obj, create)
 
         # When no request the task is called from a async task, see #19830
         request = getattr(obj, 'REQUEST', None)

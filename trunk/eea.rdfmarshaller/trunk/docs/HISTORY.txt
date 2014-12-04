@@ -3,6 +3,8 @@ Changelog
 
 7.4-dev - (unreleased)
 ----------------------
+* Bug fix: fixed child pinging when parent object is a comment
+  [ichimdav refs #22047]
 
 7.3 - (2014-11-20)
 ------------------
