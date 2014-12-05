@@ -127,7 +127,6 @@ class ATField2Surf(object):
         try:
             return self.field.getAccessor(self.context)()
         except Exception:
-
             log.log('RDF marshaller error for context[field]'
                     '"%s[%s]": \n%s: %s' %
                     (self.context.absolute_url(), self.field.getName(),
@@ -170,7 +169,11 @@ class ATFileField2Surf(ATField2Surf):
                                                      Distribution)
 
         value = self.field.getAccessor(self.context)()
-        fileDistribution[surf.ns.DCAT['sizeInBytes']] = value.get_size()
+        # 22047 check if value isn't a false value, images with no data
+        # will return an empty string
+        size = value.get_size() if value else 0
+        fileDistribution[surf.ns.DCAT['sizeInBytes']] = size
+
         url = ''.join([self.context.absolute_url(),
                        "/at_download/",
                        self.field.getName()])

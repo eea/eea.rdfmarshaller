@@ -3,6 +3,9 @@ Changelog
 
 7.4-dev - (unreleased)
 ----------------------
+* Bug fix: fixed ATFileField2Surf marshalling when file or image
+  has no data
+  [ichimdav refs #22047]
 * Bug fix: fixed child pinging when parent object is a comment
   [ichimdav refs #22047]
 
