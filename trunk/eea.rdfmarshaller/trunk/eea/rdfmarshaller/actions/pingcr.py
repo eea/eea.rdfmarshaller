@@ -99,8 +99,8 @@ class PingCRActionExecutor(object):
             for child in obj.objectIds():
                 child_obj = obj.get(child)
                 if not child_obj:
-                    logger.info("Couldn't retrieve child id %s for %s", (
-                        child, obj.absolute_url()))
+                    logger.info("Couldn't retrieve child id %s for %s",
+                        child, obj.absolute_url())
                     continue
                 obj_url = "%s/@@rdf" % child_obj.absolute_url()
                 pingCRSDS(service_to_ping, obj_url, create)
