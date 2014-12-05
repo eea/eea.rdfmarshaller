@@ -1,8 +1,8 @@
 Changelog
 =========
 
-7.4-dev - (unreleased)
-----------------------
+7.4 - (2014-12-05)
+------------------
 * Bug fix: fixed ATFileField2Surf marshalling when file or image
   has no data
   [ichimdav refs #22047]
