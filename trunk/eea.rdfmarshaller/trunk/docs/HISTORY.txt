@@ -3,6 +3,9 @@ Changelog
 
 7.5-dev - (unreleased)
 ----------------------
+* Feature: Send SDS pings with the url specified in the portal_url environment
+  variable if available
+  [olimpiurob refs #21726]
 
 7.4 - (2014-12-05)
 ------------------

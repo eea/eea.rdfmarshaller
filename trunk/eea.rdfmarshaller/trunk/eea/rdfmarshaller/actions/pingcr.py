@@ -4,6 +4,7 @@ import logging
 import urllib2
 import urllib
 import lxml.etree
+from App.config import getConfiguration
 from zope import schema
 from zope.component import adapts, getUtility, ComponentLookupError
 from zope.formlib import form
@@ -14,6 +15,7 @@ from OFS.SimpleItem import SimpleItem
 from plone.contentrules.rule.interfaces import IExecutable, IRuleElementData
 from plone.app.async.interfaces import IAsyncService
 from plone.app.contentrules.browser.formhelper import AddForm, EditForm
+from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from eea.rdfmarshaller.actions.interfaces import IObjectMovedOrRenamedEvent
 
@@ -75,7 +77,7 @@ class PingCRActionExecutor(object):
             """
             options = {}
             options['service_to_ping'] = service_to_ping
-            options['obj_url'] = obj_url
+            options['obj_url'] = self.sanitize_url(obj_url)
             options['create'] = create
             try:
                 async.queueJob(ping_CRSDS, self.context, options)
@@ -105,6 +107,7 @@ class PingCRActionExecutor(object):
                 obj_url = "%s/@@rdf" % child_obj.absolute_url()
                 pingCRSDS(service_to_ping, obj_url, create)
                 pingCRSDS_children(service_to_ping, child_obj, create)
+
 
         # When no request the task is called from a async task, see #19830
         request = getattr(obj, 'REQUEST', None)
@@ -177,6 +180,24 @@ class PingCRActionExecutor(object):
 
         return True
 
+    def sanitize_url(self, url):
+        """ Replace object's portal_url value with the one defined as an
+            environment value if any
+        """
+        portal_url_tool = getToolByName(self.context, 'portal_url')
+        portal_url = portal_url_tool()
+        conf = getConfiguration()
+
+        if not hasattr(conf, 'environment'):
+            return  # this happens during unit tests, we skip this procedure
+
+        default_url = conf.environment.get('portal_url', portal_url)
+
+        if default_url != portal_url:
+            url = url.replace(unicode(portal_url), unicode(default_url))
+            url = url.replace('SITE/', '')
+
+        return url
 
 class PingCRAddForm(AddForm):
     """ Ping action addform
