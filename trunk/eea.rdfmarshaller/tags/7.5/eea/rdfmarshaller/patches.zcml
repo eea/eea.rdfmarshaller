@@ -1,0 +1,17 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:monkey="http://namespaces.plone.org/monkey"
+           xmlns:zcml="http://namespaces.zope.org/zcml"
+           i18n_domain="eea">
+
+    <include package="collective.monkeypatcher" />
+    <include package="collective.monkeypatcher" file="meta.zcml" />
+
+    ===========================[ plone.app.contentrules patch ]==========================
+
+    <monkey:patch description="Fix rules for ObjectRemovedEvent"
+                  class="plone.app.contentrules.handlers.DuplicateRuleFilter"
+                  original="__call__"
+                  replacement=".patch_duplicaterulefilter.patched___call__"
+                  docstringWarning="true" />
+
+</configure>
