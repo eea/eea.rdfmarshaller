@@ -13,7 +13,10 @@ from eea.rdfmarshaller.archetypes.interfaces import IValue2Surf
 from eea.rdfmarshaller.config import DEBUG
 from eea.rdfmarshaller.interfaces import ISurfSession, IObject2Surf
 from eea.rdfmarshaller.marshaller import GenericObject2Surf
-from zope.component import adapts, queryMultiAdapter, getMultiAdapter, queryAdapter
+from zope.component import adapts
+from zope.component import queryMultiAdapter
+from zope.component import getMultiAdapter
+from zope.component import queryAdapter
 from zope.interface import implements, Interface
 import rdflib
 import surf
@@ -35,30 +38,30 @@ class Archetype2Surf(GenericObject2Surf):
                    ('effectiveDate', 'issued'),
                    ('expirationDate', 'expires'),
                    ('rights', 'rights'),
-                   ('location', 'spatial'),
-                   ])
+                   ('location', 'spatial')])
 
-    _blacklist = [   'constrainTypesMode',
-                     'locallyAllowedTypes',
-                     'immediatelyAddableTypes',
-                     'language',
-                     'allowDiscussion']
+    _blacklist = ['constrainTypesMode',
+                  'locallyAllowedTypes',
+                  'immediatelyAddableTypes',
+                  'language',
+                  'allowDiscussion']
     field_map = {}
 
     @property
     def blacklist_map(self):
         """ These fields shouldn't be exported """
-        ptool = getToolByName(self.context,'portal_properties')
+        ptool = getToolByName(self.context, 'portal_properties')
         props = getattr(ptool, 'rdfmarshaller_properties', None)
         if props:
             return list(props.getProperty('%s_blacklist' %
                 self.portalType.lower(), props.getProperty('blacklist')))
         else:
-                return self._blacklist
+            return self._blacklist
+
     @property
     def portalType(self):
         """ Portal type """
-        return self.context.portal_type.replace(' ','')
+        return self.context.portal_type.replace(' ', '')
 
     @property
     def prefix(self):
@@ -106,8 +109,9 @@ class Archetype2Surf(GenericObject2Surf):
                 continue
 
             #first we try with a named adapter, then a generic one
-            fieldAdapter = queryMultiAdapter((field, self.context, self.session),
-                                      interface=IATField2Surf, name=fieldName)
+            fieldAdapter = queryMultiAdapter(
+                            (field, self.context, self.session),
+                            interface=IATField2Surf, name=fieldName)
             if not fieldAdapter:
                 fieldAdapter = getMultiAdapter((field, self.context, self.session),
                                       interface=IATField2Surf)
@@ -201,7 +205,7 @@ class ATField2RdfSchema(GenericObject2Surf):
     @property
     def rdfId(self):
         """ rdf id """
-        return self.context.getName().replace(' ','')
+        return self.context.getName().replace(' ', '')
 
     @property
     def subject(self):
@@ -291,7 +295,8 @@ class FTI2Surf(GenericObject2Surf):
                 catalog = getToolByName(context, 'portal_catalog')
                 tmpPath = '%s/rdfstype' % '/'.join(tmpFolder.getPhysicalPath())
                 brains = catalog(path=tmpPath)
-                [ catalog.uncatalog_object(br.getPath()) for br in brains ]
+                for br in brains:
+                    catalog.uncatalog_object(br.getPath())
 
         if hasattr(instance, 'Schema'):
             schema = instance.Schema()

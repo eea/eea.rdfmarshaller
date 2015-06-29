@@ -4,3 +4,4 @@ from zope.lifecycleevent.interfaces import IObjectMovedEvent
 class IObjectMovedOrRenamedEvent(IObjectMovedEvent):
     """IObjectMovedOrRenamedEvent
     """
+    

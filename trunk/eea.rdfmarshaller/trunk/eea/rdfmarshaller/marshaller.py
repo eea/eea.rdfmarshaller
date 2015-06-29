@@ -39,8 +39,8 @@ class RDFMarshaller(Marshaller):
         if self._store is not None:
             return self._store
 
-        store = surf.Store(reader='rdflib',  writer='rdflib',
-                           rdflib_store = 'IOMemory')
+        store = surf.Store(reader='rdflib', writer='rdflib',
+                           rdflib_store='IOMemory')
         store.log.setLevel(logging.CRITICAL)
         store.writer.log.setLevel(logging.CRITICAL)
 
@@ -105,6 +105,7 @@ class GenericObject2Surf(object):
 
     @property
     def prefix(self):
+        """ prefix """
         if self._prefix is None:
             raise NotImplementedError
         return self._prefix
@@ -121,8 +122,8 @@ class GenericObject2Surf(object):
             return self._namespace
 
         ttool = getToolByName(self.context, 'portal_types')
-        surf.ns.register(**{ self.prefix : '%s#' %
-                             ttool[self.context.portal_type].absolute_url()} )
+        surf.ns.register(**{self.prefix : '%s#' %
+                            ttool[self.context.portal_type].absolute_url()})
         self._namespace = getattr(surf.ns, self.prefix.upper())
         return self._namespace
 
@@ -134,7 +135,7 @@ class GenericObject2Surf(object):
     @property
     def rdfId(self):
         """ rdf id; will be inserted as rdf:id  """
-        return self.context.getId().replace(' ','')
+        return self.context.getId().replace(' ', '')
 
     @property
     def resource(self, **kwds):

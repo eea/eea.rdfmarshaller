@@ -30,8 +30,8 @@ class Value2Surf(object):
 
     def __call__(self, *args, **kwds):
         language = kwds['language']
-        if isinstance(self.value,unicode):
-           return (self.value,language)
+        if isinstance(self.value, unicode):
+            return (self.value, language)
         try:
             value = (unicode(self.value, 'utf-8', 'replace'),
                     language)
@@ -91,7 +91,7 @@ class String2Surf(Value2Surf):
             except (LookupError, UnicodeDecodeError):
                 log.log("Could not decode to %s in rdfmarshaller" %
                         encoding)
-                value = self.value.decode('utf-8','replace')
+                value = self.value.decode('utf-8', 'replace')
         return (value.encode('utf-8').strip(), language)
 
 
@@ -199,5 +199,5 @@ class ATReferenceField2Surf(ATField2Surf):
 
         value = [v for v in value if v] #the field might have been empty
 
-        return [ rdflib.URIRef(obj.absolute_url()) for obj in value ]
+        return [rdflib.URIRef(obj.absolute_url()) for obj in value]
 
