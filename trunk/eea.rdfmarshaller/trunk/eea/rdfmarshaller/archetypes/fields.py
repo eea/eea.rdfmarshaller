@@ -1,3 +1,5 @@
+""" Archetypes fields
+"""
 from DateTime.DateTime import DateTime
 from Products.Archetypes.interfaces import IField, IFileField
 from Products.CMFPlone import log
@@ -63,7 +65,9 @@ class String2Surf(Value2Surf):
     """
     adapts(str)
 
-    _illegal_xml_chars = re.compile(u'[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]')
+    _illegal_xml_chars = re.compile(
+        u'[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]'
+    )
 
     def escapeXMLIllegalCharacters(self):
         """Replaces all the XML illegal characters with spaces
@@ -146,20 +150,14 @@ class ATFileField2Surf(ATField2Surf):
     prefix = "eea"
     name = "fileInfo"
 
-    def __init__(self, field, context, session):
-        self.field = field
-        self.context = context
-        self.session = session
-
     def value(self):
         """ The desired output is similar to:
         <datafile:DataFile ...
         ...
-            <eea:fileInfo>
-                <dcat:Distribution rdf:about="#dist">
-                    <dcat:sizeInBytes rdf:datatype="http://www.w3.org/2001/XMLSchema#long">XXXXX</dcat:sizeInBytes>
-                    <dcat:downloadURL
-                    rdf:resource="[url]/at_download/file"/>
+        <eea:fileInfo>
+         <dcat:Distribution rdf:about="#dist">
+          <dcat:sizeInBytes rdf:datatype="XMLSchema#long">X</dcat:sizeInBytes>
+          <dcat:downloadURL rdf:resource="[url]/at_download/file"/>
         ...
         </datafile:DataFile>
         """

@@ -1,3 +1,5 @@
+""" Archetypes
+"""
 from OFS.interfaces import IFolder
 from Products.Archetypes.interfaces import IBaseObject
 from Products.Archetypes.interfaces import IField
@@ -82,6 +84,7 @@ class Archetype2Surf(GenericObject2Surf):
 
         workflowTool = getToolByName(self.context, "portal_workflow")
         wfs = workflowTool.getWorkflowsFor(self.context)
+        wf = None
         for wf in wfs:
             if wf.isInfoSupported(self.context, "portal_workflow"):
                 break
@@ -90,7 +93,7 @@ class Archetype2Surf(GenericObject2Surf):
         if status is not None:
             status = ''.join([portal_url,
                               "/portal_workflow/",
-                              wf.getId(),
+                              getattr(wf, 'getId', lambda: '')(),
                               "/states/",
                               status])
             try:
@@ -113,8 +116,9 @@ class Archetype2Surf(GenericObject2Surf):
                             (field, self.context, self.session),
                             interface=IATField2Surf, name=fieldName)
             if not fieldAdapter:
-                fieldAdapter = getMultiAdapter((field, self.context, self.session),
-                                      interface=IATField2Surf)
+                fieldAdapter = getMultiAdapter(
+                        (field, self.context, self.session),
+                                interface=IATField2Surf)
 
             if not fieldAdapter.exportable:
                 continue

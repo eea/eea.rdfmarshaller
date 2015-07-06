@@ -1,3 +1,5 @@
+""" Archetypes Interfaces
+"""
 from zope.interface import Interface, Attribute
 from Products.Archetypes.interfaces import IField
 from eea.rdfmarshaller.interfaces import IGenericObject2Surf

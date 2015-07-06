@@ -1,3 +1,5 @@
+""" Archetypes modifiers
+"""
 from Acquisition import aq_inner
 from Products.Archetypes.interfaces import IBaseContent
 from Products.CMFCore.WorkflowCore import WorkflowException
