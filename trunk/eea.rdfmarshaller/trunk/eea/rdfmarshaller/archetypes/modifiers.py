@@ -8,7 +8,9 @@ from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 from zope.component import adapts
 from zope.interface import implements, providedBy
 import rdflib
+import re
 
+ILLEGAL_XML_CHARS_PATTERN = re.compile(u'[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]')
 
 class IsPartOfModifier(object):
     """Adds dcterms_isPartOf information to rdf resources
@@ -100,5 +102,5 @@ class SearchableTextInModifier(object):
         """Change the rdf resource
         """
 
-        resource.dcterms_abstract = self.context.SearchableText()
+        resource.dcterms_abstract = ILLEGAL_XML_CHARS_PATTERN.sub('', self.context.SearchableText())
 

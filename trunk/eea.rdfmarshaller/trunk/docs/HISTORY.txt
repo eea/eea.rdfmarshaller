@@ -3,6 +3,8 @@ Changelog
 
 7.7.dev0 - (unreleased)
 -----------------------
+* Bug fix: fixed UnicodeDecodeError: 'utf8' codec can't decode byte for @@rdf
+  [chiridra refs #28293]
 
 7.6 - (2015-03-17)
 ------------------
