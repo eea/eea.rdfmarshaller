@@ -1,6 +1,9 @@
 Changelog
 =========
 
+7.8.dev0 - (unreleased)
+-----------------------
+
 7.7 - (2015-09-10)
 ------------------
 * Bug fix: fixed UnicodeDecodeError: 'utf8' codec can't decode byte for @@rdf
