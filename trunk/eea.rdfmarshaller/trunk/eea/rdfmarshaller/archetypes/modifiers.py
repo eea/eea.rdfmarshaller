@@ -107,3 +107,19 @@ class SearchableTextInModifier(object):
         resource.dcterms_abstract = ILLEGAL_XML_CHARS_PATTERN.sub('',
             self.context.SearchableText())
 
+class RelatedItemsModifier(object):
+    """Adds dcterms:references
+    """
+
+    implements(ISurfResourceModifier)
+    adapts(IBaseContent)
+
+    def __init__(self, context):
+        self.context = context
+
+    def run(self, resource, *args, **kwds):
+        """Change the rdf resource
+        """
+
+        resource.dcterms_references = [rdflib.URIRef(o.absolute_url()) \
+            for o in self.context.getRelatedItems()]

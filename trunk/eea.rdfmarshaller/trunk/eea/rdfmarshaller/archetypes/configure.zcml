@@ -44,5 +44,7 @@
           provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
   <subscriber factory=".modifiers.SearchableTextInModifier"
           provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+  <subscriber factory=".modifiers.RelatedItemsModifier"
+          provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 
 </configure>

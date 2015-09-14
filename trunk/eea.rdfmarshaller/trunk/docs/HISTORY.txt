@@ -3,6 +3,8 @@ Changelog
 
 7.8.dev0 - (unreleased)
 -----------------------
+* Change: Improved relatedItems rdf export using dublincore
+  [chiridra refs #28697]
 
 7.7 - (2015-09-10)
 ------------------
