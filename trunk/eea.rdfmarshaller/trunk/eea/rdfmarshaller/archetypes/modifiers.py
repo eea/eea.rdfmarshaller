@@ -121,5 +121,8 @@ class RelatedItemsModifier(object):
         """Change the rdf resource
         """
 
+        if not getattr(self.context, 'getRelatedItems', None):
+            return
+
         resource.dcterms_references = [rdflib.URIRef(o.absolute_url()) \
             for o in self.context.getRelatedItems()]
