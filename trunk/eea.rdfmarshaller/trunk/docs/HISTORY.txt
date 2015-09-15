@@ -5,6 +5,10 @@ Changelog
 -----------------------
 * Change: Improved relatedItems rdf export using dublincore
   [chiridra refs #28697]
+* Upgrade step: we need to re-index all content on SDS
+   - in ZMI -> /www/0maintenance/ping_sds_content_script/ZPythonScriptHTML_editForm
+   - add meta_type as a parameter and run the script
+  [ghicaale refs #28697]
 
 7.7 - (2015-09-10)
 ------------------
