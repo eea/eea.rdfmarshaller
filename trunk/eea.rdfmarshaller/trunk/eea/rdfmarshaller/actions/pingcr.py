@@ -250,7 +250,7 @@ def ping_CRSDS(context, options):
                     options['service_to_ping'],
                     options['obj_url'],
                     options['create'])
-            ping_con = urllib2.urlopen(url)
+            ping_con = urllib2.urlopen(url, timeout=10)
             ping_response = ping_con.read()
             ping_con.close()
             response = lxml.etree.fromstring(ping_response)
