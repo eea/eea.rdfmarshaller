@@ -1,7 +1,7 @@
 """ RDF Marshaller ping action
 """
 import logging
-import urllib2
+from eventlet.green import urllib2
 import urllib
 import lxml.etree
 from App.config import getConfiguration

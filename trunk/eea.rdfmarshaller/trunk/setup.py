@@ -35,6 +35,7 @@ setup(name=name,
           'Products.ATVocabularyManager',
           'chardet',
           'plone.app.async',
+          'eventlet',
       ],
       entry_points="""
       # -*- Entry points: -*-
