@@ -1,0 +1,75 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone">
+
+    <!-- Ping CR action -->
+    <include package="plone.contentrules" file="meta.zcml" />
+    <include package="plone.app.contentrules" />
+
+    <adapter factory=".pingcr.PingCRActionExecutor" />
+
+    <browser:page
+        for="*"
+        name="ping_cr"
+        class=".pingcr.PingCRView"
+        permission="cmf.ModifyPortalContent"
+      />
+
+    <browser:page
+        for="plone.app.contentrules.browser.interfaces.IRuleActionAdding"
+        name="eea.rdfmarshaller.actions.PingCR"
+        class=".pingcr.PingCRAddForm"
+        permission="plone.app.contentrules.ManageContentRules"
+      />
+
+    <browser:page
+        for="eea.rdfmarshaller.actions.pingcr.IPingCRAction"
+        name="edit"
+        class=".pingcr.PingCREditForm"
+        permission="plone.app.contentrules.ManageContentRules"
+      />
+
+    <plone:ruleAction
+        name="eea.rdfmarshaller.actions.PingCR"
+        title="Ping CR"
+        description="Ping CR"
+        for="*"
+        event="*"
+        addview="eea.rdfmarshaller.actions.PingCR"
+        editview="edit"
+        schema=".pingcr.IPingCRAction"
+        factory=".pingcr.PingCRAction"
+        />
+
+    <!-- Make Object moved or renamed event selectable in content rules -->
+    <interface
+      interface="eea.rdfmarshaller.actions.interfaces.IObjectMovedOrRenamedEvent"
+      type="plone.contentrules.rule.interfaces.IRuleEventType"
+      name="Object moved or renamed"
+      />
+
+    <interface
+      interface="zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+      type="plone.contentrules.rule.interfaces.IRuleEventType"
+      name="Object copied"
+      />
+
+    <!-- Rule triggers -->
+    <subscriber
+      for="eea.rdfmarshaller.actions.interfaces.IObjectMovedOrRenamedEvent"
+      handler=".handlers.moved"
+      />
+
+    <subscriber
+      for="zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+      handler=".handlers.copied"
+      />
+
+    <!-- Custom handler for ObjectMovedEvent what is not triggered when object is added or deleted -->
+    <subscriber
+      for="Products.Archetypes.interfaces.IBaseObject zope.lifecycleevent.interfaces.IObjectMovedEvent"
+      handler=".handlers.forwardevent"
+      />
+
+</configure>
