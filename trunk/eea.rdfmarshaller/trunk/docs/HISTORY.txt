@@ -1,8 +1,8 @@
 Changelog
 =========
 
-7.8.dev0 - (unreleased)
------------------------
+7.8 - (2015-10-05)
+------------------
 * Bugfix: set socket timeout to prevent hanging out connection on urlopen calls with eventlet
   [lucas refs #29063]
 * Change: Improved relatedItems rdf export using dublincore
