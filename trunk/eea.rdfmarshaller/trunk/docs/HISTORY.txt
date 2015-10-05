@@ -1,6 +1,9 @@
 Changelog
 =========
 
+7.9.dev0 - (unreleased)
+-----------------------
+
 7.8 - (2015-10-05)
 ------------------
 * Bugfix: set socket timeout to prevent hanging out connection on urlopen calls with eventlet
