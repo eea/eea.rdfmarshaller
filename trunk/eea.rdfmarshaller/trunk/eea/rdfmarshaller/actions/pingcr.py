@@ -89,8 +89,9 @@ class PingCRActionExecutor(object):
             """
             back_relations = obj.getBRefs('relatesTo')
             for rel in back_relations:
-                obj_url = "%s/@@rdf" % rel.absolute_url()
-                pingCRSDS(service_to_ping, obj_url, create)
+                if rel is not None:
+                    obj_url = "%s/@@rdf" % rel.absolute_url()
+                    pingCRSDS(service_to_ping, obj_url, create)
 
         def pingCRSDS_children(service_to_ping, obj, create):
             """ Ping all sub-objects
