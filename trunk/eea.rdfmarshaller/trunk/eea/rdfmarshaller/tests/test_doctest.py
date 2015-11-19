@@ -1,6 +1,5 @@
 """ Doc tests
 """
-import os
 import doctest
 import unittest
 from eea.rdfmarshaller.tests.base import FunctionalTestCase
@@ -15,7 +14,6 @@ OPTIONFLAGS = (
 def test_suite():
     """ Suite
     """
-    os.environ['PLONE_CSRF_DISABLED'] = 'true'
 
     return unittest.TestSuite((
             FunctionalDocFileSuite('marshall.txt',
