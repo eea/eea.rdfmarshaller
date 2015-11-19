@@ -3,6 +3,8 @@ Changelog
 
 7.9.dev0 - (unreleased)
 -----------------------
+* Change: Removed CSRF security quickfix for tests
+  [szabozo0 refs #30858]
 * Bugfix: check if relation is not None before ping action
   [chiridra refs #30387]
 
