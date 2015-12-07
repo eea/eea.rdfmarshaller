@@ -1,0 +1,2 @@
+""" RDF Marshaller ping action
+"""
