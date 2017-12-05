@@ -1,0 +1,23 @@
+<registry>
+  <records interface="eea.rdfmarshaller.licenses.license.ILicenses">
+
+    <record name="rdfmarshaller_licenses">
+      <field type="plone.registry.field.List">
+        <title>Licenses</title>
+        <value_type type="collective.z3cform.datagridfield.DictRow">
+          <schema>eea.rdfmarshaller.licenses.license.ILicense</schema>
+        </value_type>
+      </field>
+    </record>
+  </records>
+
+  <records interface="eea.rdfmarshaller.licenses.license.IPortalTypeLicenses">
+    <record name="rdfmarshaller_type_licenses">
+      <field type="plone.registry.field.Dict">
+        <title>Type licenses</title>
+        <key_type type="plone.registry.field.TextLine" />
+        <value_type type="plone.registry.field.ASCIILine" />
+      </field>
+    </record>
+  </records>
+</registry>

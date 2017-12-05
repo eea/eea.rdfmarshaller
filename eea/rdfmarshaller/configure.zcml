@@ -10,6 +10,7 @@
   <include package=".archetypes" />
   <include package=".async" />
   <include package=".browser" />
+  <include package=".licenses" />
   <include package=".upgrades" />
 
   <include zcml:condition="installed plone.dexterity" package=".dexterity" />

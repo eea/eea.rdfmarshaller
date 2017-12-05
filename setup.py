@@ -46,12 +46,14 @@ setup(name=name,
           'chardet',
           'eventlet',
           'rdflib_jsonld>=0.4.0',
+          'collective.z3cform.datagridfield',
       ],
       extras_require={
           'test': [
               'Products.PloneTestCase',
               'plone.app.testing',
               'eea.depiction',
+              'collective.z3cform.datagridfield',
           ]
       },
       entry_points="""
