@@ -1,16 +1,17 @@
 """ Archetypes Field2Surf field adapters
 """
 import sys
-import surf
-import rdflib
 
+import rdflib
+import surf
+from eea.rdfmarshaller.archetypes.interfaces import (IATField2Surf,
+                                                     IReferenceField)
+from eea.rdfmarshaller.generic.fields import BaseShortenHTMLField2Surf
+from eea.rdfmarshaller.interfaces import ISurfSession
 from Products.Archetypes.interfaces import IField, IFileField
 from Products.CMFPlone import log
-from eea.rdfmarshaller.archetypes.interfaces import IATField2Surf
-from eea.rdfmarshaller.archetypes.interfaces import IReferenceField
-from eea.rdfmarshaller.interfaces import ISurfSession
 from zope.component import adapts
-from zope.interface import implements, Interface
+from zope.interface import Interface, implements
 
 
 class ATField2Surf(object):
@@ -53,6 +54,7 @@ class ATFileField2Surf(ATField2Surf):
     @property
     def name(self):
         """ return field name """
+
         return self.field.getName()
 
     def value(self):
@@ -96,6 +98,7 @@ class ATFileField2Surf(ATField2Surf):
         # will return an empty string
         # value = self.field.getAccessor(self.context)()
         size = self.field.get_size(self.context)
+
         if not size:
             return
 
@@ -125,9 +128,42 @@ class ATReferenceField2Surf(ATField2Surf):
         value = self.field.getAccessor(self.context)()
 
         # some reference fields are single value only
+
         if not isinstance(value, (list, tuple)):
             value = [value]
 
         value = [v for v in value if v]     # the field might have been empty
 
         return [rdflib.URIRef(obj.absolute_url()) for obj in value]
+
+
+class ShortenHTMLField2Surf(ATField2Surf, BaseShortenHTMLField2Surf):
+    """ A superclass to be used to provide alternate values for fields
+
+    To use it, inherit from this class and override the alternate_field prop:
+
+    class FallbackDescription(ShortenHTMLField2Surf):
+        alternate_field = "text"
+
+    <adapter
+        for="* eea.indicators.specification.Specification *"
+        name="description"
+        factory=".FallbackDescription"
+        />
+    """
+
+    alternate_field = None
+
+    def get_raw_value(self):
+
+        if not self.alternate_field:
+            raise ValueError
+        field = self.context.getField(self.alternate_field)
+        accessor = field.getAccessor(self.context)
+
+        return accessor()
+
+    def value(self):
+        v = ATField2Surf(self.field, self.context, self.session).value()
+
+        return v or self.alternate_value()
