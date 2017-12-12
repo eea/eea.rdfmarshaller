@@ -3,11 +3,4 @@
   xmlns:zcml="http://namespaces.zope.org/zcml"
   xmlns:browser="http://namespaces.zope.org/browser">
 
-  <!-- <adapter -->
-  <!--   for="zope.interface.Interface zope.interface.Interface zope.interface.Interface" -->
-  <!--   factory=".fields.DescriptionField2Surf" -->
-  <!--   provides="eea.rdfmarshaller.interfaces.IField2Surf" -->
-  <!--   name="description" -->
-  <!--   /> -->
-
 </configure>
