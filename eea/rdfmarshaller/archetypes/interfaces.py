@@ -1,8 +1,8 @@
 """ Archetypes Interfaces
 """
-from zope.interface import Interface, Attribute
+from eea.rdfmarshaller.interfaces import IField2Surf, IGenericObject2Surf
 from Products.Archetypes.interfaces import IField
-from eea.rdfmarshaller.interfaces import IGenericObject2Surf
+from zope.interface import Attribute, Interface
 
 
 class IArchetype2Surf(IGenericObject2Surf):
@@ -21,13 +21,8 @@ class IArchetype2Surf(IGenericObject2Surf):
                               u"won't be exported")
 
 
-class IATField2Surf(Interface):
+class IATField2Surf(IField2Surf):
     """ Extract values from Fields, to store them in the surf session """
-
-    def value(context):
-        """ Returns the value in RDF format """
-
-    exportable = Attribute("Is this field exportable to RDF?")
 
 
 class IATVocabulary(Interface):
