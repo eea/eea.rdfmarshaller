@@ -2,19 +2,19 @@
 
 import sys
 
-from zope.component import adapts
-from zope.interface import Interface, implements
-from zope.schema.interfaces import IField
-
 import rdflib
 import surf
 from Acquisition import aq_base
 from eea.rdfmarshaller.dexterity.interfaces import IDXField2Surf
+from eea.rdfmarshaller.generic.fields import BaseShortenHTMLField2Surf
 from eea.rdfmarshaller.interfaces import IFieldDefinition2Surf, ISurfSession
 from eea.rdfmarshaller.marshaller import GenericObject2Surf
 from eea.rdfmarshaller.value import Value2Surf
 from plone.app.textfield.value import RichTextValue
 from Products.CMFPlone import log
+from zope.component import adapts
+from zope.interface import Interface, implements
+from zope.schema.interfaces import IField
 
 try:
     from z3c.relationfield.interfaces import IRelationList
@@ -118,6 +118,39 @@ class DexterityField2RdfSchema(GenericObject2Surf):
         setattr(resource, 'rdf_domain', fti_title.replace(' ', ''))
 
         return resource
+
+
+class ShortenHTMLField2Surf(DXField2Surf, BaseShortenHTMLField2Surf):
+    """ A superclass to be used to provide alternate values for fields
+
+    To use it, inherit from this class and override the alternate_field prop:
+
+    class FallbackDescription(ShortenHTMLField2Surf):
+        alternate_field = "text"
+
+    <adapter
+        for="* eea.indicators.specification.Specification *"
+        name="description"
+        factory=".FallbackDescription"
+        />
+    """
+
+    implements(IDXField2Surf)
+
+    exportable = True
+    alternate_field = None
+
+    def get_raw_value(self):
+        if not self.alternate_field:
+            raise ValueError
+
+        return getattr(self.context, self.alternate_field).output
+
+    def value(self):
+        # import pdb; pdb.set_trace()
+        v = DXField2Surf(self.field, self.context, self.session).value()
+
+        return v or self.alternate_value()
 
 
 if HAS_Z3C_RELATIONFIELD:

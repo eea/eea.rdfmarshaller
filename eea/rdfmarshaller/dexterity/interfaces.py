@@ -1,11 +1,7 @@
 """ rdfmarshaller interfaces """
-from zope.interface import Interface, Attribute
+
+from eea.rdfmarshaller.interfaces import IField2Surf
 
 
-class IDXField2Surf(Interface):
+class IDXField2Surf(IField2Surf):
     """ Extract values from Fields, to store them in the surf session """
-
-    def value(context):
-        """ Returns the value in RDF format """
-
-    exportable = Attribute("Is this field exportable to RDF?")

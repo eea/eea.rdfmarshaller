@@ -1,6 +1,6 @@
 """ Interfaces """
 
-from zope.interface import Interface, Attribute
+from zope.interface import Attribute, Interface
 
 
 class ISurfSession(Interface):
@@ -42,6 +42,15 @@ class ISurfResourceModifier(Interface):
     def run(resource):
         """Gets the rdf resource as argument, to allow it to be changed in place
         """
+
+
+class IField2Surf(Interface):
+    """
+    """
+    exportable = Attribute("Is this field exportable to RDF?")
+
+    def value(context):
+        """ Returns the value in format understandable by SURF """
 
 
 class IValue2Surf(Interface):
