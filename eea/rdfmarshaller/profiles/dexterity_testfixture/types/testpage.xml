@@ -26,8 +26,13 @@
  </property>
  <property name="schema"></property>
  <property
-    name="model_source">&lt;model xmlns:form="http://namespaces.plone.org/supermodel/form" xmlns:easyform="http://namespaces.plone.org/supermodel/easyform" xmlns:indexer="http://namespaces.plone.org/supermodel/indexer" xmlns:i18n="http://xml.zope.org/namespaces/i18n" xmlns:security="http://namespaces.plone.org/supermodel/security" xmlns:marshal="http://namespaces.plone.org/supermodel/marshal" xmlns="http://namespaces.plone.org/supermodel/schema"&gt;
+    name="model_source">&lt;model xmlns:i18n="http://xml.zope.org/namespaces/i18n" xmlns:security="http://namespaces.plone.org/supermodel/security" xmlns:marshal="http://namespaces.plone.org/supermodel/marshal" xmlns:form="http://namespaces.plone.org/supermodel/form" xmlns="http://namespaces.plone.org/supermodel/schema"&gt;
     &lt;schema&gt;
+      &lt;field name="long_description" type="plone.app.textfield.RichText"&gt;
+        &lt;description/&gt;
+        &lt;required&gt;False&lt;/required&gt;
+        &lt;title&gt;Long description&lt;/title&gt;
+      &lt;/field&gt;
     &lt;/schema&gt;
   &lt;/model&gt;</property>
  <property name="model_file"></property>

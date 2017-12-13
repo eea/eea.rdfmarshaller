@@ -11,6 +11,7 @@
   <include package=".async" />
   <include package=".browser" />
   <include package=".licenses" />
+  <include package=".generic" />
   <include package=".upgrades" />
 
   <include zcml:condition="installed plone.dexterity" package=".dexterity" />
