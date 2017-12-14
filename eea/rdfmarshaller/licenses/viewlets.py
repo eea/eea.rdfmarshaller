@@ -95,7 +95,8 @@ class LicenseViewlet(ViewletBase):
                         "@id": license_url
                     }
                 }
-            }
+            },
+            indent=True
         )
 
         return text

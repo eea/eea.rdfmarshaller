@@ -5,7 +5,7 @@
   i18n:domain="plone">
 
   <configlet
-    title="Copyright License Definitions"
+    title="Define Copyright License"
     action_id="rdfmarshaller_licenses"
     appId="rdfmarshaller"
     category="Products"
@@ -18,7 +18,7 @@
   </configlet>
 
   <configlet
-    title="Portal Types Licenses"
+    title="Assign Licenses to Portal Types"
     action_id="rdfmarshaller_portal_type_licenses"
     appId="rdfmarshaller"
     category="Products"
