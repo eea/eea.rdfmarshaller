@@ -9,6 +9,10 @@
     profile="eea.rdfmarshaller:default">
 
     <genericsetup:upgradeDepends
+      title="Install collective.z3cform.datagridfield"
+      import_profile="collective.z3cform.datagridfield:default"
+      />
+    <genericsetup:upgradeDepends
       title="Licenses: Import plone.app.registry and controlpanel"
       import_steps="plone.app.registry controlpanel"
       />

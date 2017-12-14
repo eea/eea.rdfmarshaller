@@ -5,6 +5,8 @@ Changelog
 ------------------------
 * Change: Added superclasses for short field adapters
   [tiberich refs #90546]
+* Allow defining and assigning licenses per content types
+  [tiberich, ghitab #82751]
 
 10.3 - (2017-12-12)
 -------------------

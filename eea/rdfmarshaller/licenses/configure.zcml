@@ -28,4 +28,5 @@
   <utility
     component=".license.LicensesVocabularyFactory"
     name="eea.rdfmarshaller.licenses" />
+
 </configure>
