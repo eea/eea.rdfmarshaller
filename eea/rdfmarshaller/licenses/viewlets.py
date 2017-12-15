@@ -1,112 +1,97 @@
-import json
+import StringIO
 
-from eea.rdfmarshaller.licenses.license import ILicenses, IPortalTypeLicenses
-from plone import api
+import surf
 from plone.app.layout.viewlets.common import ViewletBase
+from Products.Marshall.registry import getComponent
+from rdflib import ConjunctiveGraph  # , Graph
+
+# import json
+# from eea.rdfmarshaller.licenses.license import ILicenses, IPortalTypeLicenses
+# from plone import api
+
+license_query = """
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX odsr: <http://schema.theodi.org/odrs#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+
+CONSTRUCT {
+    ?s ?p ?o .
+
+    ?sa dct:rights ?rights .
+    ?sa dct:title ?title .
+    ?sa rdf:type dcat:Dataset .
+
+    ?sa dct:license ?lic .
+}
+WHERE {
+    {
+        GRAPH ?a {
+            ?s odsr:contentLicense ?v
+        } .
+        GRAPH ?a {
+            ?s ?p ?o
+        }
+    } .
+    {
+        ?sa dct:rights ?rights .
+        ?sa dct:title ?title .
+        ?sa dct:license ?lic .
+        # ?lic dct:title ?lictitle .
+    }
+}
+"""         # % URL
+
+
+def json_serialize(res):
+    s = surf.Store(reader='rdflib', writer='rdflib', rdflib_store='IOMemory')
+
+    for triple in res:
+        s.add_triple(*triple)
+
+    context = {
+        "odrs": "http://schema.theodi.org/odrs#",
+        "dct": "http://purl.org/dc/terms/",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "dcat": "http://www.w3.org/ns/dcat#",
+    }
+
+    ser = s.reader.graph.serialize(format='json-ld', context=context)
+
+    return ser
+
+
+def regraph(store):
+    """ Change the content of store to a ConjunctiveGraph.
+
+    ConjunctiveGraphs allow queries to look at a graph instead of separate
+    triples.
+    """
+
+    ser = store.reader.graph.serialize(format='xml')
+    f = StringIO.StringIO(ser)
+    graph = ConjunctiveGraph()
+    graph.parse(f)
+
+    return graph
 
 
 class LicenseViewlet(ViewletBase):
     """ json-ld license content
     """
 
-    @property
-    def json_obj(self):
-        """ Return assigned license for portal_type of this context or None
-
-            Example:
-            https://github.com/theodi/open-data-licensing/blob/master/
-                    examples/simple-json-ld.json
-        """
-
-        try:
-            reg_types = api.portal.get_registry_record(
-                'rdfmarshaller_type_licenses', interface=IPortalTypeLicenses
-            )
-        except KeyError:
-            return None
-
-        try:
-            reg_licenses = api.portal.get_registry_record(
-                'rdfmarshaller_licenses', interface=ILicenses)
-        except KeyError:
-            return None
-
-        if not (reg_types and reg_licenses):
-            return
-
-        if self.context.portal_type not in reg_types.keys():
-            return None  # No license assigned for this portal type
-
-        license_id = reg_types[self.context.portal_type]
-        licenses = [x for x in reg_licenses if x['id'] == license_id]
-
-        if len(licenses) == 0:
-            return None  # No license details for this license id
-
-        license = licenses[0]
-        license_url = license.get("url", "")
-        license_title = license.get("id", "")
-        copyright = license.get("copyright", "")
-        attribution = license.get("attribution", "")
-
-        # [TODO] Update this.
-        #
-        # This is not using the eea.rdfmarshaller properly.
-        # This is work that isn't yet commited, still in work by Tibi and
-        # Alec, so it's fine for now, but will need refactoring.
-
-        site_url = api.portal.get().absolute_url()
-        type_ = "{0}/portal_types/{1}#{1}".format(
-            site_url,
-            self.context.portal_type
-        )
-
-        text = json.dumps(
-            {
-                "@context": {
-                    "dcat": "http://www.w3.org/ns/dcat#",
-                    "dct": "http://purl.org/dc/terms/",
-                    "odrs": "http://schema.theodi.org/odrs#",
-                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-                },
-
-                "@id": self.context.absolute_url(),
-                "@type": type_,
-                "dct:title": self.context.title,
-
-                "dct:license": {
-                    "@id": license_url,
-                    "dct:title": license_title
-                },
-
-                "dct:rights": {
-                    "rdfs:label": "Rights Statement",
-                    "@id": self.context.absolute_url(),
-                    "odrs:copyrightNotice": copyright,
-                    "odrs:attributionText": attribution,
-
-                    "odrs:attributionURL": {
-                        "@id": self.context.absolute_url(),
-                    },
-                    "odrs:contentLicense": {
-                        "@id": license_url
-                    },
-                    "odrs:dataLicense": {
-                        "@id": license_url
-                    }
-                }
-            },
-            indent=True
-        )
-
-        return text
-
     def render(self):
-        json_obj = self.json_obj
+        marshaller = getComponent('surfrdf')
+        marshaller.marshall(self.context, endLevel=1)
+        store = marshaller.store
 
-        if json_obj is None:
+        graph = regraph(store)
+
+        res = graph.query(license_query)
+        json = json_serialize(res)
+
+        if json is None:
             return ""
 
-        return """<script type="application/ld+json">{}</script>""".format(
-                    json_obj
-                )
+        return '<script type="application/ld+json">%s</script>' % json

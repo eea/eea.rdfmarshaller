@@ -61,6 +61,7 @@ class RDFMarshaller(Marshaller):
         store.reader.graph.bind('dcat', surf.ns.DCAT, override=True)
         store.reader.graph.bind('schema', surf.ns.SCHEMA, override=True)
         store.reader.graph.bind('foaf', surf.ns.FOAF, override=True)
+        store.reader.graph.bind('odrs', surf.ns.ODRS, override=True)
 
         self._store = store
 
