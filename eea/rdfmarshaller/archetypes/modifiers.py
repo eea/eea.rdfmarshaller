@@ -1,18 +1,21 @@
 """ Archetypes modifiers
 """
+
 import re
+
 import rdflib
 from Acquisition import aq_inner
-from zope.interface import implements, providedBy
-from zope.component import adapts
-from Products.Archetypes.interfaces import IBaseContent
-from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFCore.utils import getToolByName
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
+from Products.Archetypes.interfaces import IBaseContent
+from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.WorkflowCore import WorkflowException
+from zope.component import adapts
+from zope.interface import implements, providedBy
 
 ILLEGAL_XML_CHARS_PATTERN = re.compile(
     u'[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]'
 )
+
 
 class IsPartOfModifier(object):
     """Adds dcterms_isPartOf information to rdf resources
@@ -29,17 +32,18 @@ class IsPartOfModifier(object):
         """
         parent = getattr(aq_inner(self.context), 'aq_parent', None)
         wftool = getToolByName(self.context, 'portal_workflow')
+
         if parent is not None:
             try:
                 state = wftool.getInfoFor(parent, 'review_state')
             except WorkflowException:
-                #object has no workflow, we assume public, see #4418
+                # object has no workflow, we assume public, see #4418
                 state = 'published'
 
             if state == 'published':
                 parent_url = parent.absolute_url()
                 resource.dcterms_isPartOf = \
-                    rdflib.URIRef(parent_url) #pylint: disable = W0612
+                    rdflib.URIRef(parent_url)   # pylint: disable = W0612
 
 
 class TranslationInfoModifier(object):
@@ -57,7 +61,7 @@ class TranslationInfoModifier(object):
         """
         context = self.context
 
-        #ZZZ: should watch for availability of Products.LinguaPlone
+        # ZZZ: should watch for availability of Products.LinguaPlone
 
         if not getattr(context, 'isCanonical', None):
             return
@@ -66,7 +70,7 @@ class TranslationInfoModifier(object):
             translations = context.getTranslations(review_state=False)
             resource.eea_hasTranslation = \
                 [rdflib.URIRef(o.absolute_url()) for o in translations.values()
-                if o.absolute_url() != context.absolute_url()]
+                 if o.absolute_url() != context.absolute_url()]
         else:
             resource.eea_isTranslationOf = \
                 rdflib.URIRef(context.getCanonical().absolute_url())
@@ -86,9 +90,10 @@ class ProvidedInterfacesModifier(object):
         """Change the rdf resource
         """
         provides = ["%s.%s" % (iface.__module__ or '', iface.__name__)
-                        for iface in providedBy(self.context)]
+                    for iface in providedBy(self.context)]
 
         resource.eea_objectProvides = provides
+
 
 class SearchableTextInModifier(object):
     """Adds searchable text info
@@ -104,8 +109,9 @@ class SearchableTextInModifier(object):
         """Change the rdf resource
         """
 
-        resource.dcterms_abstract = ILLEGAL_XML_CHARS_PATTERN.sub('',
-            self.context.SearchableText())
+        resource.dcterms_abstract = ILLEGAL_XML_CHARS_PATTERN.sub(
+            '', self.context.SearchableText())
+
 
 class RelatedItemsModifier(object):
     """Adds dcterms:references
@@ -124,5 +130,5 @@ class RelatedItemsModifier(object):
         if not getattr(self.context, 'getRelatedItems', None):
             return
 
-        resource.dcterms_references = [rdflib.URIRef(o.absolute_url()) \
-            for o in self.context.getRelatedItems()]
+        resource.dcterms_references = [rdflib.URIRef(o.absolute_url())
+                                       for o in self.context.getRelatedItems()]

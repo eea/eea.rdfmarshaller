@@ -1,8 +1,15 @@
 Changelog
 =========
 
-10.3.dev0 - (unreleased)
+10.4.dev0 - (unreleased)
 ------------------------
+* Change: Added superclasses for short field adapters
+  [tiberich refs #90546]
+* Allow defining and assigning licenses per content types
+  [tiberich, ghitab #82751]
+
+10.3 - (2017-12-12)
+-------------------
 * Change: Replace eeacms/zptlint with eeacms/plone-test:4 zptlint
   [avoinea refs #90415]
 

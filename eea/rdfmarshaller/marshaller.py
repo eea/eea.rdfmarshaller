@@ -2,9 +2,6 @@
 
 import logging
 
-from zope.component import adapts, queryMultiAdapter, subscribers
-from zope.interface import Interface, implements
-
 import surf
 from eea.rdfmarshaller.interfaces import (IGenericObject2Surf, IObject2Surf,
                                           ISurfResourceModifier, ISurfSession)
@@ -12,13 +9,14 @@ from Products.Archetypes.Marshall import Marshaller
 from Products.CMFCore.interfaces._tools import ITypesTool
 from Products.CMFCore.utils import getToolByName
 from surf.log import set_logger
-
-DEBUG = False
+from zope.component import adapts, queryMultiAdapter, subscribers
+from zope.interface import Interface, implements
 
 surf.ns.register(EEA="http://www.eea.europa.eu/ontologies.rdf#")
 surf.ns.register(SKOS="http://www.w3.org/2004/02/skos/core#")
 surf.ns.register(DCAT="http://www.w3.org/ns/dcat#")
 surf.ns.register(SCHEMA="http://schema.org/")
+surf.ns.register(ODRS="http://schema.theodi.org/odrs#")
 
 # re-register the RDF + RDFS namespace because in new surf they are closed
 # namespaces and they won't "take" the custom terms that we access on them
@@ -28,6 +26,8 @@ surf.ns.register(RDFS="http://www.w3.org/2000/01/rdf-schema#")
 logger = logging.getLogger('eea.rdfmarshaller')
 logger.setLevel(level=logging.CRITICAL)
 set_logger(logger)
+
+DEBUG = False
 
 
 class RDFMarshaller(Marshaller):
@@ -61,6 +61,7 @@ class RDFMarshaller(Marshaller):
         store.reader.graph.bind('dcat', surf.ns.DCAT, override=True)
         store.reader.graph.bind('schema', surf.ns.SCHEMA, override=True)
         store.reader.graph.bind('foaf', surf.ns.FOAF, override=True)
+        store.reader.graph.bind('odrs', surf.ns.ODRS, override=True)
 
         self._store = store
 
@@ -159,8 +160,6 @@ class GenericObject2Surf(object):
             resource = self.session.get_class(
                 self.namespace[self.portalType])(self.subject)
         except Exception:
-            # import pdb; pdb.set_trace()
-
             if DEBUG:
                 raise
             logger.exception('RDF marshaller error:')

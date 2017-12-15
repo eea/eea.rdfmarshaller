@@ -3,4 +3,7 @@
   xmlns:zcml="http://namespaces.zope.org/zcml"
   xmlns:browser="http://namespaces.zope.org/browser">
 
+  <subscriber factory=".modifiers.ContentLicenseModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
 </configure>

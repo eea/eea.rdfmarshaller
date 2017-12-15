@@ -1,7 +1,8 @@
 """ EEA RDF Marshaller Installer
 """
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 name = "eea.rdfmarshaller"
 path = name.split('.') + ['version.txt']
@@ -46,12 +47,14 @@ setup(name=name,
           'chardet',
           'eventlet',
           'rdflib_jsonld>=0.4.0',
+          'collective.z3cform.datagridfield<1.3.0',
       ],
       extras_require={
           'test': [
               'Products.PloneTestCase',
               'plone.app.testing',
               'eea.depiction',
+              'collective.z3cform.datagridfield',
           ]
       },
       entry_points="""
