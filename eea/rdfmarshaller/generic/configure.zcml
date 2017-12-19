@@ -6,4 +6,7 @@
   <subscriber factory=".modifiers.ContentLicenseModifier"
     provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 
+  <subscriber factory=".modifiers.FolderPartsModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
 </configure>

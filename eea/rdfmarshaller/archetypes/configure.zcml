@@ -9,10 +9,10 @@
 
   <adapter factory=".Archetype2Surf" provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
 
-  <adapter factory=".ATFolderish2Surf" provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
-  <adapter factory=".ATFolderish2Surf"
-    for="Products.Archetypes.interfaces.IBaseFolder eea.rdfmarshaller.interfaces.ISurfSession"
-    provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
+  <!-- <adapter factory=".ATFolderish2Surf" provides="eea.rdfmarshaller.interfaces.IObject2Surf" /> -->
+  <!-- <adapter factory=".ATFolderish2Surf" -->
+  <!--   for="Products.Archetypes.interfaces.IBaseFolder eea.rdfmarshaller.interfaces.ISurfSession" -->
+  <!--   provides="eea.rdfmarshaller.interfaces.IObject2Surf" /> -->
 
   <adapter factory=".ATField2RdfSchema" provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf" />
   <adapter factory=".FTI2Surf" />
@@ -30,6 +30,8 @@
 
   <adapter factory=".fields.ATReferenceField2Surf" />
 
+  <subscriber factory=".modifiers.FieldsModifier"
+          provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
   <subscriber factory=".modifiers.IsPartOfModifier"
           provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
   <subscriber factory=".modifiers.TranslationInfoModifier"

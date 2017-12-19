@@ -3,25 +3,21 @@
 
 import sys
 
-from zope.component import (adapts, getMultiAdapter, queryAdapter,
-                            queryMultiAdapter)
-from zope.interface import Interface, implements
-
 import rdflib
 import surf
 from eea.rdfmarshaller.archetypes.interfaces import (IArchetype2Surf,
-                                                     IATField2Surf,
                                                      IATVocabularyTerm)
 from eea.rdfmarshaller.config import DEBUG
 from eea.rdfmarshaller.interfaces import (IFieldDefinition2Surf, IObject2Surf,
-                                          ISurfSession, IValue2Surf)
+                                          ISurfSession)
 from eea.rdfmarshaller.marshaller import GenericObject2Surf
-from OFS.interfaces import IFolder
 from Products.Archetypes.interfaces import IBaseObject, IField
 from Products.CMFCore.interfaces import ITypeInformation
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import log
 from Products.CMFPlone.utils import _createObjectByType
+from zope.component import adapts, queryMultiAdapter
+from zope.interface import Interface, implements
 
 
 class Archetype2Surf(GenericObject2Surf):
@@ -81,7 +77,6 @@ class Archetype2Surf(GenericObject2Surf):
 
     def modify_resource(self, resource, *args, **kwds):
         """ Schema to Surf """
-        language = self.context.Language()
         plone_portal_state = self.context.restrictedTraverse(
             '@@plone_portal_state')
         portal_url = plone_portal_state.portal_url()
@@ -111,93 +106,6 @@ class Archetype2Surf(GenericObject2Surf):
                         (self.context.absolute_url(),
                          sys.exc_info()[0], sys.exc_info()[1]),
                         severity=log.logging.WARN)
-
-        for field in self.context.Schema().fields():
-            fieldName = field.getName()
-
-            if fieldName in self.blacklist_map:
-                continue
-
-            # first we try with a named adapter, then a generic one
-            fieldAdapter = queryMultiAdapter(
-                (field, self.context, self.session),
-                interface=IATField2Surf, name=fieldName)
-
-            if not fieldAdapter:
-                fieldAdapter = getMultiAdapter(
-                    (field, self.context, self.session),
-                    interface=IATField2Surf)
-
-            if not fieldAdapter.exportable:
-                continue
-
-            try:
-                value = fieldAdapter.value()
-            except Exception:
-                log.log('RDF marshaller error for context[field]'
-                        '"%s[%s]": \n%s: %s' %
-                        (self.context.absolute_url(), fieldName,
-                         sys.exc_info()[0], sys.exc_info()[1]),
-                        severity=log.logging.WARN)
-
-            valueAdapter = queryAdapter(value, interface=IValue2Surf)
-
-            if valueAdapter:
-                value = valueAdapter(language=language)
-
-            if not value or value == "None":
-                continue
-
-            prefix = fieldAdapter.prefix or self.prefix
-
-            if fieldAdapter.name:
-                fieldName = fieldAdapter.name
-            elif fieldName in self.field_map:
-                fieldName = self.field_map.get(fieldName)
-            elif fieldName in self.dc_map:
-                fieldName = self.dc_map.get(fieldName)
-                prefix = 'dcterms'
-
-            try:
-                setattr(resource, '%s_%s' % (prefix, fieldName), value)
-            except Exception:
-
-                log.log('RDF marshaller error for context[field]'
-                        '"%s[%s]": \n%s: %s' %
-                        (self.context.absolute_url(), fieldName,
-                         sys.exc_info()[0], sys.exc_info()[1]),
-                        severity=log.logging.WARN)
-
-        return resource
-
-
-class ATFolderish2Surf(Archetype2Surf):
-    """IObject2Surf implemention for Folders"""
-
-    implements(IArchetype2Surf)
-    adapts(IFolder, ISurfSession)
-
-    def modify_resource(self, resource, currentLevel=0, endLevel=1, **kwargs):
-        """ AT to Surf """
-        currentLevel += 1
-        resource = super(ATFolderish2Surf, self).modify_resource(
-            resource, currentLevel=currentLevel, endLevel=endLevel)
-
-        if currentLevel <= endLevel or endLevel == 0:
-            resource.dcterms_hasPart = []
-
-            catalog = getToolByName(self.context, 'portal_catalog')
-            contentFilter = {
-                'path': {'query': '/'.join(self.context.getPhysicalPath()),
-                         'depth': 1}}
-            objs = [b.getObject() for b in catalog(contentFilter,
-                                                   review_state='published',
-                                                   show_all=1,
-                                                   show_inactive=1)]
-
-            for obj in objs:
-                resource.dcterms_hasPart.append(rdflib.URIRef(
-                    obj.absolute_url()))
 
         return resource
 

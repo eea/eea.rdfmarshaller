@@ -3,6 +3,13 @@
            xmlns:browser="http://namespaces.zope.org/browser">
 
   <browser:page
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+    name="rdf"
+    class=".export.RDFExport"
+    permission="zope2.View"
+    />
+
+  <browser:page
     for="plone.dexterity.interfaces.IDexterityContent"
     name="rdf"
     class=".export.RDFExport"

@@ -5,9 +5,15 @@ from plone.app.layout.viewlets.common import ViewletBase
 from Products.Marshall.registry import getComponent
 from rdflib import ConjunctiveGraph  # , Graph
 
+
 # import json
 # from eea.rdfmarshaller.licenses.license import ILicenses, IPortalTypeLicenses
 # from plone import api
+has_license_query = """
+PREFIX odsr: <http://schema.theodi.org/odrs#>
+
+ASK { ?s odsr:contentLicense ?o }
+"""
 
 license_query = """
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -87,6 +93,10 @@ class LicenseViewlet(ViewletBase):
         store = marshaller.store
 
         graph = regraph(store)
+        has_license = list(graph.query(has_license_query))
+
+        if False in has_license:
+            return ""
 
         res = graph.query(license_query)
         json = json_serialize(res)

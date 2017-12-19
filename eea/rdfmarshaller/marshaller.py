@@ -8,6 +8,7 @@ from eea.rdfmarshaller.interfaces import (IGenericObject2Surf, IObject2Surf,
 from Products.Archetypes.Marshall import Marshaller
 from Products.CMFCore.interfaces._tools import ITypesTool
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 from surf.log import set_logger
 from zope.component import adapts, queryMultiAdapter, subscribers
 from zope.interface import Interface, implements
@@ -78,6 +79,7 @@ class RDFMarshaller(Marshaller):
             (instance, session), interface=IObject2Surf
         )
 
+        # import pdb; pdb.set_trace()
         self.store.reader.graph.bind(
             obj2surf.prefix, obj2surf.namespace, override=False)
         endLevel = kwargs.get('endLevel', 1)
@@ -187,7 +189,7 @@ class GenericObject2Surf(object):
         resource = self.modify_resource(self.resource, *args, **kwds)
 
         for modifier in subscribers([self.context], ISurfResourceModifier):
-            modifier.run(resource, *args, **kwds)
+            modifier.run(resource, self, self.session, *args, **kwds)
 
         resource.update()
         resource.save()
@@ -217,3 +219,27 @@ class PortalTypesUtil2Surf(GenericObject2Surf):
         resource.rdf_id = self.rdfId
 
         return resource
+
+
+class PloneSite2Surf(GenericObject2Surf):
+    """
+    """
+    adapts(IPloneSiteRoot, ISurfSession)
+
+    @property
+    def portalType(self):
+        """ Portal type """
+
+        return self.context.portal_type.replace(' ', '')
+
+    @property
+    def prefix(self):
+        """ Prefix """
+
+        return self.portalType.lower()
+
+    @property
+    def subject(self):
+        """ Subject """
+
+        return self.context.absolute_url()
