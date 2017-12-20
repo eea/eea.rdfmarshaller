@@ -1,7 +1,8 @@
 import StringIO
 
 import surf
-# from eea.cache import cache
+from eea.rdfmarshaller.licenses.license import ILicenses, IPortalTypeLicenses
+from plone import api
 from plone.app.layout.viewlets.common import ViewletBase
 from plone.memoize.ram import cache
 from Products.Marshall.registry import getComponent
@@ -15,7 +16,6 @@ ASK { ?s odsr:contentLicense ?o }
 """
 
 license_query = """
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX odsr: <http://schema.theodi.org/odrs#>
 PREFIX dct: <http://purl.org/dc/terms/>
@@ -89,8 +89,6 @@ def license_key(method, view):
 
     key = "{0}-{1}".format(path, modified)
 
-    print key
-
     return key
 
 
@@ -98,11 +96,36 @@ class LicenseViewlet(ViewletBase):
     """ json-ld license content
     """
 
+    def available(self):
+        try:
+            reg_types = api.portal.get_registry_record(
+                'rdfmarshaller_type_licenses', interface=IPortalTypeLicenses
+            )
+        except KeyError:
+            return None
+
+        try:
+            reg_licenses = api.portal.get_registry_record(
+                'rdfmarshaller_licenses', interface=ILicenses)
+        except KeyError:
+            return None
+
+        if not (reg_types and reg_licenses):
+            return
+
+        return True
+
     @cache(license_key)
     def render(self):
-        print('doing render')
+        if not self.available():
+            return ''
+
         marshaller = getComponent('surfrdf')
-        marshaller.marshall(self.context, endLevel=1)
+        ser = marshaller.marshall(self.context, endLevel=1)
+
+        if not ser:
+            return
+
         store = marshaller.store
 
         graph = regraph(store)

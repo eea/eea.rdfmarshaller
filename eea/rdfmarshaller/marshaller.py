@@ -79,7 +79,9 @@ class RDFMarshaller(Marshaller):
             (instance, session), interface=IObject2Surf
         )
 
-        # import pdb; pdb.set_trace()
+        if obj2surf is None:
+            return
+
         self.store.reader.graph.bind(
             obj2surf.prefix, obj2surf.namespace, override=False)
         endLevel = kwargs.get('endLevel', 1)
