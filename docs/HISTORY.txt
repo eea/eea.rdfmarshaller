@@ -1,6 +1,21 @@
 Changelog
 =========
 
+10.5 - (2017-12-20)
+-------------------
+* Bug fix: don't break Plone root pages
+  [tiberich #82751]
+* Refactored the archetypes implementation to split adding field values as a
+  modifier
+  [tiberich #82751]
+* Write a new Plone @@rdf adapter, it was wrongly using the generic Archetypes
+  implementation and yielding unmonitored errors
+  [tiberich #82751]
+* Removed the ATFolderish2Surf adapter, it wasn't doing anything special
+  [tiberich #82751]
+* Refactored the dcterms_hasPart as a modifier in the generic subpackage,
+  it's a generic concept.
+
 10.4 - (2017-12-18)
 -------------------
 * Bug fix: fixed package structure and pinned versions

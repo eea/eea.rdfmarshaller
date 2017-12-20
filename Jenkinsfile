@@ -72,11 +72,9 @@ pipeline {
             node(label: 'docker-1.13') {
               script {
                 try {
-                  sh '''docker run -i --name="$BUILD_TAG-jshint" -e GIT_SRC="https://github.com/eea/$GIT_NAME.git" -e GIT_NAME="$GIT_NAME" -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/jshint'''
+                  sh '''docker run -i --rm --name="$BUILD_TAG-jshint" -e GIT_SRC="https://github.com/eea/$GIT_NAME.git" -e GIT_NAME="$GIT_NAME" -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/jshint'''
                 } catch (err) {
                   echo "Unstable: ${err}"
-                } finally {
-                  sh '''docker rm -v $BUILD_TAG-jshint'''
                 }
               }
             }
@@ -86,11 +84,9 @@ pipeline {
             node(label: 'docker-1.13') {
               script {
                 try {
-                  sh '''docker run -i --name="$BUILD_TAG-csslint" -e GIT_SRC="https://github.com/eea/$GIT_NAME.git" -e GIT_NAME="$GIT_NAME" -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/csslint'''
+                  sh '''docker run -i --rm --name="$BUILD_TAG-csslint" -e GIT_SRC="https://github.com/eea/$GIT_NAME.git" -e GIT_NAME="$GIT_NAME" -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/csslint'''
                 } catch (err) {
                   echo "Unstable: ${err}"
-                } finally {
-                  sh '''docker rm -v $BUILD_TAG-csslint'''
                 }
               }
             }
@@ -100,11 +96,9 @@ pipeline {
             node(label: 'docker-1.13') {
               script {
                 try {
-                  sh '''docker run -i --name="$BUILD_TAG-pep8" -e GIT_SRC="https://github.com/eea/$GIT_NAME.git" -e GIT_NAME="$GIT_NAME" -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/pep8'''
+                  sh '''docker run -i --rm --name="$BUILD_TAG-pep8" -e GIT_SRC="https://github.com/eea/$GIT_NAME.git" -e GIT_NAME="$GIT_NAME" -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/pep8'''
                 } catch (err) {
                   echo "Unstable: ${err}"
-                } finally {
-                  sh '''docker rm -v $BUILD_TAG-pep8'''
                 }
               }
             }
@@ -114,11 +108,9 @@ pipeline {
             node(label: 'docker-1.13') {
               script {
                 try {
-                  sh '''docker run -i --name="$BUILD_TAG-pylint" -e GIT_SRC="https://github.com/eea/$GIT_NAME.git" -e GIT_NAME="$GIT_NAME" -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/pylint'''
+                  sh '''docker run -i --rm --name="$BUILD_TAG-pylint" -e GIT_SRC="https://github.com/eea/$GIT_NAME.git" -e GIT_NAME="$GIT_NAME" -e GIT_BRANCH="$BRANCH_NAME" -e GIT_CHANGE_ID="$CHANGE_ID" eeacms/pylint'''
                 } catch (err) {
                   echo "Unstable: ${err}"
-                } finally {
-                  sh '''docker rm -v $BUILD_TAG-pylint'''
                 }
               }
             }

@@ -21,6 +21,7 @@ class RDFExport(object):
     def _sanitize(self, utext, limit=LIMIT):
         """ Sanitize unicode text
         """
+
         for char in utext:
             if ord(char) > limit:
                 yield unidecode(char)
@@ -30,6 +31,7 @@ class RDFExport(object):
     def sanitize(self, text):
         """ Remove
         """
+
         if not isinstance(text, unicode):
             text = text.decode('utf-8')
 
@@ -44,11 +46,16 @@ class RDFExport(object):
     def __call__(self):
         marshaller = getComponent('surfrdf')
         endLevel = int(self.request.get('endLevel', 1))
-        _content_type, _length, data = marshaller.marshall(self.context,
-                                                           endLevel=endLevel)
+        res = marshaller.marshall(self.context, endLevel=endLevel)
+
+        if not res:
+            return ""
+
+        _content_type, _length, data = res
 
         self.request.response.setHeader('Content-Type',
                                         'application/rdf+xml; charset=utf-8')
+
         return self.sanitize(data)
 
 
@@ -64,4 +71,5 @@ class RDFSExport(object):
         _content_type, _length, data = marshaller.marshall(self.context)
         self.request.response.setHeader('Content-Type',
                                         'application/rdf+xml; charset=utf-8')
+
         return data

@@ -3,7 +3,7 @@
   xmlns:zcml="http://namespaces.zope.org/zcml"
   xmlns:browser="http://namespaces.zope.org/browser">
 
-  <subscriber factory=".modifiers.ContentLicenseModifier"
+  <subscriber factory=".modifiers.FolderPartsModifier"
     provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 
 </configure>

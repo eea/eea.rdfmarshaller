@@ -1,16 +1,21 @@
 import StringIO
 
 import surf
+from eea.rdfmarshaller.licenses.license import ILicenses, IPortalTypeLicenses
+from plone import api
 from plone.app.layout.viewlets.common import ViewletBase
+from plone.memoize.ram import cache
 from Products.Marshall.registry import getComponent
 from rdflib import ConjunctiveGraph  # , Graph
 
-# import json
-# from eea.rdfmarshaller.licenses.license import ILicenses, IPortalTypeLicenses
-# from plone import api
+
+has_license_query = """
+PREFIX odsr: <http://schema.theodi.org/odrs#>
+
+ASK { ?s odsr:contentLicense ?o }
+"""
 
 license_query = """
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX odsr: <http://schema.theodi.org/odrs#>
 PREFIX dct: <http://purl.org/dc/terms/>
@@ -77,16 +82,57 @@ def regraph(store):
     return graph
 
 
+def license_key(method, view):
+    context = view.context
+    path = '/'.join(context.getPhysicalPath())
+    modified = getattr(context, 'modified', lambda: '')()
+
+    key = "{0}-{1}".format(path, modified)
+
+    return key
+
+
 class LicenseViewlet(ViewletBase):
     """ json-ld license content
     """
 
+    def available(self):
+        try:
+            reg_types = api.portal.get_registry_record(
+                'rdfmarshaller_type_licenses', interface=IPortalTypeLicenses
+            )
+        except KeyError:
+            return None
+
+        try:
+            reg_licenses = api.portal.get_registry_record(
+                'rdfmarshaller_licenses', interface=ILicenses)
+        except KeyError:
+            return None
+
+        if not (reg_types and reg_licenses):
+            return
+
+        return True
+
+    @cache(license_key)
     def render(self):
+        if not self.available():
+            return ''
+
         marshaller = getComponent('surfrdf')
-        marshaller.marshall(self.context, endLevel=1)
+        ser = marshaller.marshall(self.context, endLevel=1)
+
+        if not ser:
+            return
+
         store = marshaller.store
 
         graph = regraph(store)
+        has_license = list(graph.query(has_license_query))
+
+        if False in has_license:
+            return ""
 
         res = graph.query(license_query)
         json = json_serialize(res)

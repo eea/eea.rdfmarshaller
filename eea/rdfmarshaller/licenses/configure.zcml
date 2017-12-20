@@ -4,6 +4,9 @@
   xmlns:plone="http://namespaces.plone.org/plone"
   i18n_domain="example.dexterityforms">
 
+  <subscriber factory=".modifiers.ContentLicenseModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
   <browser:page
     name="licenses-settings"
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
@@ -16,13 +19,6 @@
     for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     class=".license.PortalTypeLicensesView"
     permission="cmf.ManagePortal"
-    />
-
-  <browser:viewlet
-    name="eea.rdfmarshaller.license"
-    manager="plone.app.layout.viewlets.interfaces.IHtmlHead"
-    class=".viewlets.LicenseViewlet"
-    permission="zope2.View"
     />
 
   <utility

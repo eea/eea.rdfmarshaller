@@ -1,13 +1,12 @@
 """ Test licenses feature """
 
-from eea.rdfmarshaller.licenses.license import ILicenses
-from eea.rdfmarshaller.licenses.license import IPortalTypeLicenses
+import unittest
+
+from eea.rdfmarshaller.licenses.license import ILicenses, IPortalTypeLicenses
 from eea.rdfmarshaller.testing import INTEGRATION_TESTING
 from plone import api
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID, setRoles
 from plone.app.upgrade.utils import loadMigrationProfile
-import unittest
 
 
 class TestProgramIntegration(unittest.TestCase):
@@ -17,6 +16,7 @@ class TestProgramIntegration(unittest.TestCase):
 
     def setUp(self):
         """ Setup """
+
         self.portal = self.layer['portal']
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.portal.invokeFactory('testpage', 'test-page')
@@ -84,14 +84,14 @@ class TestProgramIntegration(unittest.TestCase):
 
         # TEST license viewlet rendering
         page = self.portal['test-page']()
-        assert """<script type="application/ld+json">""" in page
-        assert """http://cc-license.com""" in page
-        assert """http://mit-license.com""" not in page
-        assert """odrs:copyrightNotice""" in page
-        assert """Copyright 2017""" not in page
-        assert """Copyright 2015""" in page
-        assert """Test Department""" not in page
-        assert """Department""" in page
+        assert '<script type="application/ld+json">' in page
+        assert 'http://cc-license.com' in page
+        assert 'http://mit-license.com' not in page
+        assert 'odrs:copyrightNotice' in page
+        assert 'Copyright 2017' not in page
+        assert 'Copyright 2015' in page
+        assert 'Test Department' not in page
+        assert 'Department' in page
 
         # TEST license viewlet rendering in Plone Site
         page = self.portal()
@@ -103,4 +103,5 @@ class TestProgramIntegration(unittest.TestCase):
 
 def test_suite():
     """ test suite """
+
     return unittest.defaultTestLoader.loadTestsFromName(__name__)

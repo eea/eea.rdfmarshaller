@@ -2,19 +2,93 @@
 """
 
 import re
+import sys
 
 import rdflib
 from Acquisition import aq_inner
-from eea.rdfmarshaller.interfaces import ISurfResourceModifier
-from Products.Archetypes.interfaces import IBaseContent
+from eea.rdfmarshaller.archetypes.interfaces import IATField2Surf
+from eea.rdfmarshaller.interfaces import ISurfResourceModifier, IValue2Surf
+from Products.Archetypes.interfaces import IBaseContent, IBaseObject
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
-from zope.component import adapts
+from Products.CMFPlone import log
+from zope.component import (adapts, getMultiAdapter, queryAdapter,
+                            queryMultiAdapter)
 from zope.interface import implements, providedBy
 
 ILLEGAL_XML_CHARS_PATTERN = re.compile(
     u'[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]'
 )
+
+
+class FieldsModifier(object):
+    """ Adds archetypes fields values to rdf
+    """
+    implements(ISurfResourceModifier)
+    adapts(IBaseObject)
+
+    def __init__(self, context):
+        self.context = context
+
+    def run(self, resource, adapter, session, *args, **kwds):
+        language = self.context.Language()
+
+        for field in self.context.Schema().fields():
+            fieldName = field.getName()
+
+            if fieldName in adapter.blacklist_map:
+                continue
+
+            # first we try with a named adapter, then a generic one
+            fieldAdapter = queryMultiAdapter((field, self.context, session),
+                                             interface=IATField2Surf,
+                                             name=fieldName)
+
+            if not fieldAdapter:
+                fieldAdapter = getMultiAdapter((field, self.context, session),
+                                               interface=IATField2Surf)
+
+            if not fieldAdapter.exportable:
+                continue
+
+            try:
+                value = fieldAdapter.value()
+            except Exception:
+                log.log('RDF marshaller error for context[field]'
+                        '"%s[%s]": \n%s: %s' %
+                        (self.context.absolute_url(), fieldName,
+                         sys.exc_info()[0], sys.exc_info()[1]),
+                        severity=log.logging.WARN)
+
+            valueAdapter = queryAdapter(value, interface=IValue2Surf)
+
+            if valueAdapter:
+                value = valueAdapter(language=language)
+
+            if not value or value == "None":
+                continue
+
+            prefix = fieldAdapter.prefix or adapter.prefix
+
+            if fieldAdapter.name:
+                fieldName = fieldAdapter.name
+            elif fieldName in adapter.field_map:
+                fieldName = adapter.field_map.get(fieldName)
+            elif fieldName in adapter.dc_map:
+                fieldName = adapter.dc_map.get(fieldName)
+                prefix = 'dcterms'
+
+            try:
+                setattr(resource, '%s_%s' % (prefix, fieldName), value)
+            except Exception:
+
+                log.log('RDF marshaller error for context[field]'
+                        '"%s[%s]": \n%s: %s' %
+                        (self.context.absolute_url(), fieldName,
+                         sys.exc_info()[0], sys.exc_info()[1]),
+                        severity=log.logging.WARN)
+
+        return resource
 
 
 class IsPartOfModifier(object):
@@ -59,6 +133,7 @@ class TranslationInfoModifier(object):
     def run(self, resource, *args, **kwds):
         """Change the rdf resource
         """
+
         context = self.context
 
         # ZZZ: should watch for availability of Products.LinguaPlone
