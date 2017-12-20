@@ -1,7 +1,7 @@
 Changelog
 =========
 
-10.5.dev0 - (unreleased)
+10.5 - (2017-12-20)
 ------------------------
 * Bug fix: don't break Plone root pages
   [tiberich #82751]
