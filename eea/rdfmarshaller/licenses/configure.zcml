@@ -21,18 +21,6 @@
     permission="cmf.ManagePortal"
     />
 
-  <!--
-  Enable this in your website if you need it. We don't enable this by default
-  because it has a small(ish) performance penalty on views, because of sparql
-  query. Should probably be refactored, but it has caching enabled
-  -->
-  <!-- <browser:viewlet -->
-  <!--   name="eea.rdfmarshaller.license" -->
-  <!--   manager="plone.app.layout.viewlets.interfaces.IHtmlHead" -->
-  <!--   class=".viewlets.LicenseViewlet" -->
-  <!--   permission="zope2.View" -->
-  <!--   /> -->
-
   <utility
     component=".license.LicensesVocabularyFactory"
     name="eea.rdfmarshaller.licenses" />

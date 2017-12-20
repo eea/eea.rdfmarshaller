@@ -1,8 +1,6 @@
 """ testing  """
-from plone.app.testing import PloneSandboxLayer
-from plone.app.testing import PLONE_FIXTURE
-from plone.app.testing import IntegrationTesting
-from plone.app.testing import FunctionalTesting
+from plone.app.testing import (PLONE_FIXTURE, FunctionalTesting,
+                               IntegrationTesting, PloneSandboxLayer)
 
 HAS_DEXTERITY = True
 try:
@@ -33,6 +31,8 @@ class Fixture(PloneSandboxLayer):
         self.loadZCML(package=plone.app.textfield)
 
         self.loadZCML(package=eea.rdfmarshaller)
+        self.loadZCML(package=eea.rdfmarshaller.licenses,
+                      name="licenseviewlet.zcml")
 
         if HAS_DEXTERITY:
             from eea.rdfmarshaller import dexterity
@@ -44,6 +44,7 @@ class Fixture(PloneSandboxLayer):
         """ Set up Plone site """
         # Install the example.conference product
         self.applyProfile(portal, 'eea.rdfmarshaller:default')
+
         if HAS_DEXTERITY:
             self.applyProfile(
                     portal,
