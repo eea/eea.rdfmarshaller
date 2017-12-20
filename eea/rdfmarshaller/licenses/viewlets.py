@@ -1,8 +1,9 @@
 import StringIO
 
 import surf
-from eea.cache import cache
+# from eea.cache import cache
 from plone.app.layout.viewlets.common import ViewletBase
+from plone.memoize.ram import cache
 from Products.Marshall.registry import getComponent
 from rdflib import ConjunctiveGraph  # , Graph
 
@@ -88,6 +89,8 @@ def license_key(method, view):
 
     key = "{0}-{1}".format(path, modified)
 
+    print key
+
     return key
 
 
@@ -97,6 +100,7 @@ class LicenseViewlet(ViewletBase):
 
     @cache(license_key)
     def render(self):
+        print('doing render')
         marshaller = getComponent('surfrdf')
         marshaller.marshall(self.context, endLevel=1)
         store = marshaller.store
