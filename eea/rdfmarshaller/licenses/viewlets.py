@@ -1,14 +1,12 @@
 import StringIO
 
 import surf
+from eea.cache import cache
 from plone.app.layout.viewlets.common import ViewletBase
 from Products.Marshall.registry import getComponent
 from rdflib import ConjunctiveGraph  # , Graph
 
 
-# import json
-# from eea.rdfmarshaller.licenses.license import ILicenses, IPortalTypeLicenses
-# from plone import api
 has_license_query = """
 PREFIX odsr: <http://schema.theodi.org/odrs#>
 
@@ -83,10 +81,21 @@ def regraph(store):
     return graph
 
 
+def license_key(method, view):
+    context = view.context
+    path = '/'.join(context.getPhysicalPath())
+    modified = getattr(context, 'modified', lambda: '')()
+
+    key = "{0}-{1}".format(path, modified)
+
+    return key
+
+
 class LicenseViewlet(ViewletBase):
     """ json-ld license content
     """
 
+    @cache(license_key)
     def render(self):
         marshaller = getComponent('surfrdf')
         marshaller.marshall(self.context, endLevel=1)
