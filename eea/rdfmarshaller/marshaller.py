@@ -68,12 +68,8 @@ class RDFMarshaller(Marshaller):
 
         return store
 
-    def marshall(self, instance, **kwargs):
-        """ Marshall the rdf data to xml representation """
-
+    def _add_content(self, instance, **kwargs):
         session = surf.Session(self.store)
-        content_type = 'text/xml; charset=UTF-8'
-        length = data = 0   # is this line required? should be len(data)
 
         obj2surf = queryMultiAdapter(
             (instance, session), interface=IObject2Surf
@@ -83,13 +79,23 @@ class RDFMarshaller(Marshaller):
             return
 
         self.store.reader.graph.bind(
-            obj2surf.prefix, obj2surf.namespace, override=False)
+            obj2surf.prefix, obj2surf.namespace, override=False
+        )
         endLevel = kwargs.get('endLevel', 1)
         obj2surf.write(endLevel=endLevel)
 
+        return obj2surf
+
+    def marshall(self, instance, **kwargs):
+        """ Marshall the rdf data to xml representation """
+
+        self._add_content(instance, **kwargs)
+
         data = self.store.reader.graph.serialize(format='pretty-xml')
 
-        return (content_type, length, data)
+        content_type = 'text/xml; charset=UTF-8'
+
+        return (content_type, len(data), data)
 
 
 class GenericObject2Surf(object):

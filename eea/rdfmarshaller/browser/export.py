@@ -2,6 +2,7 @@
 
 import os
 
+from eea.rdfmarshaller.interfaces import ILinkedData
 from Products.Marshall.registry import getComponent
 from unidecode import unidecode
 
@@ -71,5 +72,31 @@ class RDFSExport(object):
         _content_type, _length, data = marshaller.marshall(self.context)
         self.request.response.setHeader('Content-Type',
                                         'application/rdf+xml; charset=utf-8')
+
+        return data
+
+
+class LinkedDataExport(object):
+    """ Export an object as linked data
+    """
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    def __call__(self):
+
+        marshaller = getComponent('surfrdf')
+        obj2surf = marshaller._add_content(self.context)
+
+        if obj2surf is None:
+            return ""
+
+        ld = ILinkedData(self.context)
+
+        data = ld.serialize(obj2surf)
+
+        self.request.response.setHeader('Content-Type',
+                                        'application/json; charset=utf-8')
 
         return data

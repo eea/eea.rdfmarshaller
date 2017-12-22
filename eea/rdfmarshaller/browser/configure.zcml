@@ -59,4 +59,11 @@
     permission="zope2.View"
     />
 
+  <browser:page
+    for="Products.CMFCore.interfaces.IContentish"
+    name="jsonld"
+    class=".export.LinkedDataExport"
+    permission="zope2.View"
+    />
+
 </configure>

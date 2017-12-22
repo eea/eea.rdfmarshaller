@@ -66,3 +66,12 @@ class IValue2Surf(Interface):
 class IFieldDefinition2Surf(IGenericObject2Surf):
     """A three-way adapter to get rdf information from field definitions
     """
+
+
+class ILinkedData(Interface):
+    """ An adapter to provide schema.org linked data about an object
+    """
+
+    def serialize():
+        """ Return linked data in json-ld serialized format
+        """
