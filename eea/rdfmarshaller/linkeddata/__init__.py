@@ -1,5 +1,6 @@
 import surf
-from eea.rdfmarshaller.interfaces import ILinkedData
+from eea.rdfmarshaller.interfaces import ILinkedData, IPublisherOrganisation
+from plone.api import portal
 from Products.CMFCore.interfaces import IContentish
 from zope.component import adapts
 from zope.interface import implements
@@ -17,6 +18,7 @@ def schematize(store):
     graph = store.reader.graph
     triples = list(graph)
     # triples = fix_triples(triples)
+
     from pprint import pprint
     pprint(triples)
 
@@ -49,6 +51,15 @@ class GenericLinkedData(object):
     def __init__(self, context):
         self.context = context
 
+    def get_jsonld_context(self):
+
+        context = {
+            surf.ns.SCHEMA['Image']: surf.ns.SCHEMA['ImageObject'],
+            surf.ns.SCHEMA['productID']: surf.ns.SCHEMA['about'],
+        }
+
+        return context
+
     def modify(self, obj2surf):
         resource = obj2surf.resource
         session = resource.session
@@ -57,7 +68,9 @@ class GenericLinkedData(object):
         resource.rdf_type.append(surf.ns.SCHEMA[schema_type])
 
         WebPage = session.get_class(surf.ns.SCHEMA['WebPage'])
+        Organization = session.get_class(surf.ns.SCHEMA['Organization'])
         Person = session.get_class(surf.ns.SCHEMA['Person'])
+        Image = session.get_class(surf.ns.SCHEMA['ImageObject'])
 
         page = WebPage(self.context.absolute_url())
 
@@ -75,6 +88,33 @@ class GenericLinkedData(object):
 
         resource.schema_description = resource.dcterms_abstract
 
+        image = resource.foaf_depiction.first
+        image.schema_url = str(image.subject)
+        image.update()
+        image.save()
+
+        resource.schema_image = image.subject
+        resource.schema_publisher = "EEA"
+
+        site = portal.get()
+        info = IPublisherOrganisation(site)
+
+        org = Organization(site.absolute_url())
+        org.schema_name = info.name
+
+        logo = Image()
+        logo.schema_height = info.logo_height
+        logo.schema_width = info.logo_width
+        logo.schema_url = info.logo_url
+        logo.update()
+        logo.save()
+
+        org.schema_logo = logo
+        org.update()
+        org.save()
+
+        resource.schema_publisher = org
+
         resource.update()
         resource.save()
 
@@ -85,12 +125,8 @@ class GenericLinkedData(object):
 
         store = obj2surf.session.default_store
         store = schematize(store)
-        S = surf.ns.SCHEMA
 
-        context = {
-            S['Image']: S['ImageObject']
-        }
-
+        context = self.get_jsonld_context()
         data = store.reader.graph.serialize(format='json-ld', context=context)
         print data
 

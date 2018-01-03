@@ -75,3 +75,17 @@ class ILinkedData(Interface):
     def serialize():
         """ Return linked data in json-ld serialized format
         """
+
+    def get_jsonld_context():
+        """ Allow custom definitions of equivalent attributes in namespaces
+        """
+
+
+class IPublisherOrganisation(Interface):
+    """ Publisher information for a Plone website
+    """
+
+    name = Attribute("Publisher name")
+    logo_url = Attribute("Logo url")
+    logo_height = Attribute("Logo height")
+    logo_width = Attribute("Logo width")
