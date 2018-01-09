@@ -67,11 +67,16 @@ class HomepageModifier(object):
     def run(self, resource, adapter, session, *args, **kwds):
         """ Add LinkedDataHomepage information to rdf """
 
-        WebSite = session.get_class(surf.ns.SCHEMA['WebSite'])
         SearchAction = session.get_class(surf.ns.SCHEMA['SearchAction'])
 
-        website = WebSite()
-        website.schema_url = self.context.absolute_url()
+        url = self.context.absolute_url()
+        # we change the rdf type of the plone site. The problem is that we
+        # can't have multiple resources with the same subject in the schema,
+        # so instantiating a Website(self.context.absolute_url()) will yield
+        # unpredictable results
+
+        resource.rdf_type = surf.ns.SCHEMA['WebSite']
+        resource.schema_url = url
 
         ld = ILinkedDataHomepageData(self.context)
 
@@ -89,7 +94,6 @@ class HomepageModifier(object):
 
             action.set(graph)
             action.update()
-            website.schema_potentialAction = action
+            resource.schema_potentialAction = action
 
-        website.update()
-        website.save()
+        resource.update()
