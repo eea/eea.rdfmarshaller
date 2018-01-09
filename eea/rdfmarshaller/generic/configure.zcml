@@ -6,6 +6,6 @@
   <subscriber factory=".modifiers.FolderPartsModifier"
     provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 
-  <adapter factory=".GenericPublisherOrganisation" />
+  <!-- <adapter factory=".GenericPublisherOrganisation" /> -->
 
 </configure>

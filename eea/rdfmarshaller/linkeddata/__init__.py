@@ -1,26 +1,19 @@
 import surf
-from eea.rdfmarshaller.interfaces import ILinkedData, IPublisherOrganisation
-from plone.api import portal
+from eea.rdfmarshaller.interfaces import ILinkedData, ILinkedDataHomepage
+from eea.rdfmarshaller.linkeddata.interfaces import ILinkedDataHomepageData
+from persistent import Persistent
 from Products.CMFCore.interfaces import IContentish
+from zope.annotation.factory import factory
 from zope.component import adapts
 from zope.interface import implements
-
-
-def fix_triples(triples):
-    for s, p, v in triples:
-        print s, p, v
-        print "--------"
-
-    return triples
 
 
 def schematize(store):
     graph = store.reader.graph
     triples = list(graph)
-    # triples = fix_triples(triples)
 
-    from pprint import pprint
-    pprint(triples)
+    # from pprint import pprint
+    # pprint(triples)
 
     res = [(s, p, v)
            for (s, p, v) in triples
@@ -67,20 +60,19 @@ class GenericLinkedData(object):
         schema_type = portal_types_map.get(self.context.portal_type, 'Article')
         resource.rdf_type.append(surf.ns.SCHEMA[schema_type])
 
-        WebPage = session.get_class(surf.ns.SCHEMA['WebPage'])
-        Organization = session.get_class(surf.ns.SCHEMA['Organization'])
+        Article = session.get_class(surf.ns.SCHEMA['Article'])
         Person = session.get_class(surf.ns.SCHEMA['Person'])
-        Image = session.get_class(surf.ns.SCHEMA['ImageObject'])
 
-        page = WebPage(self.context.absolute_url())
+        page = Article(self.context.absolute_url())
 
         resource.schema_mainEntityOfPage = page
         resource.schema_headline = resource.dcterms_title.first.value
         resource.schema_datePublished = str(resource.dcterms_issued.first)
         resource.schema_dateModified = str(resource.dcterms_modified.first)
 
-        author = Person()
-        author.schema_name = resource.dcterms_creator.first.value
+        name = resource.dcterms_creator.first.value
+        author = Person(name)
+        author.schema_name = name
 
         resource.schema_author = author
         author.update()
@@ -94,26 +86,6 @@ class GenericLinkedData(object):
         image.save()
 
         resource.schema_image = image.subject
-        resource.schema_publisher = "EEA"
-
-        site = portal.get()
-        info = IPublisherOrganisation(site)
-
-        org = Organization(site.absolute_url())
-        org.schema_name = info.name
-
-        logo = Image()
-        logo.schema_height = info.logo_height
-        logo.schema_width = info.logo_width
-        logo.schema_url = info.logo_url
-        logo.update()
-        logo.save()
-
-        org.schema_logo = logo
-        org.update()
-        org.save()
-
-        resource.schema_publisher = org
 
         resource.update()
         resource.save()
@@ -131,3 +103,68 @@ class GenericLinkedData(object):
         print data
 
         return data
+
+
+class HomepageLinkedData(GenericLinkedData):
+    """ ILinkedData implemention for homepages """
+
+    adapts(ILinkedDataHomepage)
+
+    def get_jsonld_context(self):
+
+        context = {
+            surf.ns.SCHEMA['Image']: surf.ns.SCHEMA['ImageObject'],
+            surf.ns.SCHEMA['productID']: surf.ns.SCHEMA['about'],
+        }
+
+        return context
+
+    def modify(self, obj2surf):
+        pass
+
+        # resource = obj2surf.resource
+        # session = resource.session
+
+        # schema_type = portal_types_map.get(self.context.portal_type, 'Article')
+        # resource.rdf_type.append(surf.ns.SCHEMA[schema_type])
+        #
+        # Article = session.get_class(surf.ns.SCHEMA['Article'])
+        # Person = session.get_class(surf.ns.SCHEMA['Person'])
+        #
+        # page = Article(self.context.absolute_url())
+        #
+        # resource.schema_mainEntityOfPage = page
+        # resource.schema_headline = resource.dcterms_title.first.value
+        # resource.schema_datePublished = str(resource.dcterms_issued.first)
+        # resource.schema_dateModified = str(resource.dcterms_modified.first)
+        #
+        # name = resource.dcterms_creator.first.value
+        # author = Person(name)
+        # author.schema_name = name
+        #
+        # resource.schema_author = author
+        # author.update()
+        # author.save()
+        #
+        # resource.schema_description = resource.dcterms_abstract
+        #
+        # image = resource.foaf_depiction.first
+        # image.schema_url = str(image.subject)
+        # image.update()
+        # image.save()
+        #
+        # resource.schema_image = image.subject
+        #
+        # resource.update()
+        # resource.save()
+
+
+class LinkedDataHomepageData(Persistent):
+
+    adapts(ILinkedDataHomepage)
+    implements(ILinkedDataHomepageData)
+
+
+KEY = 'LinkedDataHomepage'
+
+linked_data_annotation = factory(LinkedDataHomepageData, key=KEY)

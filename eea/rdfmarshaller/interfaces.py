@@ -81,11 +81,6 @@ class ILinkedData(Interface):
         """
 
 
-class IPublisherOrganisation(Interface):
-    """ Publisher information for a Plone website
+class ILinkedDataHomepage(Interface):
+    """ Homepage marker interface for linked-data enabled websites
     """
-
-    name = Attribute("Publisher name")
-    logo_url = Attribute("Logo url")
-    logo_height = Attribute("Logo height")
-    logo_width = Attribute("Logo width")

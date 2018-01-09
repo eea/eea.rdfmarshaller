@@ -4,5 +4,29 @@
   xmlns:browser="http://namespaces.zope.org/browser">
 
   <adapter factory=".GenericLinkedData" />
+  <adapter factory=".HomepageLinkedData" />
+
+  <browser:viewlet
+    name="linked-data-export"
+    class=".viewlets.LinkedDataExportViewlet"
+    for="Products.CMFCore.interfaces.IContentish"
+    permission="zope2.View"
+    manager="plone.app.layout.viewlets.interfaces.IPortalFooter"
+    />
+
+  <browser:view
+    name='edit-linkeddata-homepage'
+    permission="cmf.ManagePortal"
+    for="eea.rdfmarshaller.interfaces.ILinkedDataHomepage"
+    class=".views.EditLinkedDataHomepageView"
+    />
+
+  <adapter factory=".linked_data_annotation" />
+
+  <subscriber factory=".modifiers.HomepageModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
+  <subscriber factory=".modifiers.OrganizationModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 
 </configure>
