@@ -1,7 +1,9 @@
+import rdflib
 import surf
 from eea.rdfmarshaller.interfaces import ILinkedData, ILinkedDataHomepage
 from eea.rdfmarshaller.linkeddata.interfaces import ILinkedDataHomepageData
 from persistent import Persistent
+from plone.api import portal
 from Products.CMFCore.interfaces import IContentish
 from zope.annotation.factory import factory
 from zope.component import adapts
@@ -53,42 +55,61 @@ class GenericLinkedData(object):
 
         return context
 
+    def get_site(self):
+        site = portal.get()
+        ldsite = self.context
+
+        while not ILinkedDataHomepage.providedBy(ldsite):
+            try:
+                ldsite = ldsite.aq_parent
+            except AttributeError:
+                ldsite = None
+
+                break
+
+        if ldsite is None:
+            return site
+
+        return ldsite
+
     def modify(self, obj2surf):
         resource = obj2surf.resource
         session = resource.session
 
-        schema_type = portal_types_map.get(self.context.portal_type, 'Article')
-        resource.rdf_type.append(surf.ns.SCHEMA[schema_type])
+        site = self.get_site()
+        site_url = site.absolute_url()
+        base_url = self.context.absolute_url()
 
         Article = session.get_class(surf.ns.SCHEMA['Article'])
         Person = session.get_class(surf.ns.SCHEMA['Person'])
 
-        page = Article(self.context.absolute_url())
+        resource.rdf_type.append(surf.ns.SCHEMA['WebPage'])
 
-        resource.schema_mainEntityOfPage = page
-        resource.schema_headline = resource.dcterms_title.first.value
-        resource.schema_datePublished = str(resource.dcterms_issued.first)
-        resource.schema_dateModified = str(resource.dcterms_modified.first)
+        article = Article(base_url + "#article")
+        article.schema_mainEntityOfPage = resource.subject
+        article.schema_headline = resource.dcterms_title.first.value
+        article.schema_datePublished = str(resource.dcterms_issued.first)
+        article.schema_dateModified = str(resource.dcterms_modified.first)
 
         name = resource.dcterms_creator.first.value
-        author = Person(name)
+        author = Person(site_url + "#author:" + name)
         author.schema_name = name
 
-        resource.schema_author = author
-        author.update()
-        author.save()
-
-        resource.schema_description = resource.dcterms_abstract
+        article.schema_author = author
+        article.schema_description = resource.dcterms_abstract
 
         image = resource.foaf_depiction.first
         image.schema_url = str(image.subject)
+
+        article.schema_image = image.subject
+
         image.update()
-        image.save()
-
-        resource.schema_image = image.subject
-
+        author.update()
+        article.update()
         resource.update()
-        resource.save()
+
+        article.schema_publisher = rdflib.term.URIRef(site_url)
+        article.update()
 
     def serialize(self, obj2surf):
         """ Folder to Surf """
@@ -121,42 +142,6 @@ class HomepageLinkedData(GenericLinkedData):
 
     def modify(self, obj2surf):
         pass
-
-        # resource = obj2surf.resource
-        # session = resource.session
-
-        # schema_type = portal_types_map.get(self.context.portal_type, 'Article')
-        # resource.rdf_type.append(surf.ns.SCHEMA[schema_type])
-        #
-        # Article = session.get_class(surf.ns.SCHEMA['Article'])
-        # Person = session.get_class(surf.ns.SCHEMA['Person'])
-        #
-        # page = Article(self.context.absolute_url())
-        #
-        # resource.schema_mainEntityOfPage = page
-        # resource.schema_headline = resource.dcterms_title.first.value
-        # resource.schema_datePublished = str(resource.dcterms_issued.first)
-        # resource.schema_dateModified = str(resource.dcterms_modified.first)
-        #
-        # name = resource.dcterms_creator.first.value
-        # author = Person(name)
-        # author.schema_name = name
-        #
-        # resource.schema_author = author
-        # author.update()
-        # author.save()
-        #
-        # resource.schema_description = resource.dcterms_abstract
-        #
-        # image = resource.foaf_depiction.first
-        # image.schema_url = str(image.subject)
-        # image.update()
-        # image.save()
-        #
-        # resource.schema_image = image.subject
-        #
-        # resource.update()
-        # resource.save()
 
 
 class LinkedDataHomepageData(Persistent):

@@ -41,7 +41,7 @@ class OrganizationModifier(object):
         org = Organization(site.absolute_url())
         org.schema_name = ld.name
 
-        logo = Image()
+        logo = Image(ld.logo_url + "#logo")
         logo.schema_url = ld.logo_url
         logo.update()
         logo.save()
