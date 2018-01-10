@@ -26,6 +26,13 @@
   <subscriber factory=".modifiers.HomepageModifier"
     provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 
+  <subscriber factory=".modifiers.BreadcrumbModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
+  <subscriber factory=".modifiers.OrganizationModifier"
+    for="eea.rdfmarshaller.interfaces.ILinkedDataHomepage"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
   <subscriber factory=".modifiers.OrganizationModifier"
     provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 

@@ -10,6 +10,44 @@ from zope.interface import implements
 # from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 
 
+class BreadcrumbModifier(object):
+    """ Adds information about breadcrumbs for a page
+    """
+
+    implements(ISurfResourceModifier)
+    adapts(IContentish)
+
+    def __init__(self, context):
+        self.context = context
+
+    def run(self, resource, adapter, session, *args, **kwds):
+
+        # import pdb; pdb.set_trace()
+        parent = self.context
+
+        if ILinkedDataHomepage.providedBy(parent):
+            return
+
+        BreadcrumbList = session.get_class(surf.ns.SCHEMA['BreadcrumbList'])
+        ListItem = session.get_class(surf.ns.SCHEMA['BreadcrumbList'])
+
+        blist = BreadcrumbList(self.context.absolute_url() + "#breadcrumb")
+
+        while not ILinkedDataHomepage.providedBy(parent):
+            try:
+                parent = parent.aq_parent
+                item = ListItem(parent.absolute_url())
+                item.schema_name = parent.Title()
+                item.schema_image = Literal(parent.absolute_url()
+                                            + '/image_large')
+                item.update()
+                blist.schema_itemListElement.append(item)
+            except AttributeError:
+                break
+
+        blist.update()
+
+
 class OrganizationModifier(object):
     """ Adds info about publishing organisation based on ILinkedDataHomepage
     """
@@ -21,8 +59,6 @@ class OrganizationModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-        """ Add LinkedDataHomepage information to rdf """
-
         site = self.context
 
         while not ILinkedDataHomepage.providedBy(site):
@@ -38,17 +74,16 @@ class OrganizationModifier(object):
         Organization = session.get_class(surf.ns.SCHEMA['Organization'])
         Image = session.get_class(surf.ns.SCHEMA['ImageObject'])
 
-        org = Organization(site.absolute_url())
+        org = Organization(site.absolute_url() + "#organization")
         org.schema_name = ld.name
 
         logo = Image(ld.logo_url + "#logo")
         logo.schema_url = ld.logo_url
-        logo.update()
-        logo.save()
 
         org.schema_logo = logo
+
+        logo.update()
         org.update()
-        org.save()
 
         resource.schema_publisher = org
         resource.update()
@@ -82,7 +117,8 @@ class HomepageModifier(object):
 
         if ld.search_action_url:
             action = SearchAction()
-            action.schema_target = Literal(ld.search_action_url)
+            target = self.context.absolute_url() + ld.search_action_url
+            action.schema_target = Literal(target)
 
             qi_uri = surf.ns.SCHEMA['query-input']
             action.update()

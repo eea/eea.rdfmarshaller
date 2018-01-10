@@ -108,7 +108,8 @@ class GenericLinkedData(object):
         article.update()
         resource.update()
 
-        article.schema_publisher = rdflib.term.URIRef(site_url)
+        article.schema_publisher = rdflib.term.URIRef(
+            site_url + "#organization")
         article.update()
 
     def serialize(self, obj2surf):

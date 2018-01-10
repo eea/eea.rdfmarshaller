@@ -19,7 +19,7 @@ class ILinkedDataHomepageData(Interface):
 
     search_action_url = TextLine(
         title=u"Search box action URL",
-        default=u"https://query.example.com/search?q={search_term_string}",
+        default=u"/search?q={search_term_string}",
         description=u"Used to provide a search box when showing main page as "
         u"a result",
         required=False
