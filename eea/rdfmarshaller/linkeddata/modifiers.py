@@ -7,8 +7,6 @@ from rdflib.term import Literal
 from zope.component import adapts
 from zope.interface import implements
 
-# from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
-
 
 class BreadcrumbModifier(object):
     """ Adds information about breadcrumbs for a page
@@ -22,7 +20,6 @@ class BreadcrumbModifier(object):
 
     def run(self, resource, adapter, session, *args, **kwds):
 
-        # import pdb; pdb.set_trace()
         parent = self.context
 
         if ILinkedDataHomepage.providedBy(parent):
@@ -80,6 +77,16 @@ class OrganizationModifier(object):
         logo = Image(ld.logo_url + "#logo")
         logo.schema_url = ld.logo_url
 
+        if hasattr(ld, 'logo_width'):
+            logo.schema_width = Literal(str(ld.logo_width) + 'px')
+            logo.schema_height = Literal(str(ld.logo_height) + 'px')
+
+        if hasattr(ld, 'social_profile_links'):
+            social_links = [Literal(x.strip()) for x in
+                            ld.social_profile_links.strip().split('\n') if
+                            x.strip()]
+            org.schema_sameAs = social_links
+
         org.schema_logo = logo
 
         logo.update()
@@ -105,11 +112,11 @@ class HomepageModifier(object):
         SearchAction = session.get_class(surf.ns.SCHEMA['SearchAction'])
 
         url = self.context.absolute_url()
+
         # we change the rdf type of the plone site. The problem is that we
         # can't have multiple resources with the same subject in the schema,
         # so instantiating a Website(self.context.absolute_url()) will yield
         # unpredictable results
-
         resource.rdf_type = surf.ns.SCHEMA['WebSite']
         resource.schema_url = url
 

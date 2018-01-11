@@ -1,5 +1,5 @@
 from zope.interface import Interface
-from zope.schema import TextLine
+from zope.schema import Int, Text, TextLine
 
 
 class ILinkedDataHomepageData(Interface):
@@ -13,7 +13,8 @@ class ILinkedDataHomepageData(Interface):
 
     logo_url = TextLine(
         title=u"Logo url",
-        description=u"Used to show logo of organization in search results",
+        description=u"Used to show logo of organization in search results. "
+        u"See https://developers.google.com/search/docs/data-types/logo",
         required=True
     )
 
@@ -25,5 +26,13 @@ class ILinkedDataHomepageData(Interface):
         required=False
     )
 
-    # logo_height = Attribute("Logo height")
-    # logo_width = Attribute("Logo width")
+    logo_height = Int(title=u"Logo height, in pixels", default=190)
+    logo_width = Int(title=u"Logo width, in pixels", default=190)
+
+    social_profile_links = Text(
+        title=u"Social profile links",
+        description=u"""One link per line. Supported profile links are:
+Facebook, Twitter, Google+, Instagram, YouTube, LinkedIn, Myspace, Pinterest,
+SoundCloud, Tumblr""",
+        required=False,
+    )

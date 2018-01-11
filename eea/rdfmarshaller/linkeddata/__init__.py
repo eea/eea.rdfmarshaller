@@ -14,9 +14,6 @@ def schematize(store):
     graph = store.reader.graph
     triples = list(graph)
 
-    # from pprint import pprint
-    # pprint(triples)
-
     res = [(s, p, v)
            for (s, p, v) in triples
 
@@ -109,7 +106,8 @@ class GenericLinkedData(object):
         resource.update()
 
         article.schema_publisher = rdflib.term.URIRef(
-            site_url + "#organization")
+            site_url + "#organization"
+        )
         article.update()
 
     def serialize(self, obj2surf):
@@ -122,7 +120,7 @@ class GenericLinkedData(object):
 
         context = self.get_jsonld_context()
         data = store.reader.graph.serialize(format='json-ld', context=context)
-        print data
+        # print data
 
         return data
 
