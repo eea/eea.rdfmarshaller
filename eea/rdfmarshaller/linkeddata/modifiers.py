@@ -45,6 +45,10 @@ class BreadcrumbModifier(object):
         blist.update()
 
 
+def to_literal_list(text):
+    return [Literal(x.strip()) for x in text.strip().split('\n') if x.strip()]
+
+
 class OrganizationModifier(object):
     """ Adds info about publishing organisation based on ILinkedDataHomepage
     """
@@ -66,12 +70,14 @@ class OrganizationModifier(object):
 
                 return
 
+        org_url = site.absolute_url()
         ld = ILinkedDataHomepageData(site)
 
+        ContactPoint = session.get_class(surf.ns.SCHEMA['ContactPoint'])
         Organization = session.get_class(surf.ns.SCHEMA['Organization'])
         Image = session.get_class(surf.ns.SCHEMA['ImageObject'])
 
-        org = Organization(site.absolute_url() + "#organization")
+        org = Organization(org_url + "#organization")
         org.schema_name = ld.name
 
         logo = Image(ld.logo_url + "#logo")
@@ -82,10 +88,30 @@ class OrganizationModifier(object):
             logo.schema_height = Literal(str(ld.logo_height) + 'px')
 
         if hasattr(ld, 'social_profile_links'):
-            social_links = [Literal(x.strip()) for x in
-                            ld.social_profile_links.strip().split('\n') if
-                            x.strip()]
+            social_links = to_literal_list(ld.social_profile_links)
             org.schema_sameAs = social_links
+
+        contact_points = getattr(ld, 'contact_points', [])
+
+        for index, info in enumerate(contact_points):
+            tel = info['telephone']
+            contactType = info['contactType']
+
+            langs = to_literal_list(info.get('availableLanguage', ''))
+            contactOption = info.get('contactOption')
+
+            cp = ContactPoint("{0}#contact-point-{1}".format(org_url, index))
+            cp.schema_telephone = tel
+            cp.schema_contactType = contactType
+
+            if langs:
+                cp.schema_availableLanguage = langs
+
+            if contactOption:
+                cp.schema_contactOption = contactOption
+
+            cp.update()
+            org.schema_contactPoint.append(cp)
 
         org.schema_logo = logo
 
