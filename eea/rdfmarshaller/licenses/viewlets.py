@@ -124,7 +124,7 @@ class LicenseViewlet(ViewletBase):
         ser = marshaller.marshall(self.context, endLevel=1)
 
         if not ser:
-            return
+            return ""
 
         store = marshaller.store
 
