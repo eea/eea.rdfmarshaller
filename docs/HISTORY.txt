@@ -3,7 +3,7 @@ Changelog
 10.6.dev0 - (unreleased)
 ------------------------
 * Bug fix: error on editing content rules.
-[GhitaB]
+  [GhitaB]
 
 10.5 - (2017-12-20)
 -------------------
