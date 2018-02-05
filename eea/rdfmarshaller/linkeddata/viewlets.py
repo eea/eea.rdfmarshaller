@@ -15,9 +15,14 @@ class LinkedDataExportViewlet(ViewletBase):
         if obj2surf is None:
             return ""
 
-        tpl = u"""<script type="application/ld+json">%s</script>"""
+        tpl = u"""<script data-diazo-keep='true' type="application/ld+json">
+%s
+</script>"""
 
         data = ILinkedData(self.context).serialize(obj2surf)
         data = data.decode('utf-8')
 
-        return tpl % data
+        res = tpl % data
+        print(self.context)
+
+        return res

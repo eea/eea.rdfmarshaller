@@ -36,4 +36,7 @@
   <subscriber factory=".modifiers.OrganizationModifier"
     provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 
+  <subscriber factory=".modifiers.DefaultPageModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
 </configure>

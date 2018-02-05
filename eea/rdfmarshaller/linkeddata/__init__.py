@@ -29,11 +29,6 @@ def schematize(store):
     return s
 
 
-portal_types_map = {
-    'Document': 'Article',
-}
-
-
 class GenericLinkedData(object):
     """ Generic ILinkedData implemention """
 
@@ -73,6 +68,14 @@ class GenericLinkedData(object):
         resource = obj2surf.resource
         session = resource.session
 
+        resource.rdf_type.append(surf.ns.SCHEMA['WebPage'])
+        resource.update()
+
+        image = resource.foaf_depiction.first
+
+        if not image:   # image is required by Google Structured Data
+            return
+
         site = self.get_site()
         site_url = site.absolute_url()
         base_url = self.context.absolute_url()
@@ -80,13 +83,17 @@ class GenericLinkedData(object):
         Article = session.get_class(surf.ns.SCHEMA['Article'])
         Person = session.get_class(surf.ns.SCHEMA['Person'])
 
-        resource.rdf_type.append(surf.ns.SCHEMA['WebPage'])
-
         article = Article(base_url + "#article")
         article.schema_mainEntityOfPage = resource.subject
         article.schema_headline = resource.dcterms_title.first.value
-        article.schema_datePublished = str(resource.dcterms_issued.first)
-        article.schema_dateModified = str(resource.dcterms_modified.first)
+        published = resource.dcterms_issued.first
+
+        if published:
+            article.schema_datePublished = str(published)
+        modified = resource.dcterms_modified.first
+
+        modified = modified and modified or published
+        article.schema_dateModified = str(modified)
 
         name = resource.dcterms_creator.first.value
         author = Person(site_url + "#author:" + name)
@@ -95,12 +102,12 @@ class GenericLinkedData(object):
         article.schema_author = author
         article.schema_description = resource.dcterms_abstract
 
-        image = resource.foaf_depiction.first
-        image.schema_url = str(image.subject)
+        if image:
+            image.schema_url = str(image.subject)
 
-        article.schema_image = image.subject
+            article.schema_image = image.subject
+            image.update()
 
-        image.update()
         author.update()
         article.update()
         resource.update()
@@ -120,7 +127,6 @@ class GenericLinkedData(object):
 
         context = self.get_jsonld_context()
         data = store.reader.graph.serialize(format='json-ld', context=context)
-        # print data
 
         return data
 
@@ -140,6 +146,7 @@ class HomepageLinkedData(GenericLinkedData):
         return context
 
     def modify(self, obj2surf):
+        print("This is a homepage")
         pass
 
 

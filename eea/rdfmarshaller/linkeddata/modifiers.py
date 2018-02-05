@@ -4,7 +4,7 @@ from eea.rdfmarshaller.interfaces import (ILinkedDataHomepage,
 from eea.rdfmarshaller.linkeddata.interfaces import ILinkedDataHomepageData
 from Products.CMFCore.interfaces import IContentish
 from rdflib.term import Literal
-from zope.component import adapts
+from zope.component import adapts, getMultiAdapter
 from zope.interface import implements
 
 
@@ -46,7 +46,13 @@ class BreadcrumbModifier(object):
 
 
 def to_literal_list(text):
-    return [Literal(x.strip()) for x in text.strip().split('\n') if x.strip()]
+    if not text:
+        return []
+
+    return [Literal(x.strip())
+            for x in text.strip().split('\n')
+
+            if x and x.strip()]
 
 
 class OrganizationModifier(object):
@@ -72,6 +78,9 @@ class OrganizationModifier(object):
 
         org_url = site.absolute_url()
         ld = ILinkedDataHomepageData(site)
+
+        if not getattr(ld, 'name', None):     # LD information is not there
+            return
 
         ContactPoint = session.get_class(surf.ns.SCHEMA['ContactPoint'])
         Organization = session.get_class(surf.ns.SCHEMA['Organization'])
@@ -143,8 +152,9 @@ class HomepageModifier(object):
         # can't have multiple resources with the same subject in the schema,
         # so instantiating a Website(self.context.absolute_url()) will yield
         # unpredictable results
-        resource.rdf_type = surf.ns.SCHEMA['WebSite']
-        resource.schema_url = url
+        WebSite = session.get_class(surf.ns.SCHEMA['WebSite'])
+        website = WebSite(url + "#website")
+        website.schema_url = url
 
         ld = ILinkedDataHomepageData(self.context)
 
@@ -163,6 +173,28 @@ class HomepageModifier(object):
 
             action.set(graph)
             action.update()
-            resource.schema_potentialAction = action
+            website.schema_potentialAction = action
 
-        resource.update()
+        website.update()
+
+
+class DefaultPageModifier(object):
+    """ Detects if context is used as default page for a LinkedData homepage
+    """
+
+    implements(ISurfResourceModifier)
+    adapts(IContentish)
+
+    def __init__(self, context):
+        self.context = context
+
+    def run(self, resource, adapter, session, *args, **kwds):
+        """ Add LinkedDataHomepage information to rdf """
+        view = getMultiAdapter((self.context, self.context.REQUEST),
+                               name="plone_context_state")
+
+        if view.is_view_template():
+            root = view.canonical_object()
+
+            modifier = HomepageModifier(root)
+            modifier.run(resource, adapter, session, *args, **kwds)
