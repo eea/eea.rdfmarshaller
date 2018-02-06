@@ -1,3 +1,4 @@
+import rdflib
 import surf
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 from eea.rdfmarshaller.licenses.license import ILicenses, IPortalTypeLicenses
@@ -42,7 +43,6 @@ class ContentLicenseModifier(object):
         if len(licenses) == 0:
             return None  # No license details for this license id
 
-        License = resource.session.get_class(surf.ns.SCHEMA['URL'])
         RightsStatement = resource.session.get_class(
             surf.ns.DCTERMS['RightsStatement']
         )
@@ -53,10 +53,17 @@ class ContentLicenseModifier(object):
         copyright = info.get("copyright", "")
         attribution = info.get("attribution", "")
 
-        license = License(license_url)
-        license.dcterms_title = info.get("id", "")
-        license.save()
-        resource.dcterms_license = license_url
+        # URL = resource.session.get_class(surf.ns.SCHEMA['URL'])
+        # license = URL(license_url)
+        # # license.schema_url = license_url
+        # license.dcterms_title = info.get("id", "")
+        # license.schema_name = info.get("id", "")
+        # license.save()
+        # resource.schema_license = rdflib.term.URIRef(license_url)
+        # resource.dcterms_license = rdflib.term.URIRef(license_url)
+
+        resource.schema_license = rdflib.term.Literal(license_url)
+        resource.dcterms_license = rdflib.term.Literal(license_url)
 
         rights = RightsStatement(base_url + "#rights-statement")
 
