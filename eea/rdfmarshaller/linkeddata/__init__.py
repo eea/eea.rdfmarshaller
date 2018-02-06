@@ -86,12 +86,12 @@ class GenericLinkedData(object):
         article = Article(base_url + "#article")
         article.schema_mainEntityOfPage = resource.subject
         article.schema_headline = resource.dcterms_title.first.value
+
         published = resource.dcterms_issued.first
+        published = published and published or resource.dcterms_created.first
+        article.schema_datePublished = str(published)
 
-        if published:
-            article.schema_datePublished = str(published)
         modified = resource.dcterms_modified.first
-
         modified = modified and modified or published
         article.schema_dateModified = str(modified)
 

@@ -190,11 +190,13 @@ class DefaultPageModifier(object):
 
     def run(self, resource, adapter, session, *args, **kwds):
         """ Add LinkedDataHomepage information to rdf """
+
         view = getMultiAdapter((self.context, self.context.REQUEST),
                                name="plone_context_state")
 
         if view.is_view_template():
             root = view.canonical_object()
 
-            modifier = HomepageModifier(root)
-            modifier.run(resource, adapter, session, *args, **kwds)
+            if ILinkedDataHomepage.providedBy(root):
+                modifier = HomepageModifier(root)
+                modifier.run(resource, adapter, session, *args, **kwds)
