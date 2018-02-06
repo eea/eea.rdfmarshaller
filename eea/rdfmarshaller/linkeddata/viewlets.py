@@ -23,6 +23,5 @@ class LinkedDataExportViewlet(ViewletBase):
         data = data.decode('utf-8')
 
         res = tpl % data
-        print(self.context)
 
         return res
