@@ -1,6 +1,11 @@
 Changelog
 =========
 
+10.6 - (2018-02-14)
+-------------------
+* Bug fix: error on editing content rules and portal_registry.
+  [GhitaB #82751]
+
 10.5 - (2017-12-20)
 -------------------
 * Bug fix: don't break Plone root pages
