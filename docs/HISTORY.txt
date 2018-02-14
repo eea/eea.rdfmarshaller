@@ -1,8 +1,8 @@
 Changelog
 =========
 
-10.6.dev0 - (unreleased)
-------------------------
+10.6 - (2018-02-14)
+-------------------
 * Bug fix: error on editing content rules and portal_registry.
   [GhitaB #82751]
 
