@@ -1,7 +1,7 @@
 """ Custom event for Object moved or renamed """
-from zope.lifecycleevent.interfaces import IObjectMovedEvent
+from zope.component.interfaces import IObjectEvent
 
-class IObjectMovedOrRenamedEvent(IObjectMovedEvent):
+class IObjectMovedOrRenamedEvent(IObjectEvent):
     """IObjectMovedOrRenamedEvent
     """
-    
+
