@@ -1,8 +1,15 @@
 """ Custom ObjectMovedOrRenamedEvent"""
 from eea.rdfmarshaller.actions.interfaces import IObjectMovedOrRenamedEvent
-from zope.lifecycleevent import ObjectMovedEvent
-from zope.interface import implements
+from zope.component.interfaces import ObjectEvent
+from zope.interface import implementer
 
-class ObjectMovedOrRenamedEvent(ObjectMovedEvent):
+@implementer(IObjectMovedOrRenamedEvent)
+class ObjectMovedOrRenamedEvent(ObjectEvent):
     """ObjectMovedOrRenamedEvent"""
-    implements(IObjectMovedOrRenamedEvent)
+
+    def __init__(self, object, oldParent, oldName, newParent, newName):
+        ObjectEvent.__init__(self, object)
+        self.oldParent = oldParent
+        self.oldName = oldName
+        self.newParent = newParent
+        self.newName = newName
