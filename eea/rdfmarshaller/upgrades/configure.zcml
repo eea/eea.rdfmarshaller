@@ -43,4 +43,17 @@
 
   </genericsetup:upgradeSteps>
 
+  <genericsetup:upgradeSteps
+    source="5.7"
+    destination="5.8"
+    profile="eea.rdfmarshaller:default">
+
+    <genericsetup:upgradeDepends
+      title="Import all steps from eea.rdfmarshaller profile"
+      import_profile="eea.rdfmarshaller:default"
+      import_steps="controlpanel"
+      />
+
+  </genericsetup:upgradeSteps>
+
 </configure>

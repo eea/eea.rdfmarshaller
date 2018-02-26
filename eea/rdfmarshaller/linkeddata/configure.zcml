@@ -14,11 +14,19 @@
     manager="plone.app.layout.viewlets.interfaces.IPortalFooter"
     />
 
-  <browser:view
+  <browser:page
     name='edit-linkeddata-homepage'
     permission="cmf.ManagePortal"
     for="eea.rdfmarshaller.interfaces.ILinkedDataHomepage"
     class=".views.EditLinkedDataHomepageView"
+    />
+
+  <browser:page
+    name='manage-linkeddata'
+    permission="cmf.ManagePortal"
+    for="*"
+    class=".controlpanel.EditLinkedDataHomepagesView"
+    template="pt/manage-linkeddata.pt"
     />
 
   <adapter factory=".linked_data_annotation" />

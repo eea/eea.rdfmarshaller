@@ -95,7 +95,12 @@ class GenericLinkedData(object):
         modified = modified and modified or published
         article.schema_dateModified = str(modified)
 
-        name = resource.dcterms_creator.first.value
+        name = resource.dcterms_creator.first
+
+        if name:
+            name = name.value
+        else:
+            name = "admin"
         author = Person(site_url + "#author:" + name)
         author.schema_name = name
 

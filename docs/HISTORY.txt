@@ -1,7 +1,10 @@
 Changelog
 =========
-10.6.dev0 - (unreleased)
+
+10.8.dev0 - (unreleased)
 ------------------------
+* Feature: implemented Linked Data functionality
+  [tiberich #92045, #91549, #86484]
 * Bug fix: error on editing content rules.
   [GhitaB]
 

@@ -158,7 +158,7 @@ class HomepageModifier(object):
 
         ld = ILinkedDataHomepageData(self.context)
 
-        if ld.search_action_url:
+        if getattr(ld, 'search_action_url', None):
             action = SearchAction()
             target = self.context.absolute_url() + ld.search_action_url
             action.schema_target = Literal(target)

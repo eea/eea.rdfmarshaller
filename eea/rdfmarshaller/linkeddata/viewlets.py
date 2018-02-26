@@ -1,12 +1,19 @@
 from eea.rdfmarshaller.interfaces import ILinkedData
 from plone.app.layout.viewlets import ViewletBase
+from plone.memoize.ram import cache
 from Products.Marshall.registry import getComponent
+
+
+def get_key(function, viewlet):
+
+    return u"/".join(viewlet.context.getPhysicalPath())
 
 
 class LinkedDataExportViewlet(ViewletBase):
     """ Export an object as linked data
     """
 
+    @cache(get_key)
     def render(self):
 
         marshaller = getComponent('surfrdf')
