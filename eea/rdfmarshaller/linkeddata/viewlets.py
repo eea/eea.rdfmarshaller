@@ -1,7 +1,11 @@
 from eea.rdfmarshaller.interfaces import ILinkedData
 from plone.app.layout.viewlets import ViewletBase
-from plone.memoize.ram import cache
 from Products.Marshall.registry import getComponent
+
+try:
+    from eea.cache import cache
+except ImportError:
+    from plone.memoize.ram import cache
 
 
 def get_key(function, viewlet):
