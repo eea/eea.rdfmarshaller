@@ -48,6 +48,7 @@ setup(name=name,
           'eventlet',
           'rdflib_jsonld>=0.4.0',
           'collective.z3cform.datagridfield',
+          'plone.formwidget.contenttree',
       ],
       extras_require={
           'test': [
