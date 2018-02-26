@@ -16,7 +16,7 @@
     </div>
     <div tal:define="brains python:view.form_instance.homepages()">
       <h4 i18n:translate="">Manage existing LinkedData Homepages</h4>
-      <div tal:condition="not:brains">No linkeddata homepages</div>
+      <div tal:condition="not:brains" i18n:translate="">No linkeddata homepages</div>
       <ul tal:define="plone_homepage python:view.form_instance.plone_homepage()">
         <li tal:condition="plone_homepage">
           <span i18n:translate="">The Plone site</span>
