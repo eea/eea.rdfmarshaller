@@ -1,7 +1,7 @@
 Changelog
 =========
 
-10.8.dev0 - (unreleased)
+10.8 - (2018-04-04)
 ------------------------
 * Feature: implemented Linked Data functionality
   [tiberich #92045, #91549, #86484]
