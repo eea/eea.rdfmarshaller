@@ -30,4 +30,16 @@
     <permission>Manage portal</permission>
   </configlet>
 
+  <configlet
+    title="Manage LinkedData Homepages"
+    action_id="rdfmarshaller_linkeddata"
+    appId="rdfmarshaller"
+    category="Products"
+    condition_expr=""
+    url_expr="string:${portal_url}/@@manage-linkeddata"
+    icon_expr=""
+    visible="True"
+    i18n:attributes="title">
+    <permission>Manage portal</permission>
+  </configlet>
 </object>

@@ -1,0 +1,50 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+  xmlns:five="http://namespaces.zope.org/five"
+  xmlns:zcml="http://namespaces.zope.org/zcml"
+  xmlns:browser="http://namespaces.zope.org/browser">
+
+  <adapter factory=".GenericLinkedData" />
+  <adapter factory=".HomepageLinkedData" />
+
+  <browser:viewlet
+    name="linked-data-export"
+    class=".viewlets.LinkedDataExportViewlet"
+    for="Products.CMFCore.interfaces.IContentish"
+    permission="zope2.View"
+    manager="plone.app.layout.viewlets.interfaces.IPortalFooter"
+    />
+
+  <browser:page
+    name='edit-linkeddata-homepage'
+    permission="cmf.ManagePortal"
+    for="eea.rdfmarshaller.interfaces.ILinkedDataHomepage"
+    class=".views.EditLinkedDataHomepageView"
+    />
+
+  <browser:page
+    name='manage-linkeddata'
+    permission="cmf.ManagePortal"
+    for="*"
+    class=".controlpanel.EditLinkedDataHomepagesView"
+    template="pt/manage-linkeddata.pt"
+    />
+
+  <adapter factory=".linked_data_annotation" />
+
+  <subscriber factory=".modifiers.HomepageModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
+  <subscriber factory=".modifiers.BreadcrumbModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
+  <subscriber factory=".modifiers.OrganizationModifier"
+    for="eea.rdfmarshaller.interfaces.ILinkedDataHomepage"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
+  <subscriber factory=".modifiers.OrganizationModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
+  <subscriber factory=".modifiers.DefaultPageModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
+</configure>
