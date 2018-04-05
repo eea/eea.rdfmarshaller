@@ -1,6 +1,9 @@
 Changelog
 =========
 
+10.9-dev0 - (unreleased)
+---------------------
+
 10.8 - (2018-04-05)
 ------------------------
 * Feature: implemented Linked Data functionality
@@ -574,4 +577,3 @@ Changelog
 0.1 (2010-05-19)
 ----------------
 * Initial release
-
