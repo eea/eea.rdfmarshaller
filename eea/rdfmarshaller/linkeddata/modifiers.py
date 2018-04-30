@@ -21,27 +21,31 @@ class BreadcrumbModifier(object):
     def run(self, resource, adapter, session, *args, **kwds):
 
         parent = self.context
-
         if ILinkedDataHomepage.providedBy(parent):
             return
 
         BreadcrumbList = session.get_class(surf.ns.SCHEMA['BreadcrumbList'])
-        ListItem = session.get_class(surf.ns.SCHEMA['BreadcrumbList'])
-
+        Item = session.get_class(surf.ns.SCHEMA['Thing'])
+        itemListElement = session.get_class(surf.ns.SCHEMA['ListItem'])
         blist = BreadcrumbList(self.context.absolute_url() + "#breadcrumb")
 
+        position = 0
         while not ILinkedDataHomepage.providedBy(parent):
             try:
                 parent = parent.aq_parent
-                item = ListItem(parent.absolute_url())
+                list_item = itemListElement("ListItem")
+                position += 1
+                list_item.schema_position = position
+                item = Item(parent.absolute_url())
                 item.schema_name = parent.Title()
                 item.schema_image = Literal(parent.absolute_url()
                                             + '/image_large')
                 item.update()
-                blist.schema_itemListElement.append(item)
+                list_item.schema_item = item
+                list_item.update()
+                blist.schema_itemListElement.append(list_item)
             except AttributeError:
                 break
-
         blist.update()
 
 
