@@ -31,6 +31,7 @@ class FieldsModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
+        """ modifier run method """
         language = self.context.Language()
 
         for field in self.context.Schema().fields():

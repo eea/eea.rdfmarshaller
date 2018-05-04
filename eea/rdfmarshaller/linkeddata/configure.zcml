@@ -15,14 +15,14 @@
     />
 
   <browser:page
-    name='edit-linkeddata-homepage'
+    name="edit-linkeddata-homepage"
     permission="cmf.ManagePortal"
     for="eea.rdfmarshaller.interfaces.ILinkedDataHomepage"
     class=".views.EditLinkedDataHomepageView"
     />
 
   <browser:page
-    name='manage-linkeddata'
+    name="manage-linkeddata"
     permission="cmf.ManagePortal"
     for="*"
     class=".controlpanel.EditLinkedDataHomepagesView"
@@ -35,6 +35,9 @@
     provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 
   <subscriber factory=".modifiers.BreadcrumbModifier"
+    provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
+
+  <subscriber factory=".modifiers.CarouselModifier"
     provides="eea.rdfmarshaller.interfaces.ISurfResourceModifier" />
 
   <subscriber factory=".modifiers.OrganizationModifier"
