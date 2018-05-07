@@ -4,7 +4,7 @@ from eea.rdfmarshaller.interfaces import (ILinkedDataHomepage,
 from eea.rdfmarshaller.linkeddata.interfaces import ILinkedDataHomepageData
 from Products.CMFCore.interfaces import IContentish
 from rdflib.term import Literal
-from zope.component import adapts, getMultiAdapter
+from zope.component import adapts, queryMultiAdapter
 from zope.interface import implements
 
 
@@ -18,51 +18,31 @@ class CarouselModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-        """ Run """
+
         context = self.context
-        if context.portal_type not in ['Collection', 'Topic']:
-            return
+        ptype = context.portal_type
         request = self.context.REQUEST
+        if ptype not in ['Collection', 'Topic']:
+            return
         b_size = request.get('limit_display', 100)
-        brains = self.context.queryCatalog(batch=True, b_size=b_size)
+        qry = queryMultiAdapter((context, request), name='faceted_query')
+        brains = qry.query() if qry else self.context.queryCatalog(batch=True,
+                                                           b_size=b_size)
 
         ItemList = session.get_class(surf.ns.SCHEMA['ItemList'])
         Item = session.get_class(surf.ns.SCHEMA['Article'])
         ListElement = session.get_class(surf.ns.SCHEMA['ListItem'])
         ilist = ItemList("#itemList")
-        site = get_site(context)
-        publisher = ''
-        if site:
-            ld = ILinkedDataHomepageData(site)
-            org_url = site.absolute_url()
-            publisher = get_organisation(session, ld, org_url)
 
         position = 0
         for brain in brains:
             url = brain.getURL()
             position += 1
-            list_item = ListElement("ListItem" + str(position))
+            list_item = ListElement("CarouselListItem" + str(position))
             list_item.schema_position = position
-            item = Item(url)
-            # google has a limit of max 110 characters for headline if more
-            # you get a validation error
-            item.schema_headline = brain.Title if len(brain.Title) <= 110 else \
-                brain.Title[0:107] + "..."
-            item.schema_url = url
-            item.schema_mainEntityOfPage = url
-            item.schema_image = Literal(url + '/image_large')
-            item.schema_author = brain.Creator
-            item.schema_publisher = publisher
-            item.schema_datePublished = brain.EffectiveDate
-            item.schema_dateModified = brain.ModificationDate
-            item.update()
-            list_item.schema_item = item
+            list_item.schema_url = url
             list_item.update()
             ilist.schema_itemListElement.append(list_item)
-        items_len = len(ilist.schema_itemListElement)
-        for n, el in enumerate(ilist.schema_itemListElement):
-            el.schema_position = Literal(items_len - n)
-            el.update()
         ilist.update()
 
 
@@ -77,7 +57,7 @@ class BreadcrumbModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-        """ run """
+
         parent = self.context
         if ILinkedDataHomepage.providedBy(parent):
             return
@@ -94,7 +74,7 @@ class BreadcrumbModifier(object):
                     parent = parent.aq_parent
                 url = parent.absolute_url()
                 position += 1
-                list_item = ListElement("ListItem" + str(position))
+                list_item = ListElement("BreadCrumbsListItem" + str(position))
                 list_item.schema_position = position
                 item = Item(url + "#breadcrumb")
                 item.schema_name = parent.Title()
@@ -102,7 +82,6 @@ class BreadcrumbModifier(object):
                 item.schema_url = url
                 item.update()
                 list_item.schema_item = item
-                list_item.update()
                 blist.schema_itemListElement.append(list_item)
             except AttributeError:
                 break
@@ -274,7 +253,7 @@ class DefaultPageModifier(object):
     def run(self, resource, adapter, session, *args, **kwds):
         """ Add LinkedDataHomepage information to rdf """
 
-        view = getMultiAdapter((self.context, self.context.REQUEST),
+        view = queryMultiAdapter((self.context, self.context.REQUEST),
                                name="plone_context_state")
 
         if view.is_view_template():
