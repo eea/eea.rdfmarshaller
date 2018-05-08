@@ -1,3 +1,5 @@
+""" Views Module
+"""
 from collective.z3cform.datagridfield import BlockDataGridFieldFactory
 
 from eea.rdfmarshaller.linkeddata import ILinkedDataHomepageData
@@ -6,6 +8,7 @@ from z3c.form import field, form
 
 
 class EditLinkedDataHomepageForm(form.EditForm):
+    """ EditLinkedDataHomepageForm """
     fields = field.Fields(ILinkedDataHomepageData)
     fields['contact_points'].widgetFactory = BlockDataGridFieldFactory
 

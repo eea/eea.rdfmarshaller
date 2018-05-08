@@ -1,15 +1,14 @@
 """ Marshaller module """
 
 import logging
-
 import surf
-from eea.rdfmarshaller.interfaces import (IGenericObject2Surf, IObject2Surf,
-                                          ISurfResourceModifier, ISurfSession)
+from surf.log import set_logger
 from Products.Archetypes.Marshall import Marshaller
 from Products.CMFCore.interfaces._tools import ITypesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import IPloneSiteRoot
-from surf.log import set_logger
+from eea.rdfmarshaller.interfaces import (IGenericObject2Surf, IObject2Surf,
+                                          ISurfResourceModifier, ISurfSession)
 from zope.component import adapts, queryMultiAdapter, subscribers
 from zope.interface import Interface, implements
 
@@ -69,6 +68,7 @@ class RDFMarshaller(Marshaller):
         return store
 
     def _add_content(self, instance, **kwargs):
+        """ _add_content """
         session = surf.Session(self.store)
 
         obj2surf = queryMultiAdapter(
@@ -230,7 +230,7 @@ class PortalTypesUtil2Surf(GenericObject2Surf):
 
 
 class PloneSite2Surf(GenericObject2Surf):
-    """
+    """ PloneSite2Surf
     """
     adapts(IPloneSiteRoot, ISurfSession)
 

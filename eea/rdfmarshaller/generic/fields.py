@@ -1,3 +1,5 @@
+""" Generic fields module
+"""
 import re
 
 from plone.api.portal import get_tool
@@ -40,6 +42,8 @@ class BaseShortenHTMLField2Surf(object):
         raise NotImplementedError
 
     def alternate_value(self):
+        """ alternate_value
+        """
         # override this implementation with specifics
         html = self.get_raw_value()
 

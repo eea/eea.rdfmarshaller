@@ -1,3 +1,5 @@
+""" Modifiers module
+"""
 import surf
 from eea.rdfmarshaller.interfaces import (ILinkedDataHomepage,
                                           ISurfResourceModifier)
@@ -18,7 +20,7 @@ class CarouselModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-
+        """ run """
         context = self.context
         ptype = context.portal_type
         request = self.context.REQUEST
@@ -30,7 +32,6 @@ class CarouselModifier(object):
                                                            b_size=b_size)
 
         ItemList = session.get_class(surf.ns.SCHEMA['ItemList'])
-        Item = session.get_class(surf.ns.SCHEMA['Article'])
         ListElement = session.get_class(surf.ns.SCHEMA['ListItem'])
         ilist = ItemList("#itemList")
 
@@ -57,7 +58,7 @@ class BreadcrumbModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-
+        """ run """
         parent = self.context
         if ILinkedDataHomepage.providedBy(parent):
             return

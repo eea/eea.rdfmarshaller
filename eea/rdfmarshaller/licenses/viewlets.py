@@ -1,3 +1,5 @@
+""" Viewlets
+"""
 import StringIO
 
 import surf
@@ -50,6 +52,7 @@ WHERE {
 
 
 def json_serialize(res):
+    """ json_serialize """
     s = surf.Store(reader='rdflib', writer='rdflib', rdflib_store='IOMemory')
 
     for triple in res:
@@ -83,6 +86,7 @@ def regraph(store):
 
 
 def license_key(method, view):
+    """ license_key """
     context = view.context
     path = '/'.join(context.getPhysicalPath())
     modified = getattr(context, 'modified', lambda: '')()
@@ -97,6 +101,7 @@ class LicenseViewlet(ViewletBase):
     """
 
     def available(self):
+        """ available """
         try:
             reg_types = api.portal.get_registry_record(
                 'rdfmarshaller_type_licenses', interface=IPortalTypeLicenses
@@ -117,6 +122,7 @@ class LicenseViewlet(ViewletBase):
 
     @cache(license_key)
     def render(self):
+        """ render """
         if not self.available():
             return ''
 

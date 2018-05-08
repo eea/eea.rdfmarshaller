@@ -1,3 +1,5 @@
+""" ControlPanel module
+"""
 from eea.rdfmarshaller.interfaces import ILinkedDataHomepage
 from plone import api
 from plone.autoform import directives
@@ -14,6 +16,8 @@ from zope.interface import alsoProvides, implementer, noLongerProvides
 
 @implementer(IFieldWidget)
 def MultiContentTreeFieldWidget(field, request):
+    """ MultiContentTreeFieldWidget
+    """
     default = []
     site_path = '/'.join(api.portal.get().getPhysicalPath())
     catalog = api.portal.get_tool('portal_catalog')
@@ -36,16 +40,18 @@ def MultiContentTreeFieldWidget(field, request):
 @implementer(IFieldWidget)
 def SingleCheckBoxFieldWidget(field, request):
     """IFieldWidget factory for CheckBoxWidget."""
-    widget = SCBFW(field, request)
+    swidget = SCBFW(field, request)
     site = api.portal.get()
     already_set = ILinkedDataHomepage.providedBy(site)
 
-    widget.field.default = already_set
+    swidget.field.default = already_set
 
-    return widget
+    return swidget
 
 
 class IEditLinkedDataHomepages(form.Schema):
+    """ IEditLinkedDataHomepages
+    """
     set_plonesite = schema.Bool(
         title=u"Designate the Plone site as Homepage",
     )
@@ -63,6 +69,8 @@ class IEditLinkedDataHomepages(form.Schema):
 
 
 class EditLinkedDataHomepagesForm(form.SchemaForm):
+    """ EditLinkedDataHomepageForm
+    """
     schema = IEditLinkedDataHomepages
     ignoreContext = True
 
@@ -88,6 +96,7 @@ class EditLinkedDataHomepagesForm(form.SchemaForm):
 
     @button.buttonAndHandler(u'Ok')
     def handleApply(self, action):
+        """ handleApply """
         data, errors = self.extractData()
 
         if errors:

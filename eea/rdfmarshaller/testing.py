@@ -1,12 +1,11 @@
 """ testing  """
-from plone.app.testing import (PLONE_FIXTURE, FunctionalTesting,
-                               IntegrationTesting, PloneSandboxLayer)
-
-HAS_DEXTERITY = True
 try:
     import plone.dexterity as HAS_DEXTERITY
+    HAS_DEXTERITY = True
 except ImportError:
     HAS_DEXTERITY = False
+from plone.app.testing import (PLONE_FIXTURE, FunctionalTesting,
+                               IntegrationTesting, PloneSandboxLayer)
 
 
 class Fixture(PloneSandboxLayer):

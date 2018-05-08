@@ -1,3 +1,5 @@
+""" Viewlets Module
+"""
 from eea.rdfmarshaller.interfaces import ILinkedData
 from plone.app.layout.viewlets import ViewletBase
 from Products.Marshall.registry import getComponent
@@ -9,7 +11,7 @@ except ImportError:
 
 
 def get_key(function, viewlet):
-
+    """ get_key """
     return u"/".join(viewlet.context.getPhysicalPath())
 
 
@@ -19,7 +21,7 @@ class LinkedDataExportViewlet(ViewletBase):
 
     @cache(get_key)
     def render(self):
-
+        """ render """
         marshaller = getComponent('surfrdf')
         obj2surf = marshaller._add_content(self.context)
 

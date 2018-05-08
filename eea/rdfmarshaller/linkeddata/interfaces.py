@@ -1,3 +1,5 @@
+""" Interfaces module
+"""
 from collective.z3cform.datagridfield.registry import DictRow
 
 from zope.interface import Interface
@@ -5,6 +7,7 @@ from zope.schema import Choice, Int, List, Text, TextLine
 
 
 class IContactPoint(Interface):
+    """ IContactPoint """
     telephone = TextLine(
         title=u"Telephone number",
         description=u"""An internationalized version of the phone number,

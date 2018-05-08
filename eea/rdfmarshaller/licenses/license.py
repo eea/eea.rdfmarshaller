@@ -1,3 +1,5 @@
+""" License
+"""
 from collective.z3cform.datagridfield import BlockDataGridFieldFactory
 from collective.z3cform.datagridfield.registry import DictRow
 from plone import api
@@ -13,6 +15,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 
 
 class ILicense(Interface):
+    """ ILicense """
     id = schema.ASCIILine(
         title=u"License Title",
         description=u"Used to assign a license to a portal type."
@@ -92,6 +95,7 @@ class PortalTypeLicensesView(ControlPanelFormWrapper):
 
 @implementer(IVocabularyFactory)
 class LicensesVocabulary(object):
+    """ LicensesVocabularyFactory """
 
     def __call__(self, context):
         try:

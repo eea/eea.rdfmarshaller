@@ -1,3 +1,5 @@
+""" Generic modifiers module
+"""
 import rdflib
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 from OFS.interfaces import IFolder

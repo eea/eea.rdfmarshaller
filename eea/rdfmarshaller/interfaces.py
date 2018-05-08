@@ -45,7 +45,7 @@ class ISurfResourceModifier(Interface):
 
 
 class IField2Surf(Interface):
-    """
+    """ IField2Surf
     """
     exportable = Attribute("Is this field exportable to RDF?")
 
@@ -72,7 +72,7 @@ class ILinkedData(Interface):
     """ An adapter to provide schema.org linked data about an object
     """
 
-    def serialize():
+    def serialize(self, obj):
         """ Return linked data in json-ld serialized format
         """
 

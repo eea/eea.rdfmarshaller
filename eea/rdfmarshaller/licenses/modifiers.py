@@ -1,3 +1,5 @@
+""" Modifiers
+"""
 import rdflib
 import surf
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
@@ -9,6 +11,7 @@ from zope.interface import implements
 
 
 class ContentLicenseModifier(object):
+    """ ContentLicenseModifier """
     implements(ISurfResourceModifier)
     adapts(IContentish)
 
@@ -50,7 +53,7 @@ class ContentLicenseModifier(object):
         base_url = self.context.absolute_url()
         info = licenses[0]
         license_url = info.get("url", "")
-        copyright = info.get("copyright", "")
+        cpyright = info.get("copyright", "")
         attribution = info.get("attribution", "")
 
         # URL = resource.session.get_class(surf.ns.SCHEMA['URL'])
@@ -68,7 +71,7 @@ class ContentLicenseModifier(object):
         rights = RightsStatement(base_url + "#rights-statement")
 
         rights.rdfs_label = "Rights statement"
-        rights.odrs_copyrightNotice = copyright
+        rights.odrs_copyrightNotice = cpyright
         rights.odrs_attributionText = attribution
         rights.odrs_attributionURL = base_url
         rights.odrs_contentLicense = license_url
