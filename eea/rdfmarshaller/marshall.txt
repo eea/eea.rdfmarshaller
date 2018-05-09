@@ -184,4 +184,4 @@ When no file is uploaded to the file field, fileInfo is not available in rdf
   True
   >>> sf = session.get_resource("http://nohost/plone/valentine/test2", File)
   >>> sf.file_file
-  []
+  [rdflib.term.Literal(u'None', lang=u'en')]
