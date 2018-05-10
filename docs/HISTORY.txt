@@ -2,7 +2,13 @@ Changelog
 =========
 
 10.9-dev0 - (unreleased)
----------------------
+------------------------
+* Feature: added Carousel data export (for Collections and Faceted Navigations)
+  [ichim-david refs #94557]
+* Change: pylint fixes needed after latest rounds of refactoring
+  [ichim-david refs #94557]
+* Feature: added basic tests for json-ld linkeddata functionality
+  [ichim-david refs #94557]
 
 10.8 - (2018-04-05)
 ------------------------

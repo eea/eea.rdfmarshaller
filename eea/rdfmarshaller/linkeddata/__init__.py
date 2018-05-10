@@ -78,9 +78,6 @@ class GenericLinkedData(object):
 
         image = resource.foaf_depiction.first
 
-        if not image:   # image is required by Google Structured Data
-            return
-
         site = self.get_site()
         site_url = site.absolute_url()
         base_url = self.context.absolute_url()

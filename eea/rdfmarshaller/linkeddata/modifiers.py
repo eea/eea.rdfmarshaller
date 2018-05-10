@@ -30,7 +30,8 @@ class CarouselModifier(object):
         qry = queryMultiAdapter((context, request), name='faceted_query')
         brains = qry.query() if qry else self.context.queryCatalog(batch=True,
                                                            b_size=b_size)
-
+        if not brains:
+            return
         ItemList = session.get_class(surf.ns.SCHEMA['ItemList'])
         ListElement = session.get_class(surf.ns.SCHEMA['ListItem'])
         ilist = ItemList("#itemList")
