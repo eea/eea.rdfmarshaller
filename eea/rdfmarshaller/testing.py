@@ -1,7 +1,6 @@
 """ testing  """
 try:
     import plone.dexterity as HAS_DEXTERITY
-    HAS_DEXTERITY = True
 except ImportError:
     HAS_DEXTERITY = False
 from plone.app.testing import (PLONE_FIXTURE, FunctionalTesting,
