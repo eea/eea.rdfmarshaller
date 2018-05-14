@@ -7,8 +7,8 @@ from zope.interface import implementer
 class ObjectMovedOrRenamedEvent(ObjectEvent):
     """ObjectMovedOrRenamedEvent"""
 
-    def __init__(self, object, oldParent, oldName, newParent, newName):
-        ObjectEvent.__init__(self, object)
+    def __init__(self, obj, oldParent, oldName, newParent, newName):
+        ObjectEvent.__init__(self, obj)
         self.oldParent = oldParent
         self.oldName = oldName
         self.newParent = newParent

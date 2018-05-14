@@ -97,6 +97,7 @@ class TestProgramIntegration(unittest.TestCase):
         self.page.edit(description="")
 
         class DescriptionOverride(ShortenHTMLField2Surf):
+            """ DescriptionOverride """
             alternate_field = 'long_description'
 
         gsm = getGlobalSiteManager()

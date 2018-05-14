@@ -1,11 +1,51 @@
+""" Modifiers module
+"""
 import surf
 from eea.rdfmarshaller.interfaces import (ILinkedDataHomepage,
                                           ISurfResourceModifier)
 from eea.rdfmarshaller.linkeddata.interfaces import ILinkedDataHomepageData
 from Products.CMFCore.interfaces import IContentish
 from rdflib.term import Literal
-from zope.component import adapts, getMultiAdapter
+from zope.component import adapts, queryMultiAdapter
 from zope.interface import implements
+
+
+class CarouselModifier(object):
+    """ Adds information about list of news as a carousel
+    """
+    implements(ISurfResourceModifier)
+    adapts(IContentish)
+
+    def __init__(self, context):
+        self.context = context
+
+    def run(self, resource, adapter, session, *args, **kwds):
+        """ run """
+        context = self.context
+        ptype = context.portal_type
+        request = self.context.REQUEST
+        if ptype not in ['Collection', 'Topic']:
+            return
+        b_size = request.get('limit_display', 100)
+        qry = queryMultiAdapter((context, request), name='faceted_query')
+        brains = qry.query() if qry else self.context.queryCatalog(batch=True,
+                                                           b_size=b_size)
+        if not brains:
+            return
+        ItemList = session.get_class(surf.ns.SCHEMA['ItemList'])
+        ListElement = session.get_class(surf.ns.SCHEMA['ListItem'])
+        ilist = ItemList("#itemList")
+
+        position = 0
+        for brain in brains:
+            url = brain.getURL()
+            position += 1
+            list_item = ListElement("CarouselListItem" + str(position))
+            list_item.schema_position = position
+            list_item.schema_url = url
+            list_item.update()
+            ilist.schema_itemListElement.append(list_item)
+        ilist.update()
 
 
 class BreadcrumbModifier(object):
@@ -19,33 +59,44 @@ class BreadcrumbModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-
+        """ run """
         parent = self.context
-
         if ILinkedDataHomepage.providedBy(parent):
             return
 
         BreadcrumbList = session.get_class(surf.ns.SCHEMA['BreadcrumbList'])
-        ListItem = session.get_class(surf.ns.SCHEMA['BreadcrumbList'])
+        Item = session.get_class(surf.ns.SCHEMA['Thing'])
+        ListElement = session.get_class(surf.ns.SCHEMA['ListItem'])
+        blist = BreadcrumbList("#breadcrumb")
 
-        blist = BreadcrumbList(self.context.absolute_url() + "#breadcrumb")
-
+        position = 0
         while not ILinkedDataHomepage.providedBy(parent):
             try:
-                parent = parent.aq_parent
-                item = ListItem(parent.absolute_url())
+                if position != 0:
+                    parent = parent.aq_parent
+                url = parent.absolute_url()
+                position += 1
+                list_item = ListElement("BreadCrumbsListItem" + str(position))
+                list_item.schema_position = position
+                item = Item(url + "#breadcrumb")
                 item.schema_name = parent.Title()
-                item.schema_image = Literal(parent.absolute_url()
-                                            + '/image_large')
+                item.schema_image = Literal(url + '/image_large')
+                item.schema_url = url
                 item.update()
-                blist.schema_itemListElement.append(item)
+                list_item.schema_item = item
+                blist.schema_itemListElement.append(list_item)
             except AttributeError:
                 break
-
+        items_len = len(blist.schema_itemListElement)
+        for n, el in enumerate(blist.schema_itemListElement):
+            el.schema_position = Literal(items_len - n)
+            el.update()
         blist.update()
 
 
 def to_literal_list(text):
+    """  to_literal_list
+    """
     if not text:
         return []
 
@@ -53,6 +104,69 @@ def to_literal_list(text):
             for x in text.strip().split('\n')
 
             if x and x.strip()]
+
+
+def get_site(context):
+    """ retrieve site """
+    site = context
+
+    while not ILinkedDataHomepage.providedBy(site):
+        try:
+            site = site.aq_parent
+        except AttributeError:
+            site = None
+            return site
+    return site
+
+
+def get_organisation(session, homepage, org_url):
+    """ retrieve organisation/publisher data """
+    ld = homepage
+    ContactPoint = session.get_class(surf.ns.SCHEMA['ContactPoint'])
+    Organization = session.get_class(surf.ns.SCHEMA['Organization'])
+    Image = session.get_class(surf.ns.SCHEMA['ImageObject'])
+
+    org = Organization(org_url + "#organization")
+    org.schema_name = ld.name
+
+    logo = Image(ld.logo_url + "#logo")
+    logo.schema_url = ld.logo_url
+
+    if hasattr(ld, 'logo_width'):
+        logo.schema_width = Literal(str(ld.logo_width) + 'px')
+        logo.schema_height = Literal(str(ld.logo_height) + 'px')
+
+    if hasattr(ld, 'social_profile_links'):
+        social_links = to_literal_list(ld.social_profile_links)
+        org.schema_sameAs = social_links
+
+    contact_points = getattr(ld, 'contact_points', [])
+
+    for index, info in enumerate(contact_points):
+        tel = info['telephone']
+        contactType = info['contactType']
+
+        langs = to_literal_list(info.get('availableLanguage', ''))
+        contactOption = info.get('contactOption')
+
+        cp = ContactPoint("{0}#contact-point-{1}".format(org_url, index))
+        cp.schema_telephone = tel
+        cp.schema_contactType = contactType
+
+        if langs:
+            cp.schema_availableLanguage = langs
+
+        if contactOption:
+            cp.schema_contactOption = contactOption
+
+        cp.update()
+        org.schema_contactPoint.append(cp)
+
+    org.schema_logo = logo
+
+    logo.update()
+    org.update()
+    return org
 
 
 class OrganizationModifier(object):
@@ -66,66 +180,16 @@ class OrganizationModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-        site = self.context
-
-        while not ILinkedDataHomepage.providedBy(site):
-            try:
-                site = site.aq_parent
-            except AttributeError:
-                site = None
-
-                return
-
+        """ Run """
+        site = get_site(self.context)
+        if not site:
+            return
         org_url = site.absolute_url()
         ld = ILinkedDataHomepageData(site)
 
         if not getattr(ld, 'name', None):     # LD information is not there
             return
-
-        ContactPoint = session.get_class(surf.ns.SCHEMA['ContactPoint'])
-        Organization = session.get_class(surf.ns.SCHEMA['Organization'])
-        Image = session.get_class(surf.ns.SCHEMA['ImageObject'])
-
-        org = Organization(org_url + "#organization")
-        org.schema_name = ld.name
-
-        logo = Image(ld.logo_url + "#logo")
-        logo.schema_url = ld.logo_url
-
-        if hasattr(ld, 'logo_width'):
-            logo.schema_width = Literal(str(ld.logo_width) + 'px')
-            logo.schema_height = Literal(str(ld.logo_height) + 'px')
-
-        if hasattr(ld, 'social_profile_links'):
-            social_links = to_literal_list(ld.social_profile_links)
-            org.schema_sameAs = social_links
-
-        contact_points = getattr(ld, 'contact_points', [])
-
-        for index, info in enumerate(contact_points):
-            tel = info['telephone']
-            contactType = info['contactType']
-
-            langs = to_literal_list(info.get('availableLanguage', ''))
-            contactOption = info.get('contactOption')
-
-            cp = ContactPoint("{0}#contact-point-{1}".format(org_url, index))
-            cp.schema_telephone = tel
-            cp.schema_contactType = contactType
-
-            if langs:
-                cp.schema_availableLanguage = langs
-
-            if contactOption:
-                cp.schema_contactOption = contactOption
-
-            cp.update()
-            org.schema_contactPoint.append(cp)
-
-        org.schema_logo = logo
-
-        logo.update()
-        org.update()
+        org = get_organisation(session, ld, org_url)
 
         resource.schema_publisher = org
         resource.update()
@@ -191,7 +255,7 @@ class DefaultPageModifier(object):
     def run(self, resource, adapter, session, *args, **kwds):
         """ Add LinkedDataHomepage information to rdf """
 
-        view = getMultiAdapter((self.context, self.context.REQUEST),
+        view = queryMultiAdapter((self.context, self.context.REQUEST),
                                name="plone_context_state")
 
         if view.is_view_template():

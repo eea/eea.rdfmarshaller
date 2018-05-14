@@ -1,3 +1,5 @@
+""" text archetypes module
+"""
 import unittest
 
 import lxml.etree
@@ -67,6 +69,7 @@ class TestProgramIntegration(unittest.TestCase):
         self.page.edit(description="")
 
         class DescriptionOverride(ShortenHTMLField2Surf):
+            """ DescriptionOverride """
             alternate_field = 'text'
 
         gsm = getGlobalSiteManager()

@@ -1,8 +1,12 @@
 ==================
 EEA RDF Marshaller
 ==================
-.. image:: http://ci.eionet.europa.eu/job/eea/job/eea.rdfmarshaller/job/master/badge/icon
-  :target: http://ci.eionet.europa.eu/job/eea/job/eea.rdfmarshaller/job/master/display/redirect
+.. image:: https://ci.eionet.europa.eu/buildStatus/icon?job=eea/eea.rdfmarshaller/develop
+  :target: https://ci.eionet.europa.eu/job/eea/job/eea.rdfmarshaller/job/develop/display/redirect
+  :alt: develop
+.. image:: https://ci.eionet.europa.eu/buildStatus/icon?job=eea/eea.rdfmarshaller/master
+  :target: https://ci.eionet.europa.eu/job/eea/job/eea.rdfmarshaller/job/master/display/redirect
+  :alt: master
 
 Export any Archetype content to RDF.
 It provides a few general adaptors for ATContentTypes and ATVocabularyManager.

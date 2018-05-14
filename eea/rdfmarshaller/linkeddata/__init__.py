@@ -1,3 +1,5 @@
+""" LinkedData module
+"""
 import rdflib
 import surf
 from eea.rdfmarshaller.interfaces import ILinkedData, ILinkedDataHomepage
@@ -11,6 +13,7 @@ from zope.interface import implements
 
 
 def schematize(store):
+    """ schematize """
     graph = store.reader.graph
     triples = list(graph)
 
@@ -39,7 +42,7 @@ class GenericLinkedData(object):
         self.context = context
 
     def get_jsonld_context(self):
-
+        """ get_jsonld_context """
         context = {
             surf.ns.SCHEMA['Image']: surf.ns.SCHEMA['ImageObject'],
             surf.ns.SCHEMA['productID']: surf.ns.SCHEMA['about'],
@@ -48,6 +51,7 @@ class GenericLinkedData(object):
         return context
 
     def get_site(self):
+        """ get_site """
         site = portal.get()
         ldsite = self.context
 
@@ -65,6 +69,7 @@ class GenericLinkedData(object):
         return ldsite
 
     def modify(self, obj2surf):
+        """ modify """
         resource = obj2surf.resource
         session = resource.session
 
@@ -72,9 +77,6 @@ class GenericLinkedData(object):
         resource.update()
 
         image = resource.foaf_depiction.first
-
-        if not image:   # image is required by Google Structured Data
-            return
 
         site = self.get_site()
         site_url = site.absolute_url()
@@ -142,7 +144,7 @@ class HomepageLinkedData(GenericLinkedData):
     adapts(ILinkedDataHomepage)
 
     def get_jsonld_context(self):
-
+        """ get_jsonld_context """
         context = {
             surf.ns.SCHEMA['Image']: surf.ns.SCHEMA['ImageObject'],
             surf.ns.SCHEMA['productID']: surf.ns.SCHEMA['about'],
@@ -151,12 +153,12 @@ class HomepageLinkedData(GenericLinkedData):
         return context
 
     def modify(self, obj2surf):
-        print("This is a homepage")
-        pass
+        """ modify """
+        print "This is a homepage"
 
 
 class LinkedDataHomepageData(Persistent):
-
+    """ LinkedDataHomepageData """
     adapts(ILinkedDataHomepage)
     implements(ILinkedDataHomepageData)
 

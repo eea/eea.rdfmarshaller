@@ -26,7 +26,7 @@ class Value2Surf(object):
         try:
             value = (unicode(self.value, 'utf-8', 'replace'), language)
         except TypeError:
-            value = str(self.value)
+            value = (str(self.value), language)
         return value
 
 
