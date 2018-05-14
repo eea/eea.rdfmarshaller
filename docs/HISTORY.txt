@@ -1,6 +1,9 @@
 Changelog
 =========
 
+11.0-dev0 - (unreleased)
+---------------------
+
 10.9 - (2018-05-10)
 ------------------------
 * Feature: added Carousel data export (for Collections and Faceted Navigations)
