@@ -39,7 +39,8 @@ def MultiContentTreeFieldWidget(field, request):
 
 @implementer(IFieldWidget)
 def SingleCheckBoxFieldWidget(field, request):
-    """IFieldWidget factory for CheckBoxWidget."""
+    """ IFieldWidget factory for CheckBoxWidget
+    """
     swidget = SCBFW(field, request)
     site = api.portal.get()
     already_set = ILinkedDataHomepage.providedBy(site)
@@ -78,7 +79,8 @@ class EditLinkedDataHomepagesForm(form.SchemaForm):
     # description = u""
 
     def plone_homepage(self):
-        """Returns the Plone site if it's marked with ILinkedDataHomepage"""
+        """ Returns the Plone site if it's marked with ILinkedDataHomepage
+        """
         site = api.portal.get()
         already_set = ILinkedDataHomepage.providedBy(site)
 
@@ -96,7 +98,8 @@ class EditLinkedDataHomepagesForm(form.SchemaForm):
 
     @button.buttonAndHandler(u'Ok')
     def handleApply(self, action):
-        """ handleApply """
+        """ handleApply
+        """
         data, errors = self.extractData()
 
         if errors:
@@ -140,7 +143,7 @@ class EditLinkedDataHomepagesForm(form.SchemaForm):
 
     @button.buttonAndHandler(u"Cancel")
     def handleCancel(self, action):
-        """User cancelled. Redirect back to the front page.
+        """ User cancelled. Redirect back to the front page.
         """
 
 
