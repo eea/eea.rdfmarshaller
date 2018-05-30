@@ -3,7 +3,7 @@ Changelog
 
 11.0-dev0 - (unreleased)
 ---------------------
-* Bug fix: fixed case in linked data dump when title was empty
+* Bug fix: fixed case in linked data viewlet when title was empty
   [alecghica refs #95891]
 
 10.9 - (2018-05-10)
