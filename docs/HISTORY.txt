@@ -1,7 +1,7 @@
 Changelog
 =========
 
-11.0-dev0 - (unreleased)
+11.0 - (2018-06-05)
 ---------------------
 * Bug fix: fixed case in linked data viewlet when title was empty
   [alecghica refs #95891]
