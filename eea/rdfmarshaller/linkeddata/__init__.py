@@ -87,7 +87,13 @@ class GenericLinkedData(object):
 
         article = Article(base_url + "#article")
         article.schema_mainEntityOfPage = resource.subject
-        article.schema_headline = resource.dcterms_title.first.value
+
+        headline = resource.dcterms_title.first
+        if headline:
+            headline = headline.value
+        else:
+            headline = resource.dcterms_abstract
+        article.schema_headline = headline
 
         published = resource.dcterms_issued.first
         published = published and published or resource.dcterms_created.first
