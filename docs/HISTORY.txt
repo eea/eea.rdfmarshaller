@@ -3,6 +3,8 @@ Changelog
 
 11.1-dev0 - (unreleased)
 ---------------------
+* Change: updated URLs pointing to eea.europa.eu with https://
+  [alecghica refs #95849]
 
 11.0 - (2018-06-05)
 ---------------------
@@ -404,7 +406,7 @@ Changelog
    - select the profile: eea.rdfmarshaller:default
    - upgrade to 5.6
 * Upgrade Step: in
-  http://www.eea.europa.eu/aq_parent/portal_properties/rdfmarshaller_properties
+  https://www.eea.europa.eu/aq_parent/portal_properties/rdfmarshaller_properties
   remove the "provenances" field from the "blacklist" list.
 
 5.5 - (2013-06-17)
