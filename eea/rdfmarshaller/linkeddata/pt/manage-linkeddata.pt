@@ -1,33 +1,36 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="context/main_template/macros/master">
 
-  <body>
+  <body i18n:domain="plone">
 
     <metal:slot metal:fill-slot="header">
-    <h1 tal:content="view/label">View Title</h1>
+      <h1 tal:content="view/label">View Title</h1>
     </metal:slot>
 
-    <metal:slot metal:fill-slot="main">
+    <metal:slot metal:fill-slot="main" i18n:domain="cmf_default">
     <div id="layout-contents">
       <span tal:replace="structure view/contents" />
     </div>
     <div tal:define="brains python:view.form_instance.homepages()">
-      <h4>Manage existing LinkedData Homepages</h4>
-      <div tal:condition="not:brains">No linkeddata homepages</div>
+      <h4 i18n:translate="">Manage existing LinkedData Homepages</h4>
+      <div tal:condition="not:brains" i18n:translate="">No linkeddata homepages</div>
       <ul tal:define="plone_homepage python:view.form_instance.plone_homepage()">
         <li tal:condition="plone_homepage">
-          <span>The Plone site</span>
+          <span i18n:translate="">The Plone site</span>
           (<span tal:content="python:'/'.join(plone_homepage.getPhysicalPath())">Object Path here</span>)
-          <a href="" tal:attributes="href string:${plone_homepage/absolute_url}/@@edit-linkeddata-homepage">Edit</a>
+          <a href="" i18n:translate="" tal:attributes="href string:${plone_homepage/absolute_url}/@@edit-linkeddata-homepage">Edit</a>
         </li>
         <li tal:repeat="brain brains">
           <span tal:content="brain/Title">Object Title here</span>
           (<span tal:content="brain/getPath">Object Path here</span>)
-          <a href="" tal:condition="python:brain.getPath() != '/www/SITE'"
+          <a href=""  i18n:translate=""
+             tal:condition="python:brain.getPath() != '/www/SITE'"
              tal:attributes="href string:${brain/getURL}/@@edit-linkeddata-homepage">Edit</a>
-          <a href="" tal:condition="python:brain.getPath() == '/www/SITE'"
+          <a href=""  i18n:translate=""
+             tal:condition="python:brain.getPath() == '/www/SITE'"
              tal:attributes="href string:${brain/getURL}/edit-linkeddata-homepage">Edit</a>
         </li>
       </ul>
