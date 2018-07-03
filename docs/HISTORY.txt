@@ -2,17 +2,21 @@ Changelog
 =========
 
 11.1-dev0 - (unreleased)
----------------------
+------------------------
 * Change: updated URLs pointing to eea.europa.eu with https://
   [alecghica refs #95849]
+* Bug fix: fixed URL for editing /www/SITE LinkedData Homepage
+  [alecghica refs #96375]
+* Bug fix: expose LinkedData Homepage for multilingual content
+  [alecghica refs #96375]
 
 11.0 - (2018-06-05)
----------------------
+-------------------
 * Bug fix: fixed case in linked data viewlet when title was empty
   [alecghica refs #95891]
 
 10.9 - (2018-05-10)
-------------------------
+-------------------
 * Feature: added Carousel data export (for Collections and Faceted Navigations)
   [ichim-david refs #94557]
 * Change: pylint fixes needed after latest rounds of refactoring
@@ -21,7 +25,7 @@ Changelog
   [ichim-david refs #94557]
 
 10.8 - (2018-04-05)
-------------------------
+-------------------
 * Feature: implemented Linked Data functionality
   [tiberich #92045, #91549, #86484]
 * Bug fix: error on editing content rules.
