@@ -1,13 +1,22 @@
 Changelog
 =========
 
+11.1 - (2018-07-03)
+------------------------
+* Change: updated URLs pointing to eea.europa.eu with https://
+  [alecghica refs #95849]
+* Bug fix: fixed URL for editing /www/SITE LinkedData Homepage
+  [alecghica refs #96375]
+* Bug fix: expose LinkedData Homepage for multilingual content
+  [alecghica refs #96375]
+
 11.0 - (2018-06-05)
----------------------
+-------------------
 * Bug fix: fixed case in linked data viewlet when title was empty
   [alecghica refs #95891]
 
 10.9 - (2018-05-10)
-------------------------
+-------------------
 * Feature: added Carousel data export (for Collections and Faceted Navigations)
   [ichim-david refs #94557]
 * Change: pylint fixes needed after latest rounds of refactoring
@@ -16,7 +25,7 @@ Changelog
   [ichim-david refs #94557]
 
 10.8 - (2018-04-05)
-------------------------
+-------------------
 * Feature: implemented Linked Data functionality
   [tiberich #92045, #91549, #86484]
 * Bug fix: error on editing content rules.
@@ -401,7 +410,7 @@ Changelog
    - select the profile: eea.rdfmarshaller:default
    - upgrade to 5.6
 * Upgrade Step: in
-  http://www.eea.europa.eu/aq_parent/portal_properties/rdfmarshaller_properties
+  https://www.eea.europa.eu/aq_parent/portal_properties/rdfmarshaller_properties
   remove the "provenances" field from the "blacklist" list.
 
 5.5 - (2013-06-17)

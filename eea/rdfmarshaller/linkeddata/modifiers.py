@@ -20,7 +20,8 @@ class CarouselModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-        """ run """
+        """ Run
+        """
         context = self.context
         ptype = context.portal_type
         request = self.context.REQUEST
@@ -59,7 +60,8 @@ class BreadcrumbModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-        """ run """
+        """ Run
+        """
         parent = self.context
         if ILinkedDataHomepage.providedBy(parent):
             return
@@ -95,7 +97,7 @@ class BreadcrumbModifier(object):
 
 
 def to_literal_list(text):
-    """  to_literal_list
+    """  To literal list
     """
     if not text:
         return []
@@ -107,7 +109,8 @@ def to_literal_list(text):
 
 
 def get_site(context):
-    """ retrieve site """
+    """ Retrieve site
+    """
     site = context
 
     while not ILinkedDataHomepage.providedBy(site):
@@ -120,7 +123,8 @@ def get_site(context):
 
 
 def get_organisation(session, homepage, org_url):
-    """ retrieve organisation/publisher data """
+    """ Retrieve organisation/publisher data
+    """
     ld = homepage
     ContactPoint = session.get_class(surf.ns.SCHEMA['ContactPoint'])
     Organization = session.get_class(surf.ns.SCHEMA['Organization'])
@@ -180,7 +184,8 @@ class OrganizationModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-        """ Run """
+        """ Run
+        """
         site = get_site(self.context)
         if not site:
             return
@@ -206,7 +211,8 @@ class HomepageModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-        """ Add LinkedDataHomepage information to rdf """
+        """ Add LinkedDataHomepage information to rdf
+        """
 
         SearchAction = session.get_class(surf.ns.SCHEMA['SearchAction'])
 
@@ -253,7 +259,8 @@ class DefaultPageModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-        """ Add LinkedDataHomepage information to rdf """
+        """ Add LinkedDataHomepage information to rdf
+        """
 
         view = queryMultiAdapter((self.context, self.context.REQUEST),
                                name="plone_context_state")

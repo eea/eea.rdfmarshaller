@@ -6,8 +6,8 @@
 
   <body i18n:domain="plone">
 
-    <metal:slot metal:fill-slot="header" i18n:domain="cmf_default">
-    <h1 tal:content="view/label">View Title</h1>
+    <metal:slot metal:fill-slot="header">
+      <h1 tal:content="view/label">View Title</h1>
     </metal:slot>
 
     <metal:slot metal:fill-slot="main" i18n:domain="cmf_default">
@@ -26,7 +26,12 @@
         <li tal:repeat="brain brains">
           <span tal:content="brain/Title">Object Title here</span>
           (<span tal:content="brain/getPath">Object Path here</span>)
-          <a href="" i18n:translate="" tal:attributes="href string:${brain/getURL}/@@edit-linkeddata-homepage">Edit</a>
+          <a href=""  i18n:translate=""
+             tal:condition="python:brain.getPath() != '/www/SITE'"
+             tal:attributes="href string:${brain/getURL}/@@edit-linkeddata-homepage">Edit</a>
+          <a href=""  i18n:translate=""
+             tal:condition="python:brain.getPath() == '/www/SITE'"
+             tal:attributes="href string:${brain/getURL}/edit-linkeddata-homepage">Edit</a>
         </li>
       </ul>
     </div>

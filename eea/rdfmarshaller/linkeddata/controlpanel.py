@@ -92,7 +92,9 @@ class EditLinkedDataHomepagesForm(form.SchemaForm):
         """
         catalog = api.portal.get_tool('portal_catalog')
         brains = catalog.searchResults(
-            object_provides=ILinkedDataHomepage.__identifier__)
+            object_provides=ILinkedDataHomepage.__identifier__,
+            show_inactive=True,
+            Language='all')
 
         return brains
 
