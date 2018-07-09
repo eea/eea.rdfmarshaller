@@ -1,5 +1,6 @@
 """ Viewlets Module
 """
+import logging
 from eea.rdfmarshaller.interfaces import ILinkedData
 from plone.app.layout.viewlets import ViewletBase
 from Products.Marshall.registry import getComponent
@@ -9,6 +10,8 @@ try:
 except ImportError:
     from plone.memoize.ram import cache
 
+
+logger = logging.getLogger('eea.rdfmarshaller')
 
 def get_key(function, viewlet):
     """ get_key """
@@ -32,9 +35,12 @@ class LinkedDataExportViewlet(ViewletBase):
 %s
 </script>"""
 
-        data = ILinkedData(self.context).serialize(obj2surf)
+        try:
+            data = ILinkedData(self.context).serialize(obj2surf)
+        except AssertionError, err:
+            logger.exception(err)
+            return ""
+
         data = data.decode('utf-8')
-
         res = tpl % data
-
         return res

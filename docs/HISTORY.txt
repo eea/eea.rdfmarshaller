@@ -3,6 +3,8 @@ Changelog
 
 11.2-dev0 - (unreleased)
 ---------------------
+* Bug fix: fixed linked-data-export viewlet exception
+  [alecghica refs #96997]
 
 11.1 - (2018-07-03)
 ------------------------
