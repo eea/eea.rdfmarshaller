@@ -1,16 +1,18 @@
-""" Export module """
-
+""" Export module
+"""
 import os
-
+import logging
 from eea.rdfmarshaller.interfaces import ILinkedData
 from Products.Marshall.registry import getComponent
 from unidecode import unidecode
+
 
 try:
     LIMIT = int(os.environ.get("RDF_UNICODE_LIMIT", 65535))
 except Exception:
     LIMIT = 65535   # Refs #83543 - Default: 0xFFFF, 2^16, 16-bit
 
+logger = logging.getLogger('eea.rdfmarshaller')
 
 class RDFExport(object):
     """ RDF Export """
@@ -47,7 +49,12 @@ class RDFExport(object):
     def __call__(self):
         marshaller = getComponent('surfrdf')
         endLevel = int(self.request.get('endLevel', 1))
-        res = marshaller.marshall(self.context, endLevel=endLevel)
+
+        try:
+            res = marshaller.marshall(self.context, endLevel=endLevel)
+        except AssertionError, err:
+            logger.exception(err)
+            return ""
 
         if not res:
             return ""
