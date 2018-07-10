@@ -5,6 +5,8 @@ Changelog
 ---------------------
 * Bug fix: fixed linked-data-export viewlet exception
   [alecghica refs #96997]
+* Bug fix: fixed rdflib.graph in _assertnode error 
+  [alecghica refs #96997]
 
 11.1 - (2018-07-03)
 ------------------------

@@ -26,7 +26,11 @@ class LinkedDataExportViewlet(ViewletBase):
     def render(self):
         """ render """
         marshaller = getComponent('surfrdf')
-        obj2surf = marshaller._add_content(self.context)
+        try:
+            obj2surf = marshaller._add_content(self.context)
+        except AssertionError, err:
+            logger.exception(err)
+            return ""
 
         if obj2surf is None:
             return ""
