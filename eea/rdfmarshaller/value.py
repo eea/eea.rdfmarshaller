@@ -96,7 +96,7 @@ class String2Surf(Value2Surf):
             value = self.value.decode('utf-8', 'replace')
         else:
             try:
-                value = self.value.decode(encoding)
+                value = self.value.decode('utf-8')
             except (LookupError, UnicodeDecodeError):
                 log.log("Could not decode to %s in rdfmarshaller" %
                         encoding)
