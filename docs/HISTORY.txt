@@ -1,6 +1,9 @@
 Changelog
 =========
 
+11.5-dev0 - (unreleased)
+---------------------
+
 11.4 - (2018-12-21)
 ---------------------
 * Change: use utf-8 for any archetypes field which avoids
