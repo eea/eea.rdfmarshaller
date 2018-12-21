@@ -1,7 +1,7 @@
 Changelog
 =========
 
-11.4 - (unreleased)
+11.4 - (2018-12-21)
 ---------------------
 * Change: use utf-8 for any archetypes field which avoids
   long dash tranformation when exporting to rdf and field has
