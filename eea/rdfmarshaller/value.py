@@ -88,7 +88,8 @@ class String2Surf(Value2Surf):
             return None
         nonEUencodings = ['Big5', 'GB2312', 'EUC-TW', 'HZ-GB-2312',
                           'ISO-2022-CN', 'EUC-JP', 'SHIFT_JIS', 'ISO-2022-JP',
-                          'EUC-KR', 'ISO-2022-KR', 'TIS-620', 'ISO-8859-2']
+                          'EUC-KR', 'ISO-2022-KR', 'TIS-620', 'ISO-8859-2',
+                          'Windows-1252']
         language = kwds['language']
         encoding = detect(self.value)['encoding']
 
@@ -96,7 +97,7 @@ class String2Surf(Value2Surf):
             value = self.value.decode('utf-8', 'replace')
         else:
             try:
-                value = self.value.decode('utf-8')
+                value = self.value.decode(encoding)
             except (LookupError, UnicodeDecodeError):
                 log.log("Could not decode to %s in rdfmarshaller" %
                         encoding)
