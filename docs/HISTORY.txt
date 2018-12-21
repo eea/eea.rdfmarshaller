@@ -1,6 +1,13 @@
 Changelog
 =========
 
+11.4 - (unreleased)
+---------------------
+* Change: use utf-8 for any archetypes field which avoids
+  long dash tranformation when exporting to rdf and field has
+  Windows-1252 encoding
+  [ichim-david refs #100868]
+
 11.3 - (2018-12-19)
 ---------------------
 * Bug fix: use utf-8 for any archetypes field which avoids
