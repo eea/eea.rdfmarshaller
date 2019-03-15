@@ -1,11 +1,9 @@
 """ RDF Marshaller ping action
 """
 import logging
-import socket
 import pytz
 import urllib
 import lxml.etree
-from random import randint
 from eventlet.green import urllib2
 from datetime import datetime, timedelta
 from zope import schema
