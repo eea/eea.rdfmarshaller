@@ -3,6 +3,8 @@ Changelog
 
 11.6-dev0 - (unreleased)
 ---------------------
+* Feature: configured the PingCR async jobs to retry on failure
+  [alecghica refs #103659]
 
 11.5 - (2019-01-28)
 ---------------------

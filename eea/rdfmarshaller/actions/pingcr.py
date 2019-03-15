@@ -1,9 +1,13 @@
 """ RDF Marshaller ping action
 """
 import logging
+import socket
+import pytz
 import urllib
 import lxml.etree
+from random import randint
 from eventlet.green import urllib2
+from datetime import datetime, timedelta
 from zope import schema
 from zope.interface import implements, Interface
 from zope.component import adapts, queryUtility, ComponentLookupError
@@ -276,6 +280,7 @@ def ping_CRSDS(context, options):
             ping_response = ping_con.read()
             ping_con.close()
             response = lxml.etree.fromstring(ping_response)
+
             try:
                 message = response.find("message").text
                 logger.info(
@@ -285,26 +290,27 @@ def ping_CRSDS(context, options):
                     message)
             except AttributeError:
                 message = 'no message'
-                logger.info(
-                    "Pinging %s for object %s failed without message",
-                    options['service_to_ping'],
-                    options['obj_url'])
+
             if (not options['create']) and \
                'URL not in catalogue of sources' in message:
-                logger.info("Retry ping with create=true")
+                #Retry ping with create=true
                 options['create'] = True
                 continue
-        except urllib2.HTTPError, err:
-            logger.info(
-                "Pinging %s for object %s failed with message: %s",
-                options['service_to_ping'],
-                options['obj_url'],
-                err.msg)
-        except urllib2.URLError, err:
-            logger.info(
-                "Pinging %s for object %s failed with message: %s",
-                options['service_to_ping'],
-                options['obj_url'],
-                err.reason)
+        except Exception, err:
+            # re-schedule PING on error
+            schedule = datetime.now(pytz.UTC) + timedelta(hours=4)
+            async_service = queryUtility(IAsyncService)
+            queue = async_service.getQueues()['']
+            async_service.queueJobInQueueWithDelay(
+                None, schedule, queue, ('rdf',), 
+                ping_CRSDS, context, options
+            )
+
+            # mark the original job as failed
+            return "Ping re-sceduled as pinging %s for object %s failed. "\
+                   "Reason: %s " % (
+                       options['service_to_ping'],
+                       options['obj_url'],
+                       str(err))
 
         break
