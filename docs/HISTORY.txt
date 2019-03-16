@@ -1,6 +1,9 @@
 Changelog
 =========
 
+11.7-dev0 - (unreleased)
+---------------------
+
 11.6 - (2019-03-15)
 ---------------------
 * Feature: configured the PingCR async jobs to retry on failure
