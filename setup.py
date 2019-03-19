@@ -49,6 +49,7 @@ setup(name=name,
           'rdflib_jsonld>=0.4.0',
           'collective.z3cform.datagridfield',
           'plone.formwidget.contenttree',
+          'eea.rabbitmq.client',
       ],
       extras_require={
           'test': [
