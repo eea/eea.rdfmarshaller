@@ -305,7 +305,7 @@ def ping_CRSDS(context, options):
             )
 
             # mark the original job as failed
-            return "Ping re-sceduled as pinging %s for object %s failed. "\
+            return "Ping re-scheduled as pinging %s for object %s failed. "\
                    "Reason: %s " % (
                        options['service_to_ping'],
                        options['obj_url'],
