@@ -13,7 +13,8 @@ from zope.interface import implements
 
 
 def schematize(store):
-    """ schematize """
+    """ Schematize
+    """
     graph = store.reader.graph
     triples = list(graph)
 
@@ -33,7 +34,8 @@ def schematize(store):
 
 
 class GenericLinkedData(object):
-    """ Generic ILinkedData implemention """
+    """ Generic ILinkedData implemention
+    """
 
     implements(ILinkedData)
     adapts(IContentish)
@@ -42,7 +44,8 @@ class GenericLinkedData(object):
         self.context = context
 
     def get_jsonld_context(self):
-        """ get_jsonld_context """
+        """ Get jsonld context
+        """
         context = {
             surf.ns.SCHEMA['Image']: surf.ns.SCHEMA['ImageObject'],
             surf.ns.SCHEMA['productID']: surf.ns.SCHEMA['about'],
@@ -51,7 +54,8 @@ class GenericLinkedData(object):
         return context
 
     def get_site(self):
-        """ get_site """
+        """ Get site
+        """
         site = portal.get()
         ldsite = self.context
 
@@ -69,7 +73,8 @@ class GenericLinkedData(object):
         return ldsite
 
     def modify(self, obj2surf):
-        """ modify """
+        """ Modify
+        """
         resource = obj2surf.resource
         session = resource.session
 
@@ -131,7 +136,8 @@ class GenericLinkedData(object):
         article.update()
 
     def serialize(self, obj2surf):
-        """ Folder to Surf """
+        """ Folder to Surf
+        """
 
         self.modify(obj2surf)
 
@@ -145,12 +151,14 @@ class GenericLinkedData(object):
 
 
 class HomepageLinkedData(GenericLinkedData):
-    """ ILinkedData implemention for homepages """
+    """ ILinkedData implemention for homepages
+    """
 
     adapts(ILinkedDataHomepage)
 
     def get_jsonld_context(self):
-        """ get_jsonld_context """
+        """ Get jsonld context
+        """
         context = {
             surf.ns.SCHEMA['Image']: surf.ns.SCHEMA['ImageObject'],
             surf.ns.SCHEMA['productID']: surf.ns.SCHEMA['about'],
@@ -159,12 +167,14 @@ class HomepageLinkedData(GenericLinkedData):
         return context
 
     def modify(self, obj2surf):
-        """ modify """
+        """ Modify
+        """
         print "This is a homepage"
 
 
 class LinkedDataHomepageData(Persistent):
-    """ LinkedDataHomepageData """
+    """ LinkedDataHomepageData
+    """
     adapts(ILinkedDataHomepage)
     implements(ILinkedDataHomepageData)
 

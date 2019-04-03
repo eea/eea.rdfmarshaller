@@ -3,7 +3,6 @@
 
 import re
 import sys
-
 import rdflib
 from Acquisition import aq_inner
 from eea.rdfmarshaller.archetypes.interfaces import IATField2Surf
@@ -12,8 +11,8 @@ from Products.Archetypes.interfaces import IBaseContent, IBaseObject
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone import log
-from zope.component import (adapts, getMultiAdapter, queryAdapter,
-                            queryMultiAdapter)
+from zope.component import adapts, getMultiAdapter, queryAdapter
+from zope.component import queryMultiAdapter
 from zope.interface import implements, providedBy
 
 ILLEGAL_XML_CHARS_PATTERN = re.compile(
@@ -31,7 +30,8 @@ class FieldsModifier(object):
         self.context = context
 
     def run(self, resource, adapter, session, *args, **kwds):
-        """ modifier run method """
+        """ Modifier run method
+        """
         language = self.context.Language()
 
         for field in self.context.Schema().fields():
@@ -93,7 +93,7 @@ class FieldsModifier(object):
 
 
 class IsPartOfModifier(object):
-    """Adds dcterms_isPartOf information to rdf resources
+    """ Adds dcterms_isPartOf information to rdf resources
     """
 
     implements(ISurfResourceModifier)
@@ -103,7 +103,7 @@ class IsPartOfModifier(object):
         self.context = context
 
     def run(self, resource, *args, **kwds):
-        """Change the rdf resource
+        """ Change the rdf resource
         """
         parent = getattr(aq_inner(self.context), 'aq_parent', None)
         wftool = getToolByName(self.context, 'portal_workflow')
@@ -122,7 +122,7 @@ class IsPartOfModifier(object):
 
 
 class TranslationInfoModifier(object):
-    """Adds translation info
+    """ Adds translation info
     """
 
     implements(ISurfResourceModifier)
@@ -132,9 +132,8 @@ class TranslationInfoModifier(object):
         self.context = context
 
     def run(self, resource, *args, **kwds):
-        """Change the rdf resource
+        """ Change the rdf resource
         """
-
         context = self.context
 
         # ZZZ: should watch for availability of Products.LinguaPlone
@@ -153,7 +152,7 @@ class TranslationInfoModifier(object):
 
 
 class ProvidedInterfacesModifier(object):
-    """Adds information about provided interfaces
+    """ Adds information about provided interfaces
     """
 
     implements(ISurfResourceModifier)
@@ -163,7 +162,7 @@ class ProvidedInterfacesModifier(object):
         self.context = context
 
     def run(self, resource, *args, **kwds):
-        """Change the rdf resource
+        """ Change the rdf resource
         """
         provides = ["%s.%s" % (iface.__module__ or '', iface.__name__)
                     for iface in providedBy(self.context)]
@@ -172,7 +171,7 @@ class ProvidedInterfacesModifier(object):
 
 
 class SearchableTextInModifier(object):
-    """Adds searchable text info
+    """ Adds searchable text info
     """
 
     implements(ISurfResourceModifier)
@@ -182,15 +181,14 @@ class SearchableTextInModifier(object):
         self.context = context
 
     def run(self, resource, *args, **kwds):
-        """Change the rdf resource
+        """ Change the rdf resource
         """
-
         resource.dcterms_abstract = ILLEGAL_XML_CHARS_PATTERN.sub(
             '', self.context.SearchableText())
 
 
 class RelatedItemsModifier(object):
-    """Adds dcterms:references
+    """ Adds dcterms:references
     """
 
     implements(ISurfResourceModifier)
@@ -200,9 +198,8 @@ class RelatedItemsModifier(object):
         self.context = context
 
     def run(self, resource, *args, **kwds):
-        """Change the rdf resource
+        """ Change the rdf resource
         """
-
         if not getattr(self.context, 'getRelatedItems', None):
             return
 
