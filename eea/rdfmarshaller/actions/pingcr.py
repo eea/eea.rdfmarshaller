@@ -117,6 +117,8 @@ class PingCRActionExecutor(object):
 
             # Use RabbitMQ if available
             if self.rabbit_config:
+                options['create'] = 'create' if options.get(
+                    'create', False) else 'update'
                 return ping_RabbitMQ(self.rabbit_config, options)
 
             # Use zc.async if available
