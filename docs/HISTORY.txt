@@ -3,9 +3,11 @@ Changelog
 
 12.0 - (2019-03-20)
 -------------------
+* Upgrade step: Within "Plone > Site setup > Add-ons" click on
+  upgrade button available for eea.rdfmarshaller
+  [avoinea refs #102083]
 * Feature: Ping semantic Content Registry via RabbitMQ message broker
-  instead of zc.async if RABBITMQ_HOST, RABBITMQ_USER, RABBITMQ_PASS
-  environment variables are provided
+  instead of zc.async if RabbitMQ is configured via eea.rabbitmq.plone
   [avoinea refs #102083]
 
 11.6 - (2019-03-15)
@@ -35,7 +37,7 @@ Changelog
 ---------------------
 * Bug fix: fixed linked-data-export viewlet exception
   [alecghica refs #96997]
-* Bug fix: fixed rdflib.graph in _assertnode error 
+* Bug fix: fixed rdflib.graph in _assertnode error
   [alecghica refs #96997]
 
 11.1 - (2018-07-03)

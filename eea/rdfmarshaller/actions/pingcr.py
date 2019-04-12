@@ -2,7 +2,6 @@
 """
 import logging
 import pytz
-import os
 import urllib
 import lxml.etree
 from eventlet.green import urllib2
@@ -24,7 +23,8 @@ except ImportError:
     hasLinguaPloneInstalled = False
 from plone.app.contentrules.browser.formhelper import AddForm, EditForm
 from plone.contentrules.rule.interfaces import IExecutable, IRuleElementData
-from eea.rabbitmq.client import RabbitMQConnector
+from eea.rabbitmq.plone.rabbitmq import get_rabbitmq_client_settings
+from eea.rabbitmq.plone.rabbitmq import queue_msg
 from eea.rdfmarshaller.async import IAsyncService
 from eea.rdfmarshaller.actions.interfaces import IObjectMovedOrRenamedEvent
 try:
@@ -33,13 +33,7 @@ try:
 except ImportError:
     hasVersionsInstalled = False
 
-
 logger = logging.getLogger("eea.rdfmarshaller")
-rabbitmq_host = os.environ.get('RABBITMQ_HOST', '')
-rabbitmq_port = os.environ.get('RABBITMQ_PORT', '')
-rabbitmq_user = os.environ.get('RABBITMQ_USER', '')
-rabbitmq_pass = os.environ.get('RABBITMQ_PASS', '')
-rabbitmq_queue = os.environ.get("RABBITMQ_QUEUE", "sds_queue")
 
 
 class IPingCRAction(Interface):
@@ -83,21 +77,10 @@ class PingCRActionExecutor(object):
         if self._rabbit_config is not None:
             return self._rabbit_config
 
-        if not rabbitmq_host:
-            self._rabbit_config = {}
-            return self._rabbit_config
-
         try:
-            port = int(rabbitmq_port or 5672)
+            self._rabbit_config = get_rabbitmq_client_settings()
         except Exception:
-            port = 5672
-
-        self._rabbit_config = {
-            "rabbit_host": rabbitmq_host,
-            "rabbit_port": port,
-            "rabbit_username": rabbitmq_user,
-            "rabbit_password": rabbitmq_pass
-        }
+            self._rabbit_config = {}
         return self._rabbit_config
 
     def __call__(self):
@@ -119,7 +102,7 @@ class PingCRActionExecutor(object):
             if self.rabbit_config:
                 options['create'] = 'create' if options.get(
                     'create', False) else 'update'
-                return ping_RabbitMQ(self.rabbit_config, options)
+                return ping_RabbitMQ(options)
 
             # Use zc.async if available
             if async_service is None:
@@ -298,20 +281,15 @@ class PingCRView(BrowserView):
         ping_CRSDS(context, options)
 
 
-def ping_RabbitMQ(config, options):
+def ping_RabbitMQ(options):
     """ Ping the CR/SDS service via RabbitMQ
     """
-    body = "{create}|{service_to_ping}|{obj_url}".format(**options)
-    rabbit = RabbitMQConnector(**config)
-    rabbit.open_connection()
+    msg = "{create}|{service_to_ping}|{obj_url}".format(**options)
     try:
-        rabbit.declare_queue(rabbitmq_queue)
-        rabbit.send_message(rabbitmq_queue, body)
+        queue_msg(msg, queue="sds_queue")
     except Exception as err:
-        logger.error('Sending \'%s\' in \'%s\' FAILED with error: %s',
-            body, rabbitmq_queue, err)
-    finally:
-        rabbit.close_connection()
+        logger.error("Sending '%s' in 'sds_queue' FAILED: %s", msg, err)
+
 
 def ping_CRSDS(context, options):
     """ Ping the CR/SDS service via zc.async
@@ -355,7 +333,7 @@ def ping_CRSDS(context, options):
             async_service = queryUtility(IAsyncService)
             queue = async_service.getQueues()['']
             async_service.queueJobInQueueWithDelay(
-                None, schedule, queue, ('rdf',), 
+                None, schedule, queue, ('rdf',),
                 ping_CRSDS, context, options
             )
 
