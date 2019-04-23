@@ -23,6 +23,8 @@ except ImportError:
     hasLinguaPloneInstalled = False
 from plone.app.contentrules.browser.formhelper import AddForm, EditForm
 from plone.contentrules.rule.interfaces import IExecutable, IRuleElementData
+from eea.rabbitmq.plone.rabbitmq import get_rabbitmq_client_settings
+from eea.rabbitmq.plone.rabbitmq import queue_msg
 from eea.rdfmarshaller.async import IAsyncService
 from eea.rdfmarshaller.actions.interfaces import IObjectMovedOrRenamedEvent
 try:
@@ -30,7 +32,6 @@ try:
     hasVersionsInstalled = True
 except ImportError:
     hasVersionsInstalled = False
-
 
 logger = logging.getLogger("eea.rdfmarshaller")
 
@@ -67,6 +68,20 @@ class PingCRActionExecutor(object):
         self.context = context
         self.element = element
         self.event = event
+        self._rabbit_config = None
+
+    @property
+    def rabbit_config(self):
+        """ RabbitMQ Config
+        """
+        if self._rabbit_config is not None:
+            return self._rabbit_config
+
+        try:
+            self._rabbit_config = get_rabbitmq_client_settings()
+        except Exception:
+            self._rabbit_config = {}
+        return self._rabbit_config
 
     def __call__(self):
         event = self.event
@@ -78,14 +93,22 @@ class PingCRActionExecutor(object):
         def pingCRSDS(service_to_ping, obj_url, create):
             """ Ping the CR/SDS service
             """
-            if async_service is None:
-                logger.warn("Can't pingCRSDS, plone.app.async not installed!")
-                return
-
             options = {}
             options['service_to_ping'] = service_to_ping
             options['obj_url'] = self.sanitize_url(obj_url)
             options['create'] = create
+
+            # Use RabbitMQ if available
+            if self.rabbit_config:
+                options['create'] = 'create' if options.get(
+                    'create', False) else 'update'
+                return ping_RabbitMQ(options)
+
+            # Use zc.async if available
+            if async_service is None:
+                logger.warn("Can't pingCRSDS, plone.app.async not installed!")
+                return
+
             queue = async_service.getQueues()['']
             try:
                 async_service.queueJobInQueue(
@@ -258,8 +281,18 @@ class PingCRView(BrowserView):
         ping_CRSDS(context, options)
 
 
+def ping_RabbitMQ(options):
+    """ Ping the CR/SDS service via RabbitMQ
+    """
+    msg = "{create}|{service_to_ping}|{obj_url}".format(**options)
+    try:
+        queue_msg(msg, queue="sds_queue")
+    except Exception as err:
+        logger.error("Sending '%s' in 'sds_queue' FAILED: %s", msg, err)
+
+
 def ping_CRSDS(context, options):
-    """ Ping the CR/SDS service
+    """ Ping the CR/SDS service via zc.async
     """
     while True:
         try:
@@ -300,12 +333,12 @@ def ping_CRSDS(context, options):
             async_service = queryUtility(IAsyncService)
             queue = async_service.getQueues()['']
             async_service.queueJobInQueueWithDelay(
-                None, schedule, queue, ('rdf',), 
+                None, schedule, queue, ('rdf',),
                 ping_CRSDS, context, options
             )
 
             # mark the original job as failed
-            return "Ping re-sceduled as pinging %s for object %s failed. "\
+            return "Ping re-scheduled as pinging %s for object %s failed. "\
                    "Reason: %s " % (
                        options['service_to_ping'],
                        options['obj_url'],

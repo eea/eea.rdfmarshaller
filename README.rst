@@ -31,6 +31,27 @@ Getting started
 
 See `marshaller.txt <https://github.com/eea/eea.rdfmarshaller/blob/master/eea/rdfmarshaller/marshall.txt>`_
 
+Updating Semantic Content-Registry
+==================================
+This add-on defines a Plone custom Content rule action called **Ping CR**.
+Thus, within **Site Setup > Content Rules** one can define custom content rules that will trigger the **Ping CR** action.
+This is an asynchronous action, thus it can be handled:
+
+Externally via RabbitMQ
+-----------------------
+Just provide the **RABBITMQ_** environment variables:
+
+* **RABBITMQ_HOST** - RabbitMQ domain name. e.g.: **RABBITMQ_HOST=rabbitmq.apps.eea.europa.eu**
+* **RABBITMQ_PORT** - Connect to RabbitMQ on this port. e.g.: **RABBITMQ_PORT=5672**
+* **RABBITMQ_USER** - Username to be used to connect to RabbitMQ. e.g.: **RABBITMQ_USER=client**
+* **RABBITMQ_PASS** - Password to be used to connect to RabbitMQ. e.g.: **RABBITMQ_PASS=secret**
+
+Internally via zc.async
+-----------------------
+* Make sure you have **plone.app.async** (preferably **eea.async.manager**) installed and properly configured.
+  See https://pypi.org/project/plone.app.async/#installation
+* If you're using **Docker** and **eeacms/kgs**, to start a **zc.async** instance, just use **ZOPE_MODE=zeo_async**
+
 Source code
 ===========
 
