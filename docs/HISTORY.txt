@@ -3,6 +3,9 @@ Changelog
 
 12.1-dev0 - (unreleased)
 ---------------------
+* Change: render linkeddata viewlet only if we are on the view template where
+  we really need it
+  [ichim-david refs #107760]
 
 12.0 - (2019-03-20)
 -------------------

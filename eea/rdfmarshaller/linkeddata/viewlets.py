@@ -4,6 +4,7 @@ import logging
 from eea.rdfmarshaller.interfaces import ILinkedData
 from plone.app.layout.viewlets import ViewletBase
 from Products.Marshall.registry import getComponent
+from zope.component import getMultiAdapter
 
 try:
     from eea.cache import cache
@@ -12,6 +13,7 @@ except ImportError:
 
 
 logger = logging.getLogger('eea.rdfmarshaller')
+
 
 def get_key(function, viewlet):
     """ get_key """
@@ -23,8 +25,8 @@ class LinkedDataExportViewlet(ViewletBase):
     """
 
     @cache(get_key)
-    def render(self):
-        """ render """
+    def render_viewlet(self):
+        """ render viewlet """
         marshaller = getComponent('surfrdf')
         try:
             obj2surf = marshaller._add_content(self.context)
@@ -48,3 +50,15 @@ class LinkedDataExportViewlet(ViewletBase):
         data = data.decode('utf-8')
         res = tpl % data
         return res
+
+    def render(self):
+        """ render """
+        return self.render_viewlet() if self.available() else ""
+
+    def available(self):
+        """ Method that enables the viewlet only if we are on a
+            view template
+        """
+        plone = getMultiAdapter((self.context, self.request),
+                                name=u'plone_context_state')
+        return plone.is_view_template()
