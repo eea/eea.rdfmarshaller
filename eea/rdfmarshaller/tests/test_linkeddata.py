@@ -26,12 +26,16 @@ class TestLinkedDataIntegration(unittest.TestCase):
         self.page = self.portal['test-page']
         self.page.edit(title="Test title", description="Test description")
 
+        # Cheat condition @@plone_context_state/is_view_template
+        self.page.REQUEST['ACTUAL_URL'] = self.page.absolute_url()
+
         loadMigrationProfile(self.portal, 'profile-eea.rdfmarshaller:default')
 
     def test_linkeddata_viewlet(self):
         """ test linkeddata modifiers """
 
         # TEST linkeddata viewlet rendering
+
         page = self.portal['test-page']()
         assert """<script data-diazo-keep='true' type="application/ld+json">"""\
                in page
@@ -117,6 +121,8 @@ class TestLinkedDataIntegration(unittest.TestCase):
         collection = portal['collection']
         results = collection.results(batch=False)
 
+        # Cheat condition @@plone_context_state/is_view_template
+        collection.REQUEST['ACTUAL_URL'] = collection.absolute_url()
         view = collection()
         ritem0 = results[0]
         assert ritem0.absolute_url() in view
