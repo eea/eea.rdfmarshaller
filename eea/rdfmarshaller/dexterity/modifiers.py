@@ -1,13 +1,16 @@
 """ Modifiers """
 import re
 import sys
+
+from zope.component import adapts
+from zope.interface import implements, providedBy
+
 import rdflib
+from eea.rdfmarshaller.interfaces import ISurfResourceModifier
+from plone.dexterity.interfaces import IDexterityContent
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import log
-from zope.component import adapts
-from zope.interface import implements, providedBy
-from plone.dexterity.interfaces import IDexterityContent
 
 try:
     from plone.app.multilingual.interfaces import ITranslationManager
@@ -15,7 +18,6 @@ try:
 except ImportError:
     has_plone_multilingual = False
 
-from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 
 ILLEGAL_XML_CHARS_PATTERN = re.compile(
     u'[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]'
@@ -42,11 +44,13 @@ class WorkflowStateModifier(object):
         workflowTool = getToolByName(self.context, "portal_workflow")
         wfs = workflowTool.getWorkflowsFor(self.context)
         wf = None
+
         for wf in wfs:
             if wf.isInfoSupported(self.context, "portal_workflow"):
                 break
 
         status = workflowTool.getInfoFor(self.context, "review_state", None)
+
         if status is not None:
             status = ''.join([portal_url,
                               "/portal_workflow/",
@@ -62,6 +66,7 @@ class WorkflowStateModifier(object):
                         (self.context.absolute_url(),
                          sys.exc_info()[0], sys.exc_info()[1]),
                         severity=log.logging.WARN)
+
         return resource
 
 
@@ -81,6 +86,7 @@ class IsPartOfModifier(object):
         """
         parent = self.context.getParentNode()
         wftool = getToolByName(self.context, 'portal_workflow')
+
         if parent is not None:
             try:
                 state = wftool.getInfoFor(parent, 'review_state')
@@ -109,13 +115,14 @@ class TranslationInfoModifier(object):
         context = self.context
 
         # ZZZ: should watch for availability of plone.app.multilingual
+
         if has_plone_multilingual:
-            translations = ITranslationManager(
-                context).get_translated_languages()
+            tm = ITranslationManager(context)
+            translations = tm.get_translated_languages()
 
             if translations:
-                translations_objs = [ITranslationManager.get_translation(o)
-                                     for o in translations]
+                translations_objs = filter(None, [tm.get_translation(o)
+                                      for o in translations])
                 resource.eea_hasTranslation = \
                     [rdflib.URIRef(o.absolute_url()) for o in translations_objs
                      if o.absolute_url() != context.absolute_url()]
@@ -124,6 +131,7 @@ class TranslationInfoModifier(object):
                     rdflib.URIRef(context.absolute_url())
         else:
             resource.eea_hasTranslation = ['No Translation']
+
             return
 
 
@@ -140,6 +148,7 @@ class ProvidedInterfacesModifier(object):
     def run(self, resource, *args, **kwds):
         """Change the rdf resource
         """
+
         provides = ["%s.%s" % (iface.__module__ or '', iface.__name__)
                     for iface in providedBy(self.context)]
         resource.eea_objectProvides = provides
@@ -180,6 +189,7 @@ class RelatedItemsModifier(object):
 
         resource.dcterms_references = [
             rdflib.URIRef(o.to_object.absolute_url())
+            
             for o in self.context.relatedItems]
 
 
@@ -199,6 +209,7 @@ class BaseFileModifier(object):
         """change the rdf resource
         """
         item = getattr(self.context, self.field)
+        
         if not item:
             return
 
