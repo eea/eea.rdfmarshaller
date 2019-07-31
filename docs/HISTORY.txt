@@ -3,6 +3,9 @@ Changelog
 
 12.1-dev0 - (unreleased)
 ---------------------
+* Change: Modified how the get_translation() and get_translated_langauges()
+  methods are obtained for purposes of Plone5 compatibility
+  [davidsilaghi refs #104219]
 * Change: render linkeddata viewlet only if we are on the view template where
   we really need it
   [ichim-david refs #107760]
