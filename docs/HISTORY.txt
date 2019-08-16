@@ -2,7 +2,7 @@ Changelog
 =========
 
 12.1-dev0 - (unreleased)
----------------------
+--------------------------
 * Change: Modified how the get_translation() and get_translated_langauges()
   methods are obtained for purposes of Plone5 compatibility
   [davidsilaghi refs #104219]
@@ -20,30 +20,30 @@ Changelog
   [avoinea refs #102083]
 
 11.6 - (2019-03-15)
----------------------
+--------------------------
 * Feature: configured the PingCR async jobs to retry on failure
   [alecghica refs #103659]
 
 11.5 - (2019-01-28)
----------------------
+--------------------------
 * Jenkins: Add sonarqube step
   [avoinea refs #101552]
 
 11.4 - (2018-12-21)
----------------------
+--------------------------
 * Change: use utf-8 for any archetypes field which avoids
   long dash tranformation when exporting to rdf and field has
   Windows-1252 encoding
   [ichim-david refs #100868]
 
 11.3 - (2018-12-19)
----------------------
+--------------------------
 * Bug fix: use utf-8 for any archetypes field which avoids
   long dash tranformation when exporting to rdf
   [ichim-david refs #100868]
 
 11.2 - (2018-07-10)
----------------------
+--------------------------
 * Bug fix: fixed linked-data-export viewlet exception
   [alecghica refs #96997]
 * Bug fix: fixed rdflib.graph in _assertnode error
