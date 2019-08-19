@@ -1,7 +1,7 @@
 Changelog
 =========
 
-12.1-dev0 - (unreleased)
+12.1 - (2019-08-19)
 --------------------------
 * Change: Modified how the get_translation() and get_translated_langauges()
   methods are obtained for purposes of Plone5 compatibility
