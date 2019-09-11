@@ -185,6 +185,7 @@ class SearchableTextInModifier(object):
         """
         abstract = self.context.SearchableText()
         abstract = ILLEGAL_XML_CHARS_PATTERN.sub('', abstract)
+        resource.dcterms_abstract = abstract
 
         # Sanitize HTML
         if "</" in abstract or "/>" in abstract:
@@ -192,8 +193,6 @@ class SearchableTextInModifier(object):
             if transforms._findPath("text/html", "text/plain") is not None:
                 resource.dcterms_abstract = str(transforms.convertTo(
                     "text/plain", abstract, mimetype="text/html"))
-        else:
-            resource.dcterms_abstract = abstract
 
 
 class RelatedItemsModifier(object):
