@@ -1,7 +1,7 @@
 Changelog
 =========
 
-12.2-dev0 - (unreleased)
+12.2 - (2019-09-11)
 ---------------------------
 * Bug fix: Fixed broken layout on footer when adding HTML code within Page description
   [avoinea refs #105522]
