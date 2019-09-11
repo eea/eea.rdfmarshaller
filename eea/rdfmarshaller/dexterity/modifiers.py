@@ -165,10 +165,19 @@ class SearchableTextInModifier(object):
         self.context = context
 
     def run(self, resource, *args, **kwds):
-        """Change the rdf resource
+        """ Change the rdf resource
         """
-        resource.dcterms_abstract = ILLEGAL_XML_CHARS_PATTERN.sub(
-            '', self.context.SearchableText())
+        abstract = self.context.SearchableText()
+        abstract = ILLEGAL_XML_CHARS_PATTERN.sub('', abstract)
+
+        # Sanitize HTML
+        if "</" in abstract or "/>" in abstract:
+            transforms = getToolByName(self.context, 'portal_transforms')
+            if transforms._findPath("text/html", "text/plain") is not None:
+                resource.dcterms_abstract = str(transforms.convertTo(
+                    "text/plain", abstract, mimetype="text/html"))
+        else:
+            resource.dcterms_abstract = abstract
 
 
 class RelatedItemsModifier(object):
@@ -189,7 +198,7 @@ class RelatedItemsModifier(object):
 
         resource.dcterms_references = [
             rdflib.URIRef(o.to_object.absolute_url())
-            
+
             for o in self.context.relatedItems]
 
 
@@ -209,7 +218,7 @@ class BaseFileModifier(object):
         """change the rdf resource
         """
         item = getattr(self.context, self.field)
-        
+
         if not item:
             return
 

@@ -3,6 +3,8 @@ Changelog
 
 12.2-dev0 - (unreleased)
 ---------------------------
+* Bug fix: Fixed broken layout on footer when adding HTML code within Page description
+  [avoinea refs #105522]
 
 12.1 - (2019-08-19)
 --------------------------
