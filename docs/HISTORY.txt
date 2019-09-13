@@ -1,6 +1,11 @@
 Changelog
 =========
 
+12.2 - (2019-09-11)
+---------------------------
+* Bug fix: Fixed broken layout on footer when adding HTML code within Page description
+  [avoinea refs #105522]
+
 12.1 - (2019-08-19)
 --------------------------
 * Change: Modified how the get_translation() and get_translated_langauges()
