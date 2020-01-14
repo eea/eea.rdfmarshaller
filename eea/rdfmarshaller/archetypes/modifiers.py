@@ -89,6 +89,8 @@ class FieldsModifier(object):
                          sys.exc_info()[0], sys.exc_info()[1]),
                         severity=log.logging.WARN)
 
+        resource.dcterms_identifier = adapter.context.UID()
+
         return resource
 
 
