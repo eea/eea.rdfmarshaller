@@ -82,6 +82,8 @@ class TestProgramIntegration(unittest.TestCase):
         rdf = view()
         e = lxml.etree.fromstring(rdf.encode('utf-8'))
 
+        assert e.xpath('//dcterms:identifier/text()', namespaces=NSMAP) == \
+            [self.page.UID()]
         assert e.xpath('//dcterms:description/text()', namespaces=NSMAP) == \
             ['Lorem ipsum dolor sit amet, consectetur adipiscing elit.']
 
