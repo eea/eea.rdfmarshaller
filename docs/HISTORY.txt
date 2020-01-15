@@ -1,6 +1,9 @@
 Changelog
 =========
 
+12.4-dev0 - (unreleased)
+---------------------------
+
 12.3 - (2020-01-15)
 ---------------------------
 * Change: Refs #111827 - Render UID as `dcterms:identifier`
