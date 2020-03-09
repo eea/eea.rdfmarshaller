@@ -1,5 +1,6 @@
 """ LinkedData module
 """
+from __future__ import print_function
 import rdflib
 import surf
 from eea.rdfmarshaller.interfaces import ILinkedData, ILinkedDataHomepage
@@ -169,7 +170,7 @@ class HomepageLinkedData(GenericLinkedData):
     def modify(self, obj2surf):
         """ Modify
         """
-        print "This is a homepage"
+        print("This is a homepage")
 
 
 @implementer(ILinkedDataHomepageData)
