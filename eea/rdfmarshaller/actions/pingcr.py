@@ -4,7 +4,10 @@ import logging
 import pytz
 import urllib
 import lxml.etree
-from eventlet.green import urllib2
+try:
+    from eventlet.green import urllib2
+except ImportError:
+    from eventlet.green.urllib import request as urllib2
 from datetime import datetime, timedelta
 from zope import schema
 from zope.interface import implementer, Interface
