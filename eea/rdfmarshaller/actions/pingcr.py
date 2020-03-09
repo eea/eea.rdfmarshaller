@@ -25,7 +25,7 @@ from plone.app.contentrules.browser.formhelper import AddForm, EditForm
 from plone.contentrules.rule.interfaces import IExecutable, IRuleElementData
 from eea.rabbitmq.plone.rabbitmq import get_rabbitmq_client_settings
 from eea.rabbitmq.plone.rabbitmq import queue_msg
-from eea.rdfmarshaller.async import IAsyncService
+from eea.rdfmarshaller.asyncode import IAsyncService
 from eea.rdfmarshaller.actions.interfaces import IObjectMovedOrRenamedEvent
 try:
     from eea.versions.interfaces import IGetVersions, IVersionEnhanced
