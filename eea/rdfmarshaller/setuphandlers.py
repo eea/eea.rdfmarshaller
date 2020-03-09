@@ -16,4 +16,3 @@ def setupVarious(context):
 
     site = context.getSite()
     qinstaller = getToolByName(site, 'portal_quickinstaller')
-    qinstaller.installProduct('Marshall')
