@@ -3,10 +3,11 @@
 from eea.rdfmarshaller.interfaces import ILinkedDataHomepage
 from plone import api
 from plone.autoform import directives
-from plone.directives import form
 from plone.formwidget.contenttree import PathSourceBinder
 from plone.formwidget.contenttree.widget import MultiContentTreeWidget
 from plone.z3cform import layout
+from z3c.form.form import Form
+from plone.supermodel import model
 from z3c.form import button, widget
 from z3c.form.browser.checkbox import SingleCheckBoxFieldWidget as SCBFW
 from z3c.form.interfaces import IFieldWidget
@@ -50,7 +51,7 @@ def SingleCheckBoxFieldWidget(field, request):
     return swidget
 
 
-class IEditLinkedDataHomepages(form.Schema):
+class IEditLinkedDataHomepages(model.Schema):
     """ IEditLinkedDataHomepages
     """
     set_plonesite = schema.Bool(
@@ -69,7 +70,7 @@ class IEditLinkedDataHomepages(form.Schema):
     directives.widget('set_plonesite', SingleCheckBoxFieldWidget)
 
 
-class EditLinkedDataHomepagesForm(form.SchemaForm):
+class EditLinkedDataHomepagesForm(Form):
     """ EditLinkedDataHomepageForm
     """
     schema = IEditLinkedDataHomepages
