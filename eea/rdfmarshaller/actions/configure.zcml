@@ -1,6 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:plone="http://namespaces.plone.org/plone">
 
     <!-- Ping CR action -->
@@ -69,7 +70,12 @@
     <!-- Custom handler for ObjectMovedEvent what is not triggered when object is added or deleted -->
     <subscriber
       for="Products.Archetypes.interfaces.IBaseObject zope.lifecycleevent.interfaces.IObjectMovedEvent"
-      handler=".handlers.forwardevent"
+      handler=".handlers.forwardevent" zcml:condition="installed Products.Archetypes"
       />
+
+  <subscriber
+    for="zope.lifecycleevent.interfaces.IObjectMovedEvent"
+    handler=".handlers.forwardevent" zcml:condition="not-installed Products.Archetypes"
+  />
 
 </configure>
