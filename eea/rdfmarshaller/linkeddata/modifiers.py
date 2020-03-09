@@ -7,13 +7,13 @@ from eea.rdfmarshaller.linkeddata.interfaces import ILinkedDataHomepageData
 from Products.CMFCore.interfaces import IContentish
 from rdflib.term import Literal
 from zope.component import adapts, queryMultiAdapter
-from zope.interface import implements
+from zope.interface import implementer
 
 
+@implementer(ISurfResourceModifier)
 class CarouselModifier(object):
     """ Adds information about list of news as a carousel
     """
-    implements(ISurfResourceModifier)
     adapts(IContentish)
 
     def __init__(self, context):
@@ -49,11 +49,11 @@ class CarouselModifier(object):
         ilist.update()
 
 
+@implementer(ISurfResourceModifier)
 class BreadcrumbModifier(object):
     """ Adds information about breadcrumbs for a page
     """
 
-    implements(ISurfResourceModifier)
     adapts(IContentish)
 
     def __init__(self, context):
@@ -173,11 +173,11 @@ def get_organisation(session, homepage, org_url):
     return org
 
 
+@implementer(ISurfResourceModifier)
 class OrganizationModifier(object):
     """ Adds info about publishing organisation based on ILinkedDataHomepage
     """
 
-    implements(ISurfResourceModifier)
     adapts(IContentish)
 
     def __init__(self, context):
@@ -200,11 +200,11 @@ class OrganizationModifier(object):
         resource.update()
 
 
+@implementer(ISurfResourceModifier)
 class HomepageModifier(object):
     """ Add info about linked data homepage
     """
 
-    implements(ISurfResourceModifier)
     adapts(ILinkedDataHomepage)
 
     def __init__(self, context):
@@ -248,11 +248,11 @@ class HomepageModifier(object):
         website.update()
 
 
+@implementer(ISurfResourceModifier)
 class DefaultPageModifier(object):
     """ Detects if context is used as default page for a LinkedData homepage
     """
 
-    implements(ISurfResourceModifier)
     adapts(IContentish)
 
     def __init__(self, context):

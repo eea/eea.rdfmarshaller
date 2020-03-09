@@ -7,7 +7,7 @@ import lxml.etree
 from eventlet.green import urllib2
 from datetime import datetime, timedelta
 from zope import schema
-from zope.interface import implements, Interface
+from zope.interface import implementer, Interface
 from zope.component import adapts, queryUtility, ComponentLookupError
 from zope.formlib import form
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
@@ -46,10 +46,10 @@ class IPingCRAction(Interface):
     )
 
 
+@implementer(IPingCRAction, IRuleElementData)
 class PingCRAction(SimpleItem):
     """ Ping action settings
     """
-    implements(IPingCRAction, IRuleElementData)
 
     service_to_ping = ''
 
@@ -58,10 +58,10 @@ class PingCRAction(SimpleItem):
     summary = u'ping cr'
 
 
+@implementer(IExecutable)
 class PingCRActionExecutor(object):
     """ Ping action executor
     """
-    implements(IExecutable)
     adapts(Interface, IPingCRAction, Interface)
 
     def __init__(self, context, element, event):

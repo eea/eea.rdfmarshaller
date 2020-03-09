@@ -13,7 +13,7 @@ from eea.rdfmarshaller.value import Value2Surf
 from plone.app.textfield.value import RichTextValue
 from Products.CMFPlone import log
 from zope.component import adapts
-from zope.interface import Interface, implements
+from zope.interface import Interface, implementer
 from zope.schema.interfaces import IField
 
 try:
@@ -24,10 +24,10 @@ except ImportError:
     HAS_Z3C_RELATIONFIELD = False
 
 
+@implementer(IDXField2Surf)
 class DXField2Surf(object):
     """Base implementation of IDXField2Surf """
 
-    implements(IDXField2Surf)
     # adapts(IField, Interface, ISurfSession)
     adapts(Interface, Interface, ISurfSession)
 
@@ -68,6 +68,7 @@ class RichValue2Surf(Value2Surf):
         super(RichValue2Surf, self).__init__(value.output)
 
 
+@implementer(IFieldDefinition2Surf)
 class DexterityField2RdfSchema(GenericObject2Surf):
     """IFieldDefinition2Surf implemention for Fields;
 
@@ -75,7 +76,6 @@ class DexterityField2RdfSchema(GenericObject2Surf):
     extracting their field definitions
     """
 
-    implements(IFieldDefinition2Surf)
     adapts(IField, Interface, ISurfSession)
 
     _namespace = surf.ns.RDFS
@@ -120,6 +120,7 @@ class DexterityField2RdfSchema(GenericObject2Surf):
         return resource
 
 
+@implementer(IDXField2Surf)
 class ShortenHTMLField2Surf(DXField2Surf, BaseShortenHTMLField2Surf):
     """ A superclass to be used to provide alternate values for fields
 
@@ -135,7 +136,6 @@ class ShortenHTMLField2Surf(DXField2Surf, BaseShortenHTMLField2Surf):
         />
     """
 
-    implements(IDXField2Surf)
 
     exportable = True
     alternate_field = None

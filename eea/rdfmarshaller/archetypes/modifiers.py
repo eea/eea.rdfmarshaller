@@ -13,17 +13,17 @@ from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone import log
 from zope.component import adapts, getMultiAdapter, queryAdapter
 from zope.component import queryMultiAdapter
-from zope.interface import implements, providedBy
+from zope.interface import implementer, providedBy
 
 ILLEGAL_XML_CHARS_PATTERN = re.compile(
     u'[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]'
 )
 
 
+@implementer(ISurfResourceModifier)
 class FieldsModifier(object):
     """ Adds archetypes fields values to rdf
     """
-    implements(ISurfResourceModifier)
     adapts(IBaseObject)
 
     def __init__(self, context):
@@ -94,11 +94,11 @@ class FieldsModifier(object):
         return resource
 
 
+@implementer(ISurfResourceModifier)
 class IsPartOfModifier(object):
     """ Adds dcterms_isPartOf information to rdf resources
     """
 
-    implements(ISurfResourceModifier)
     adapts(IBaseContent)
 
     def __init__(self, context):
@@ -123,11 +123,11 @@ class IsPartOfModifier(object):
                     rdflib.URIRef(parent_url)   # pylint: disable = W0612
 
 
+@implementer(ISurfResourceModifier)
 class TranslationInfoModifier(object):
     """ Adds translation info
     """
 
-    implements(ISurfResourceModifier)
     adapts(IBaseContent)
 
     def __init__(self, context):
@@ -153,11 +153,11 @@ class TranslationInfoModifier(object):
                 rdflib.URIRef(context.getCanonical().absolute_url())
 
 
+@implementer(ISurfResourceModifier)
 class ProvidedInterfacesModifier(object):
     """ Adds information about provided interfaces
     """
 
-    implements(ISurfResourceModifier)
     adapts(IBaseContent)
 
     def __init__(self, context):
@@ -172,11 +172,11 @@ class ProvidedInterfacesModifier(object):
         resource.eea_objectProvides = provides
 
 
+@implementer(ISurfResourceModifier)
 class SearchableTextInModifier(object):
     """ Adds searchable text info
     """
 
-    implements(ISurfResourceModifier)
     adapts(IBaseContent)
 
     def __init__(self, context):
@@ -197,11 +197,11 @@ class SearchableTextInModifier(object):
                     "text/plain", abstract, mimetype="text/html"))
 
 
+@implementer(ISurfResourceModifier)
 class RelatedItemsModifier(object):
     """ Adds dcterms:references
     """
 
-    implements(ISurfResourceModifier)
     adapts(IBaseContent)
 
     def __init__(self, context):

@@ -11,13 +11,13 @@ from eea.rdfmarshaller.interfaces import ISurfSession
 from Products.Archetypes.interfaces import IField, IFileField
 from Products.CMFPlone import log
 from zope.component import adapts
-from zope.interface import Interface, implements
+from zope.interface import Interface, implementer
 
 
+@implementer(IATField2Surf)
 class ATField2Surf(object):
     """Base implementation of IATField2Surf """
 
-    implements(IATField2Surf)
     adapts(IField, Interface, ISurfSession)
 
     exportable = True
@@ -43,10 +43,10 @@ class ATField2Surf(object):
             return None
 
 
+@implementer(IATField2Surf)
 class ATFileField2Surf(ATField2Surf):
     """IATField2Surf implementation for File fields"""
 
-    implements(IATField2Surf)
     adapts(IFileField, Interface, ISurfSession)
 
     exportable = True
@@ -117,10 +117,10 @@ class ATFileField2Surf(ATField2Surf):
         return rdflib.URIRef(field_url)
 
 
+@implementer(IATField2Surf)
 class ATReferenceField2Surf(ATField2Surf):
     """IATField2Surf implementation for Reference fields"""
 
-    implements(IATField2Surf)
     adapts(IReferenceField, Interface, ISurfSession)
 
     def value(self):

@@ -9,7 +9,7 @@ from plone.api import portal
 from Products.CMFCore.interfaces import IContentish
 from zope.annotation.factory import factory
 from zope.component import adapts
-from zope.interface import implements
+from zope.interface import implementer
 
 
 def schematize(store):
@@ -33,11 +33,11 @@ def schematize(store):
     return s
 
 
+@implementer(ILinkedData)
 class GenericLinkedData(object):
     """ Generic ILinkedData implemention
     """
 
-    implements(ILinkedData)
     adapts(IContentish)
 
     def __init__(self, context):
@@ -172,11 +172,11 @@ class HomepageLinkedData(GenericLinkedData):
         print "This is a homepage"
 
 
+@implementer(ILinkedDataHomepageData)
 class LinkedDataHomepageData(Persistent):
     """ LinkedDataHomepageData
     """
     adapts(ILinkedDataHomepage)
-    implements(ILinkedDataHomepageData)
 
 
 KEY = 'LinkedDataHomepage'

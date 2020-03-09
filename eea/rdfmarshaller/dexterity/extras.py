@@ -3,7 +3,7 @@
 import sys
 
 from zope.component import adapts
-from zope.interface import implements
+from zope.interface import implementer
 
 from eea.rdfmarshaller.dexterity.modifiers import BaseFileModifier
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
@@ -20,11 +20,11 @@ except ImportError:
         """
 
 
+@implementer(ISurfResourceModifier)
 class CoverTilesModifier(object):
     """Adds tiles information to rdf resources
     """
 
-    implements(ISurfResourceModifier)
     adapts(ICover)
 
     def __init__(self, context):

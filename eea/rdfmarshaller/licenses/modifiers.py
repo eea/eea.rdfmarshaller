@@ -7,12 +7,12 @@ from eea.rdfmarshaller.licenses.license import ILicenses, IPortalTypeLicenses
 from plone import api
 from Products.CMFCore.interfaces import IContentish
 from zope.component import adapts
-from zope.interface import implements
+from zope.interface import implementer
 
 
+@implementer(ISurfResourceModifier)
 class ContentLicenseModifier(object):
     """ ContentLicenseModifier """
-    implements(ISurfResourceModifier)
     adapts(IContentish)
 
     def __init__(self, context):

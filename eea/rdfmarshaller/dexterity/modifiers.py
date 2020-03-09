@@ -3,7 +3,7 @@ import re
 import sys
 
 from zope.component import adapts
-from zope.interface import implements, providedBy
+from zope.interface import implementer, providedBy
 
 import rdflib
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
@@ -24,11 +24,11 @@ ILLEGAL_XML_CHARS_PATTERN = re.compile(
 )
 
 
+@implementer(ISurfResourceModifier)
 class WorkflowStateModifier(object):
     """Adds workflow information information to rdf resources
     """
 
-    implements(ISurfResourceModifier)
     adapts(IDexterityContent)
 
     def __init__(self, context):
@@ -71,11 +71,11 @@ class WorkflowStateModifier(object):
 
 
 # Archetypes modifiers ported to dexterity
+@implementer(ISurfResourceModifier)
 class IsPartOfModifier(object):
     """Adds dcterms_isPartOf information to rdf resources
     """
 
-    implements(ISurfResourceModifier)
     adapts(IDexterityContent)
 
     def __init__(self, context):
@@ -99,11 +99,11 @@ class IsPartOfModifier(object):
                     rdflib.URIRef(parent_url)
 
 
+@implementer(ISurfResourceModifier)
 class TranslationInfoModifier(object):
     """Adds translation info
     """
 
-    implements(ISurfResourceModifier)
     adapts(IDexterityContent)
 
     def __init__(self, context):
@@ -135,11 +135,11 @@ class TranslationInfoModifier(object):
             return
 
 
+@implementer(ISurfResourceModifier)
 class ProvidedInterfacesModifier(object):
     """Adds information about provided interfaces
     """
 
-    implements(ISurfResourceModifier)
     adapts(IDexterityContent)
 
     def __init__(self, context):
@@ -154,11 +154,11 @@ class ProvidedInterfacesModifier(object):
         resource.eea_objectProvides = provides
 
 
+@implementer(ISurfResourceModifier)
 class SearchableTextInModifier(object):
     """Adds searchable text info
     """
 
-    implements(ISurfResourceModifier)
     adapts(IDexterityContent)
 
     def __init__(self, context):
@@ -179,11 +179,11 @@ class SearchableTextInModifier(object):
                     "text/plain", abstract, mimetype="text/html"))
 
 
+@implementer(ISurfResourceModifier)
 class RelatedItemsModifier(object):
     """Adds dcterms:references
     """
 
-    implements(ISurfResourceModifier)
     adapts(IDexterityContent)
 
     def __init__(self, context):
@@ -202,13 +202,12 @@ class RelatedItemsModifier(object):
 
 
 # This one comes from eea.dataservices
+@implementer(ISurfResourceModifier)
 class BaseFileModifier(object):
     """Adds dcterms:format
     """
 
     field = ''
-
-    implements(ISurfResourceModifier)
 
     def __init__(self, context):
         self.context = context

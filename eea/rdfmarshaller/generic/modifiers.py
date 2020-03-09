@@ -5,13 +5,13 @@ from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 from OFS.interfaces import IFolder
 from plone.api.portal import get_tool
 from zope.component import adapts
-from zope.interface import implements
+from zope.interface import implementer
 
 
+@implementer(ISurfResourceModifier)
 class FolderPartsModifier(object):
     """IObject2Surf implemention for Folders"""
 
-    implements(ISurfResourceModifier)
     adapts(IFolder)
 
     def __init__(self, context):

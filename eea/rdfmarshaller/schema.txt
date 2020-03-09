@@ -98,14 +98,14 @@ First we create an schema extender
 
 
   >>> from zope.component import adapts
-  >>> from zope.interface import implements
+  >>> from zope.interface import implementer
   >>> from archetypes.schemaextender.interfaces import ISchemaExtender
   >>> from Products.Archetypes.public import BooleanWidget
   >>> from Products.ATContentTypes.interface import IATDocument
   >>>
+  >>> @implementer(ISchemaExtender)
   >>> class PageExtender(object):
   ...     adapts(IATDocument)
-  ...     implements(ISchemaExtender)
   ...
   ...     fields = [
   ...         MyBooleanField("super_power",

@@ -7,13 +7,13 @@ from chardet import detect
 from eea.rdfmarshaller.interfaces import IValue2Surf
 from rdflib import URIRef
 from zope.component import adapts
-from zope.interface import implements, Interface
+from zope.interface import implementer, Interface
 
 
+@implementer(IValue2Surf)
 class Value2Surf(object):
     """Base implementation of IValue2Surf
     """
-    implements(IValue2Surf)
     adapts(Interface)
 
     def __init__(self, value):

@@ -17,13 +17,13 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import log
 from Products.CMFPlone.utils import _createObjectByType
 from zope.component import adapts, queryMultiAdapter
-from zope.interface import Interface, implements
+from zope.interface import Interface, implementer
 
 
+@implementer(IObject2Surf)
 class Archetype2Surf(GenericObject2Surf):
     """IArchetype2Surf implementation for AT based content items"""
 
-    implements(IObject2Surf)
     adapts(IBaseObject, ISurfSession)
 
     dc_map = dict([('title', 'title'),
@@ -110,6 +110,7 @@ class Archetype2Surf(GenericObject2Surf):
         return resource
 
 
+@implementer(IFieldDefinition2Surf)
 class ATField2RdfSchema(GenericObject2Surf):
     """IFieldDefinition2Surf implemention for Fields;
 
@@ -117,7 +118,6 @@ class ATField2RdfSchema(GenericObject2Surf):
     extracting their field definitions
     """
 
-    implements(IFieldDefinition2Surf)
     adapts(IField, Interface, ISurfSession)
 
     _namespace = surf.ns.RDFS
@@ -250,10 +250,10 @@ class FTI2Surf(GenericObject2Surf):
         return resource
 
 
+@implementer(IArchetype2Surf)
 class ATVocabularyTerm2Surf(Archetype2Surf):
     """IArchetype2Surf implemention for ATVocabularyTerms"""
 
-    implements(IArchetype2Surf)
     adapts(IATVocabularyTerm, ISurfSession)
 
     @property
