@@ -327,7 +327,7 @@ def ping_CRSDS(context, options):
                 #Retry ping with create=true
                 options['create'] = True
                 continue
-        except Exception, err:
+        except Exception as err:
             # re-schedule PING on error
             schedule = datetime.now(pytz.UTC) + timedelta(hours=4)
             async_service = queryUtility(IAsyncService)

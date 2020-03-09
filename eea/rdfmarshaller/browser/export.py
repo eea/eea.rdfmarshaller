@@ -52,7 +52,7 @@ class RDFExport(object):
 
         try:
             res = marshaller.marshall(self.context, endLevel=endLevel)
-        except AssertionError, err:
+        except AssertionError as err:
             logger.exception(err)
             return ""
 

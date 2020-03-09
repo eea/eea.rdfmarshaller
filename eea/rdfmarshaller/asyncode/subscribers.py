@@ -26,7 +26,7 @@ def configureQueue(event):
     try:
         size = int(os.environ.get(
             'EEARDF_ASYNC_THREADS', getMaximumThreads(queue)))
-    except Exception, err:
+    except Exception as err:
         logger.exception(err)
         size = 1
 

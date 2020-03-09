@@ -30,7 +30,7 @@ class LinkedDataExportViewlet(ViewletBase):
         marshaller = getComponent('surfrdf')
         try:
             obj2surf = marshaller._add_content(self.context)
-        except AssertionError, err:
+        except AssertionError as err:
             logger.exception(err)
             return ""
 
@@ -43,7 +43,7 @@ class LinkedDataExportViewlet(ViewletBase):
 
         try:
             data = ILinkedData(self.context).serialize(obj2surf)
-        except AssertionError, err:
+        except AssertionError as err:
             logger.exception(err)
             return ""
 
