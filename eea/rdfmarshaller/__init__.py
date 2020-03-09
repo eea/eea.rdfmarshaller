@@ -1,8 +1,9 @@
 """ eea.rdfmarshaller package """
 
-from Products.Marshall.registry import registerComponent
+
 from eea.rdfmarshaller import marshaller
 from eea.rdfmarshaller import config
+from eea.rdfmarshaller.products_marshall_registry import registerComponent
 
 registerComponent('surfrdf', 'RDF Marshaller',
                   marshaller.RDFMarshaller)

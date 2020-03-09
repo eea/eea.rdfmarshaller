@@ -3,7 +3,7 @@
 import os
 import logging
 from eea.rdfmarshaller.interfaces import ILinkedData
-from Products.Marshall.registry import getComponent
+from eea.rdfmarshaller.products_marshall_registry import getComponent
 from unidecode import unidecode
 
 

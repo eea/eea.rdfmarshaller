@@ -7,7 +7,8 @@ from eea.rdfmarshaller.licenses.license import ILicenses, IPortalTypeLicenses
 from plone import api
 from plone.app.layout.viewlets.common import ViewletBase
 from plone.memoize.ram import cache
-from Products.Marshall.registry import getComponent
+from eea.rdfmarshaller.products_marshall_registry import getComponent
+
 from rdflib import ConjunctiveGraph  # , Graph
 
 

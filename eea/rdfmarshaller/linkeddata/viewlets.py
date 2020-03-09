@@ -3,7 +3,7 @@
 import logging
 from eea.rdfmarshaller.interfaces import ILinkedData
 from plone.app.layout.viewlets import ViewletBase
-from Products.Marshall.registry import getComponent
+from eea.rdfmarshaller.products_marshall_registry import getComponent
 from zope.component import getMultiAdapter
 
 try:
