@@ -3,14 +3,14 @@
 import logging
 import surf
 from surf.log import set_logger
-from Products.Archetypes.Marshall import Marshaller
 from Products.CMFCore.interfaces._tools import ITypesTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from eea.rdfmarshaller.interfaces import (IGenericObject2Surf, IObject2Surf,
                                           ISurfResourceModifier, ISurfSession)
+from eea.rdfmarshaller.products_archetypes_marshall import Marshaller
 from zope.component import adapts, queryMultiAdapter, subscribers
-from zope.interface import Interface, implements
+from zope.interface import Interface, implementer
 
 surf.ns.register(EEA="http://www.eea.europa.eu/ontologies.rdf#")
 surf.ns.register(SKOS="http://www.w3.org/2004/02/skos/core#")
@@ -98,13 +98,13 @@ class RDFMarshaller(Marshaller):
         return (content_type, len(data), data)
 
 
+implementer(IGenericObject2Surf)
 class GenericObject2Surf(object):
     """Generic implementation of IObject2Surf
 
     This is meant to be subclassed and not used directly.
     """
 
-    implements(IGenericObject2Surf)
     adapts(Interface, ISurfSession)
 
     _resource = None    # stores the surf resource

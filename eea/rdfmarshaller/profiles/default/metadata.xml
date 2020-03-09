@@ -2,7 +2,4 @@
 <metadata>
  <description>EEA RDF Marshaller</description>
  <version>12.0</version>
- <dependencies>
-  <dependency>profile-Products.ATVocabularyManager:default</dependency>
- </dependencies>
 </metadata>
