@@ -7,7 +7,7 @@
   <include file="patches.zcml" />
 
   <include package=".actions" />
-  <include package=".archetypes" />
+  <include package=".archetypes" zcml:condition="installed Products.Archetypes" />
   <include package=".asyncode" />
   <include package=".browser" />
   <include package=".licenses" />
@@ -21,15 +21,33 @@
      <implements interface=".interfaces.ISurfSession" />
   </class>
 
-  <adapter factory=".marshaller.PortalTypesUtil2Surf" />
-  <adapter factory=".marshaller.PloneSite2Surf" />
+  <adapter factory=".marshaller.PortalTypesUtil2Surf"
+    provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+  />
+  <adapter factory=".marshaller.PloneSite2Surf"
+    provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+  />
 
-  <adapter factory=".value.DateTime2Surf" />
-  <adapter factory=".value.List2Surf" />
-  <adapter factory=".value.Set2Surf" />
-  <adapter factory=".value.String2Surf" />
-  <adapter factory=".value.Tuple2Surf" />
-  <adapter factory=".value.URIRef2Surf" />
-  <adapter factory=".value.Value2Surf" />
+  <adapter factory=".value.DateTime2Surf"
+    provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+  />
+  <adapter factory=".value.List2Surf"
+    provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+  />
+  <adapter factory=".value.Set2Surf"
+    provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+  />
+  <adapter factory=".value.String2Surf"
+    provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+  />
+  <adapter factory=".value.Tuple2Surf"
+    provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+  />
+  <adapter factory=".value.URIRef2Surf"
+    provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+  />
+  <adapter factory=".value.Value2Surf"
+    provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+  />
 
 </configure>

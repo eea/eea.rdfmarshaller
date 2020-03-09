@@ -15,7 +15,9 @@
     provides="eea.rdfmarshaller.interfaces.IObject2Surf" />
 
   <!-- rdfs adapters -->
-  <adapter factory=".DexterityFTI2Surf" />
+  <adapter factory=".DexterityFTI2Surf"
+    provides="eea.rdfmarshaller.interfaces.IObject2Surf"
+  />
 
   <adapter
     factory=".fields.DexterityField2RdfSchema"
@@ -23,12 +25,20 @@
 
   <!-- Field adapters -->
 
-  <adapter factory=".fields.DXField2Surf" />
-  <adapter factory=".fields.RichValue2Surf" />
+  <adapter factory=".fields.DXField2Surf"
+    provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+  />
+  <adapter factory=".fields.RichValue2Surf"
+    provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+  />
 
   <configure zcml:condition="installed z3c.relationfield">
-    <adapter factory=".fields.DXRelationList2Surf" />
-    <adapter factory=".fields.RelationValue2Surf" />
+    <adapter factory=".fields.DXRelationList2Surf"
+      provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+    />
+    <adapter factory=".fields.RelationValue2Surf"
+      provides="eea.rdfmarshaller.interfaces.IFieldDefinition2Surf"
+    />
   </configure>
 
   <!-- Specific dexterity @@rdf modifiers -->
