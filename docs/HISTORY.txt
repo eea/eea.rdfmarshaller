@@ -3,6 +3,8 @@ Changelog
 
 12.4-dev0 - (unreleased)
 ---------------------------
+* Change: ping_cr updated to use the RabbitMQ instead of plone.app.async
+  [alecghica refs #129707]
 
 12.3 - (2020-01-15)
 ---------------------------

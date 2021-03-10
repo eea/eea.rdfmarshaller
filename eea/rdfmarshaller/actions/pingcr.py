@@ -278,7 +278,7 @@ class PingCRView(BrowserView):
         options['create'] = False
         options['service_to_ping'] = 'http://semantic.eea.europa.eu/ping'
         options['obj_url'] = url
-        ping_CRSDS(context, options)
+        ping_RabbitMQ(options)
 
 
 def ping_RabbitMQ(options):
