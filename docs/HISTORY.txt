@@ -1,6 +1,9 @@
 Changelog
 =========
 
+12.5-dev0 - (unreleased)
+---------------------------
+
 12.4 - (2021-03-10)
 ---------------------------
 * Change: ping_cr updated to use the RabbitMQ instead of plone.app.async
