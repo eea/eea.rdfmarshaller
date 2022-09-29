@@ -2,15 +2,15 @@
 import re
 import sys
 
-from zope.component import adapts
-from zope.interface import implements, providedBy
-
 import rdflib
+from AccessControl.unauthorized import Unauthorized
 from eea.rdfmarshaller.interfaces import ISurfResourceModifier
 from plone.dexterity.interfaces import IDexterityContent
-from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone import log
+from zope.component import adapts
+from zope.interface import implements, providedBy
 
 try:
     from plone.app.multilingual.interfaces import ITranslationManager
@@ -121,11 +121,15 @@ class TranslationInfoModifier(object):
             translations = tm.get_translated_languages()
 
             if translations:
-                translations_objs = filter(None, [tm.get_translation(o)
-                                      for o in translations])
-                resource.eea_hasTranslation = \
-                    [rdflib.URIRef(o.absolute_url()) for o in translations_objs
-                     if o.absolute_url() != context.absolute_url()]
+                try:
+                    translations_objs = filter(None, [tm.get_translation(o)
+                        for o in translations])
+                    resource.eea_hasTranslation = \
+                        [rdflib.URIRef(o.absolute_url()) for o in translations_objs
+                         if o.absolute_url() != context.absolute_url()]
+                except Unauthorized:
+                    # TODO: The translations are unauthorized
+                    pass
             else:
                 resource.eea_isTranslationOf = \
                     rdflib.URIRef(context.absolute_url())
